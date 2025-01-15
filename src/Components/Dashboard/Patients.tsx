@@ -46,29 +46,31 @@ const Patients = () => {
     const [patients,setPatients] = useState(allpatients);
 
 
-    const handlesearch = (e) => {
+    const handlesearch = (e:any) => {
       setsearch(e)
-  
-      if (!allpatients[0] || !Array.isArray(allpatients[0])) {
-          console.error("Invalid data format for allpatients");
-          setPatients([]); // Reset patients to an empty array
-          return;
-      }
-  
-      const data = allpatients[0].filter((element) => {
-          if (!element?.name) return false; // Ensure element and name exist
-  
-          const substring = element.name.slice(0, search.length).toLowerCase();
-          return substring === search.toLowerCase(); // Case-insensitive comparison
-      });
-  
-      console.log("Filtered data:", data);
-      setPatients(data);
+      console.log(search);
+      
+   
+      const data = allpatients.filter((element:any)=>{
+           let tempname = element.name.slice(0,search.length).toLowerCase();;
+            console.log("tempname",tempname);
+            
+           if(search.toLocaleLowerCase() == tempname){
+            return element
+            
+           }
+         
+      })
+
+      setPatients(data)
+      
+
+       
   };
 
 
   const resethandle = ()=>{
-    setPatients(allpatients?.[0]);
+    setPatients(allpatients);
     setsearch("");
   }
 

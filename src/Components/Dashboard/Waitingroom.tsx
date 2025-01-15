@@ -47,7 +47,7 @@ const PatientCard = ({ patient, appointment,address,phone,date,visit,gender,dob,
   
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden ">
+    <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden  ">
       <div className="p-6">
         {/* Header Section with Gradient Banner */}
         <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
@@ -211,7 +211,7 @@ export default function WaitingRoom() {
   // };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 py-6 px-4 rounded-md">
+    <div className=" bg-gradient-to-br from-blue-50 to-cyan-50 py-6 px-4 rounded-md h-full">
       <div className="max-w-7xl mx-auto space-y-6">
         <h1 className="text-xl lg:text-3xl md:text-4xl font-bold text-blue-900 text-center mb-8">
           Patient Waiting Room
