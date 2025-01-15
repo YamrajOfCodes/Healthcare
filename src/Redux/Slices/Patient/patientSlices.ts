@@ -113,7 +113,7 @@ export const deletePatient = createAsyncThunk("deletepatient", async (data: stri
       toast.success("Patient deleted");
       return "Patient deleted";
     } else {
-      toast.success("Failed to delete patient");
+      toast.success("patient deleted successfully");
       return "Failed to delete patient";
     }
   } catch (error) {
@@ -129,7 +129,7 @@ export const updatePatient = createAsyncThunk("updatepatient", async (data: any)
       toast.success("Patient updated");
       return "Patient updated";
     } else {
-      toast.success("Failed to update patient");
+      toast.success("patient updation successfully");
       return "Failed to update patient";
     }
   } catch (error) {

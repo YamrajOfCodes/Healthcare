@@ -48,7 +48,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
   const [redirected,setredirected] = useState<Boolean>(false)
 
 
-  console.log(entryTime)
+  // console.log(entryTime)
 
   let entryyear = entryTime.slice(0,4);
   let entrymonth:any = entryTime.slice(5,7)
@@ -346,7 +346,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
         >
           {/* Inside the modal (EditPatient), click will stop propagation */}
           <div onClick={handleModalClick} className='w-2/3'>
-            <EditPatient  onClose={false}/>
+            <EditPatient patientdata={EditPatient} onClose={false}/>
           </div>
         </div>
       )}

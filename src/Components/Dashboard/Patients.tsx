@@ -16,12 +16,15 @@ const Patients = () => {
     const [editpatient,seteditpatient]=useState(null)
     const {deletepatient} = useSelector((state:RootState)=>state.Patient);
 
+   
+    
+
     console.log(deletepatient);
 
    
 
 
-    const handleeditpatient = (e)=>{
+    const handleeditpatient = (e:any)=>{
       window.scrollTo(0,0);
       setIsEditing(true);
       seteditpatient(e)

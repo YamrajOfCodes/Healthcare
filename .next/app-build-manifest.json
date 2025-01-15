@@ -1,50 +1,20 @@
 {
   "pages": {
-    "/_not-found/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/app/_not-found/page-43b8b49ad7e4e8d6.js"
-    ],
     "/layout": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/css/07f3a00847784503.css",
-      "static/css/62ffe345355801a7.css",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/app/layout-f74f9f8d42864495.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
     "/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/87-af66bf9c05841ef5.js",
-      "static/chunks/922-e9ce9028aaa2038c.js",
-      "static/chunks/app/page-21bf2c1f067e7fbe.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
     ],
     "/clinic/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/87-af66bf9c05841ef5.js",
-      "static/chunks/806-189a4cadef14cb69.js",
-      "static/chunks/922-e9ce9028aaa2038c.js",
-      "static/chunks/app/clinic/page-e158095abbecc197.js"
-    ],
-    "/prescription/[id]/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/app/prescription/[id]/page-2ab3086755ce89c4.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/clinic/page.js"
     ]
   }
 }
