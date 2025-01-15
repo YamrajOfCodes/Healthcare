@@ -13,8 +13,11 @@ interface PatientData {
   address?: string;
 }
 
-const PatientEditForm = ({ patientdata = {}, onClose }) => {
+const PatientEditForm = ({ patientdata, onClose }) => {
 
+
+  // console.log(patientdata);
+  
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({
     fullname: (patientdata as PatientData)?.name || '',
@@ -84,7 +87,7 @@ const PatientEditForm = ({ patientdata = {}, onClose }) => {
                     value={formData.fullname}
                     onChange={handleInputChange}
                     className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
-                    placeholder="Enter full name"
+                    placeholder={patientdata?.name}
                   />
                 </div>
               </div>
@@ -154,7 +157,7 @@ const PatientEditForm = ({ patientdata = {}, onClose }) => {
                       value={formData.email}
                       onChange={handleInputChange}
                       className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
-                      placeholder="Enter email address"
+                      placeholder={patientdata?.email}
                     />
                   </div>
                 </div>
@@ -174,7 +177,7 @@ const PatientEditForm = ({ patientdata = {}, onClose }) => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
-                      placeholder="Enter phone number"
+                      placeholder={patientdata?.phone}
                     />
                   </div>
                 </div>
@@ -195,7 +198,7 @@ const PatientEditForm = ({ patientdata = {}, onClose }) => {
                     value={formData.address}
                     onChange={handleInputChange}
                     className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
-                    placeholder="Enter address"
+                    placeholder={patientdata?.address}
                   />
                 </div>
               </div>
