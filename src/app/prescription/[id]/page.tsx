@@ -5,7 +5,6 @@ import { Printer } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { patientPrescription } from "@/Redux/Slices/Patient/patientSlices";
-import { RootState, AppDispatch } from "@/Redux/App/store";
 import { useAppDispatch } from "@/hooks";
 
 // Custom hook for typed dispatch
@@ -25,13 +24,36 @@ type Prescription = {
   };
 };
 
+interface Patient {
+  dob: string;
+  // Add other patient properties as needed
+}
+
+interface Appointment {
+  patient: Patient;
+  // Add other appointment properties as needed
+}
+
+
+interface PrescriptionState {
+  prescriptions: Prescription[];
+}
+
+interface RootState {
+  Patient: {
+    prescriptions: PrescriptionState;
+  };
+}
+
 // Component definition
 const Prescription = () => {
   const [prescription, setPrescription] = useState<Prescription | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(true);
   const { prescriptions } = useSelector((state: RootState) => state.Patient);
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+
+  console.log("pre", prescriptions?.prescriptions);
 
   useEffect(() => {
     // Dispatch the action to fetch prescriptions
@@ -39,13 +61,23 @@ const Prescription = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (prescriptions.length > 0) {
-      const matchedPrescription = prescriptions[0]?.prescriptions?.find(
-        (element: Prescription) => element.appointment_id === id
-      );
-      setPrescription(matchedPrescription || null);
+    if (prescriptions?.prescriptions && id) {
+       Number(id)
+      const appointmentId = parseInt(id, 10); // Use `parseInt` for conversion
+      if (!isNaN(appointmentId)) {
+        const matchedPrescription = prescriptions.prescriptions.filter(
+          (element: Prescription) => element.appointment_id == id
+        );
+  
+        if (matchedPrescription.length > 0) {
+          setPrescription(matchedPrescription[0]);
+        }
+      } else {
+        console.error('Invalid appointment ID');
+      }
     }
   }, [prescriptions, id]);
+  
 
   // Disable the loader after 2 seconds
   useEffect(() => {
@@ -54,7 +86,7 @@ const Prescription = () => {
   }, []);
 
   // Print handler
-  const handlePrint = () => {
+  const handlePrint = (): void => {
     window.print();
   };
 
@@ -68,7 +100,7 @@ const Prescription = () => {
   }
 
   // Render no prescription found state
-  if (!prescription) {
+  if (!prescriptions) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         No prescriptions found.
@@ -77,8 +109,18 @@ const Prescription = () => {
   }
 
   // Extract data from the prescription
-  const appointmentData = JSON.parse(prescription.prescription_details);
-  const dob = parseInt(prescription.appointment.patient.dob.slice(0, 4), 10);
+  let appointmentData: any = null;
+  let dob: number | null = null;
+
+  if (prescription) {
+    try {
+      appointmentData = JSON.parse(prescription.prescription_details);
+      dob = parseInt(prescription.appointment.patient.dob.slice(0, 4), 10);
+    } catch (error) {
+      console.error('Error parsing prescription details:', error);
+    }
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -126,6 +168,13 @@ const Prescription = () => {
               <div className="mt-1 p-2 bg-emerald-50 rounded">
                 {prescription.appointment.patient.address}
               </div>
+            </div>
+            <div className="h-80">
+
+            </div>
+            <div>
+              <p>signature</p>
+              <div className="w-1/3 border-b border-gray-700 mt-5"></div>
             </div>
           </div>
           <div className="mt-5 pt-8 text-center">

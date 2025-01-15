@@ -128,10 +128,10 @@ const ProfileCard: React.FC<ProfileProps> = ({
                  backdrop-blur-xl border border-white/20 transition-all duration-500 
                  hover:shadow-2xl hover:border-blue-200/30"
     >
-      <div className="flex items-center gap-8">
+      <div className="flex items-center justify-between gap-8">
         {/* Profile Section */}
-        <div className="flex items-center gap-6">
-          <div className="relative group">
+        <div className="flex items-center gap-6 flex-1 min-w-0">
+          <div className="relative group shrink-0">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full blur opacity-60 group-hover:opacity-100 transition duration-500"></div>
             <div className="relative h-16 w-16 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center shadow-xl">
               <User className="h-8 w-8 text-white drop-shadow-md" />
@@ -139,20 +139,20 @@ const ProfileCard: React.FC<ProfileProps> = ({
           </div>
           
           {/* Patient Details */}
-          <div className="flex-grow space-y-2">
+          <div className="min-w-0 flex-1 space-y-2">
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 truncate">
                {name}
               </h2>
-              <Shield className="h-4 w-4 text-blue-500" />
+              <Shield className="h-4 w-4 text-blue-500 shrink-0" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-gray-600">
-                <MapPin className="h-4 w-4" />
-                <p className="text-sm">{address}</p>
+                <MapPin className="h-4 w-4 shrink-0" />
+                <p className="text-sm truncate">{address}</p>
               </div>
               <div className="flex items-center gap-2 text-gray-600">
-                <Phone className="h-4 w-4" />
+                <Phone className="h-4 w-4 shrink-0" />
                 <p className="text-sm">+91 {phone}</p>
               </div>
             </div>
@@ -160,7 +160,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
         </div>
 
         {/* Actions Section */}
-        <div className="flex flex-col items-end gap-4">
+        <div className="flex flex-col items-end gap-4 shrink-0">
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold text-blue-600">{entryday}</span>
             <div className="text-sm text-gray-500">
@@ -169,8 +169,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
             </div>
           </div>
           
-
-          {/* opd bi */}
+          {/* OPD Buttons */}
           <div className="flex gap-3">
             <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl 
                            shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 
@@ -189,48 +188,14 @@ const ProfileCard: React.FC<ProfileProps> = ({
                 <span>Health Chart</span>
               </div>
             </button>
-
-            {/* <div className="relative">
-              <button 
-                onClick={() => setOpen(!open)}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <MoreVertical className="h-5 w-5" />
-              </button>
-              
-              {open && (
-                <div className="absolute top-0 right-10 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 
-                             backdrop-blur-lg py-2 z-10">
-                  <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 
-                                 transition-colors">
-                    Edit Patient
-                  </button>
-                </div>
-              )}
-            </div> */}
           </div>         
         </div>
-
-        {/* Time Information */}
-        {/* <div className="flex flex-col items-end gap-3">
-          <div className="flex items-center gap-2 text-gray-600">
-            <Clock className="h-4 w-4" />
-            <span className="text-sm font-medium">Entry at {hours}:{minutes} PM</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 bg-orange-500 rounded-full animate-pulse"></div>
-            <p className="text-sm text-orange-500 font-medium">Wait time: 9 mins</p>
-          </div>
-          <div className="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
-            <div className="w-1/3 h-full bg-orange-500 rounded-full"></div>
-          </div>
-        </div> */}
       </div>
     </div>
 
 {/* For sma screens */}
     <div 
-      className="w-[300px] sm:w-[230px] bg-white rounded-xl shadow-lg p-4 xl:hidden
+      className="w-[300px] sm:w-[330px] bg-white rounded-xl shadow-lg p-4 xl:hidden
                  backdrop-blur-xl border border-white/20 transition-all duration-500 
                  hover:shadow-2xl hover:border-blue-200/30"
       // onMouseEnter={() => setIsHovered(true)}
