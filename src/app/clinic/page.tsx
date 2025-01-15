@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import {Calendar,Users,Settings, Menu,X,  
+import {Calendar,Users,FileText, Menu,X,  
   LayoutDashboard,
   UserPlus,
   Clock,
@@ -245,10 +245,10 @@ const DashboardLayout: React.FC = () => {
                   />
 
                   <NavItem 
-                    icon={Settings} 
-                    label="Settings" 
-                    isActive={activeItem === 'Settings'}
-                    onClick={() => setActiveItem('Settings')}
+                    icon={FileText} 
+                    label="Transactions" 
+                    isActive={activeItem === 'Transactions'}
+                    onClick={() => setActiveItem('Transactions')}
                   />
                 </nav>
 
@@ -292,7 +292,7 @@ const DashboardLayout: React.FC = () => {
               activeItem === "allpatients" ? <Patients /> : 
               activeItem === "waitingroom" ? <Waitingroom /> : 
               activeItem === "register" ? <Register /> : 
-              activeItem === "allappointments" ? <Allappointment /> : activeItem === "Settings"? <Transactions/> : null
+              activeItem === "allappointments" ? <Allappointment /> : activeItem === "Transactions"? <Transactions/> : null
             }
           </div>
 
