@@ -39,6 +39,7 @@ const Patients = () => {
 
 
 
+
     const {allpatients} = useSelector((state:RootState)=>state.Patient)
     console.log("data",allpatients)
     
@@ -74,6 +75,13 @@ const Patients = () => {
   const handledeletepatient = (data)=>{
     console.log("id",data);
     dispatch(deletePatient(data));
+   let filterdata = patients.filter((dataa)=>{
+    return dataa.id !== data
+   })
+
+   setPatients(filterdata)
+
+
   }
 
  
