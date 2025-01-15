@@ -8,43 +8,63 @@ import { completePatient } from '@/Redux/Slices/Patient/patientSlices';
 import { AppDispatch, RootState } from '@/Redux/App/store';
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
-const PatientCard = ({ patient, appointment,address,phone,date,visit,gender,dob,waitingid}) => {
-  const [open, setOpen] = useState(false);
-  // const [isHovered, setIsHovered] = useState(false);
-  // const [waiting,setwaiting]=useState(null)
+interface Patient {
+  id: string;
+  appointment_id: string;
+  patient: {
+    name: string;
+    address: string;
+    phone: string;
+    visit_count: number;
+    gender: string;
+    dob: string;
+  };
+  updated_at: string;
+}
+
+interface PatientCardProps {
+  patient: string;
+  appointment: string;
+  address: string;
+  phone: string;
+  date: string;
+  visit: number;
+  gender: string;
+  dob: string;
+  waitingid: string;
+}
+
+const PatientCard: React.FC<PatientCardProps> = ({ 
+  patient, 
+  appointment, 
+  address, 
+  phone, 
+  date, 
+  visit, 
+  gender, 
+  dob, 
+  waitingid 
+}) => {
+  const [open, setOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
-  console.log(waitingid);
+  const entrydate = new Date(date);
+  const now = new Date();
+  const waiting_time_ms = now.getTime() - entrydate.getTime();
+  const age = new Date().getFullYear() - parseInt(dob.slice(0,4));
+
+  let tempdate = '';
   
-
-
-  let tempdate:any;
-  let age = new Date().getFullYear() - dob.slice(0,4);
-
-  const entrydate:any = new Date(date); // Ensure 'date' is a valid string
-  const now:any = new Date();
-  
-  let waiting_time_ms =  now - entrydate ; // Difference in milliseconds
-  if (waiting_time_ms < 0) {
-    console.log("The entry date is in the past.");
-  } else {
-    // Convert milliseconds to readable time
+  if (waiting_time_ms > 0) {
     const waiting_seconds = Math.floor(waiting_time_ms / 1000) % 60;
     const waiting_minutes = Math.floor(waiting_time_ms / (1000 * 60)) % 60;
     const waiting_hours = Math.floor(waiting_time_ms / (1000 * 60 * 60)) % 24;
-    const waiting_days = Math.floor(waiting_time_ms / (1000 * 60 * 60 * 24));
-  
-    // console.log(`Waiting time: ${waiting_days} days, ${waiting_hours} hours, ${waiting_minutes} minutes, ${waiting_seconds} seconds`);
-      tempdate =`${waiting_hours} hours, ${waiting_minutes} minutes, ${waiting_seconds}`
-     
-    
+    tempdate = `${waiting_hours} hours, ${waiting_minutes} minutes, ${waiting_seconds}`;
   }
 
-  const handlecomplete = ()=>{
-    dispatch(completePatient(waitingid))
-  }
-  
-  
+  const handlecomplete = (): void => {
+    dispatch(completePatient(waitingid));
+  };
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden  ">
@@ -114,7 +134,7 @@ const PatientCard = ({ patient, appointment,address,phone,date,visit,gender,dob,
                 <div
                   className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-500"
                   style={{
-                    width: tempdate && tempdate.slice(0,2) >  12 ? `100%` : '40%'
+                    width: tempdate && parseInt(tempdate.slice(0,2)) > 12 ? '100%' : '40%'
                   }}
                 ></div>
               </div>
@@ -164,13 +184,13 @@ const PatientCard = ({ patient, appointment,address,phone,date,visit,gender,dob,
 
 export default function WaitingRoom() {
   const dispatch = useAppDispatch();
-  const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
+  const { waitingroom }: { waitingroom: Patient[][] } = useSelector((state: RootState) => state.Doctor);
   console.log("waitingroom",waitingroom);
   
 
   useEffect(()=>{
     dispatch(getWaitingroom());
-  },[]);
+  },[dispatch]);
   // const [patients, setPatients] = useState([
   //   {
   //     id: 1,
@@ -220,7 +240,7 @@ export default function WaitingRoom() {
 
         {/* md:flex md:flex-wrap    you can put to following div */}
         <div className="space-y-4 ">
-          {waitingroom?.[0]?.map((element) => (
+          {waitingroom?.[0]?.map((element: Patient) => (
             <PatientCard
               key={element.id}
               waitingid={element.id}

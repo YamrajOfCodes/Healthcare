@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Activity, Heart, User, Calendar, Clipboard, Mail, Phone, MapPin, ChevronRight } from 'lucide-react';
 import { updatePatient } from '@/Redux/Slices/Patient/patientSlices';
@@ -6,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useAppDispatch } from '@/hooks';
 
 interface PatientData {
+  id?: string;
   name?: string;
   dob?: string;
   email?: string;
@@ -13,21 +13,30 @@ interface PatientData {
   address?: string;
 }
 
-const PatientEditForm = ({ patientdata, onClose }) => {
+interface EditPatientProps {
+  patientdata: PatientData;
+  onClose: () => void;
+}
 
+interface FormData {
+  fullname: string;
+  dateOfBirth: string;
+  email: string;
+  phone: string;
+  address: string;
+}
 
-  // console.log(patientdata);
-  
+const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) => {
   const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState({
-    fullname: (patientdata as PatientData)?.name || '',
-    dateOfBirth: (patientdata as PatientData)?.dob || '',
-    email: (patientdata as PatientData)?.email || '',
-    phone: (patientdata as PatientData)?.phone || '',
-    address: (patientdata as PatientData)?.address || '',
+  const [formData, setFormData] = useState<FormData>({
+    fullname: patientdata?.name || '',
+    dateOfBirth: patientdata?.dob || '',
+    email: patientdata?.email || '',
+    phone: patientdata?.phone || '',
+    address: patientdata?.address || '',
   });
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -35,16 +44,13 @@ const PatientEditForm = ({ patientdata, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Add additional logic here (e.g., send data to backend)
-    onClose(); 
-    dispatch(updatePatient(formData))
-    
+    dispatch(updatePatient(formData));
+    onClose();
   };
 
- 
   return (
     <div className="min-h-screen p-3 sm:p-6 mt-14">
       <div className="max-w-2xl mx-auto">

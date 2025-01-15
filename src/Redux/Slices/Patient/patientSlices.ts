@@ -6,109 +6,137 @@ import toast from "react-hot-toast"
 
 
 type AppointmentsState = {
-    appointments: Appointment[]; // Array of appointments
+    appointments: Appointment[] | null;
     error: string | null;
   };
 
 // Define types for the Appointment and other states
-type Appointment = {
+interface Appointment {
+  id: string;
   patient_id: string;
   doctor_id: string;
   mode: string;
   appointment_date: string;
-};
+  patient?: {
+    name: string;
+    email?: string;
+    phone?: string;
+  };
+  doctor?: {
+    name: string;
+    specialization?: string;
+  };
+  status: 'confirmed' | 'pending' | 'cancelled';
+  type?: string;
+}
 
-type Patient = {
+interface Patient {
   id: string;
   name: string;
   // Add any other properties you expect
-};
+}
 
-type PatientState = {
-  registerpatient: Patient[];
+// Define a more comprehensive state interface
+interface PatientState {
+  registerpatient: any[]; // Consider defining a specific type instead of any[]
   allpatients: Patient[];
-  deletepatient: string[]; // Assuming delete returns a message or confirmation
-  update: string[]; // Assuming update returns a message or confirmation
-  appointment: Appointment[];
-  getappointments: Appointment[];
-  prescriptions: any[]; // Define the structure if known
-  complete: any[]; // Define the structure if known
+  deletepatient: string[];
+  update: string[];
+  complete: any[]; // Consider defining a specific type
+  getappointments: AppointmentsState;
   error: string | null;
   loader: boolean;
-};
+  appointment: Appointment[] | null;
+  prescriptions: any[] | null;
+}
 
 // Define the async thunks
-export const RegisterPatient = createAsyncThunk("register", async (data: any) => {
-  try {
-    console.log(data);
-    const response = await PatientAPI(data);
-    if (response.status === 200) {
-      toast.success("patient registration successful");
-      return response.data;
-    } else {
-      return response.data;
-    }
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-});
+interface APIResponse {
+  status: number;
+  data: any;
+}
 
-export const getallPatients = createAsyncThunk("getallpatients", async () => {
-  try {
-    const response = await getPatientsAPI();
-    if (response.status === 200) {
-      return response.data;
+export const RegisterPatient = createAsyncThunk(
+  "register",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      console.log(data);
+      const response = await PatientAPI(data) as APIResponse;
+      if (response.status === 200) {
+        toast.success("patient registration successful");
+        return response.data;
+      } else {
+        return response.data;
+      }
+    } catch (error: any) {
+      console.log(error);
+      return rejectWithValue(error.message);
     }
-  } catch (error) {
-    console.log(error);
-    throw error;
   }
-});
+);
+
+export const getallPatients = createAsyncThunk(
+  "getallpatients",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getPatientsAPI() as APIResponse;
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error: any) {
+      console.log(error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const Addappointment = createAsyncThunk(
   "appointment/addAppointment",
   async (appointment: Appointment, { rejectWithValue }) => {
     try {
-      const response = await addPatientAppointmentAPI(appointment);
+      const response = await addPatientAppointmentAPI(appointment) as APIResponse;
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue((error as any).response.data);
     }
   }
 );
 
-export const getAppointments = createAsyncThunk("getallappointments", async () => {
-  try {
-    const response = await getPatientAppointmentAPI();
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      console.log("Error while fetching appointments");
+export const getAppointments = createAsyncThunk(
+  "getallappointments", 
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getPatientAppointmentAPI() as APIResponse;
+      if (response.status === 200) {
+        return response.data;
+      }
+      return rejectWithValue("Error while fetching appointments");
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue("Failed to fetch appointments");
     }
-  } catch (error) {
-    console.log(error);
-    throw error;
   }
-});
+);
 
-export const patientPrescription = createAsyncThunk("patientsprescription", async () => {
-  try {
-    const response = await patientPrescAPI();
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      console.log("Error while fetching prescriptions");
+export const patientPrescription = createAsyncThunk(
+  "patientsprescription", 
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await patientPrescAPI() as APIResponse;
+      if (response.status === 200) {
+        return response.data;
+      }
+      return rejectWithValue("Error while fetching prescriptions");
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue("Failed to fetch prescriptions");
     }
-  } catch (error) {
-    console.log(error);
-    throw error;
   }
-});
+);
 
 export const deletePatient = createAsyncThunk("deletepatient", async (data: string) => {
   try {
-    const response = await deletePatientsAPI(data);
+    const response = await deletePatientsAPI(data) as APIResponse;
     if (response.status === 200) {
       toast.success("Patient deleted");
       return "Patient deleted";
@@ -124,7 +152,7 @@ export const deletePatient = createAsyncThunk("deletepatient", async (data: stri
 
 export const updatePatient = createAsyncThunk("updatepatient", async (data: any) => {
   try {
-    const response = await updatePatientsAPI(data);
+    const response = await updatePatientsAPI(data) as APIResponse;
     if (response.status === 200) {
       toast.success("Patient updated");
       return "Patient updated";
@@ -140,7 +168,7 @@ export const updatePatient = createAsyncThunk("updatepatient", async (data: any)
 
 export const completePatient = createAsyncThunk("completePatient", async (data: any) => {
   try {
-    const response = await CompletePatientAPI(data);
+    const response = await CompletePatientAPI(data) as APIResponse;
     if (response.status === 200) {
       toast.success("Patient consultation completed");
       return response.data;
@@ -154,35 +182,27 @@ export const completePatient = createAsyncThunk("completePatient", async (data: 
   }
 });
 
-// Define the initial state
+// Initial state with proper typing
 const initialState: PatientState = {
   registerpatient: [],
   allpatients: [],
   deletepatient: [],
   update: [],
-  appointment: [],
-  getappointments: [],
-  prescriptions: [],
   complete: [],
+  getappointments: {
+    appointments: null,
+    error: null
+  },
   error: null,
   loader: false,
+  appointment: null,
+  prescriptions: null,
 };
 
 // Create the slice
 export const PatientSlice = createSlice({
   name: "Patientslice",
-   initialState:   {
-    registerpatient: [],
-    allpatients: [],
-    deletepatient: [],
-    update: [],
-    appointment: [],
-    getappointments:{ appointments: [], error: null },
-    prescriptions: [],
-    complete: [],
-    error: null,
-    loader: false,
-  },
+  initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -196,7 +216,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(RegisterPatient.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.error.message || null;
       })
 
       // Get All Patients
@@ -209,7 +229,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(getallPatients.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.error.message || null;
       })
 
       // Delete Patient
@@ -222,7 +242,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(deletePatient.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.error.message || null;
       })
 
       // Add Appointment
@@ -233,9 +253,9 @@ export const PatientSlice = createSlice({
         state.loader = false;
         state.appointment = [action.payload];
       })
-      .addCase(Addappointment.rejected, (state, action) => {
+      .addCase(Addappointment.rejected, (state, action: PayloadAction<unknown>) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.payload as string;
       })
 
       // Get Appointments
@@ -248,7 +268,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(getAppointments.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.error.message || null;
       })
 
       // Get Prescriptions
@@ -261,7 +281,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(patientPrescription.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.error.message || null;
       })
 
       // Update Patient
@@ -274,7 +294,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(updatePatient.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.error.message || null;
       })
 
       // Complete Patient Consultation
@@ -287,7 +307,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(completePatient.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload;
+        state.error = action.error.message || null;
       });
   },
 });

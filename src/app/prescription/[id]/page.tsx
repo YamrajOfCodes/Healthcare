@@ -10,30 +10,23 @@ import { useAppDispatch } from "@/hooks";
 // Custom hook for typed dispatch
 
 
-// Define the type for a single prescription
-type Prescription = {
-  appointment_id: string;
-  prescription_details: string;
-  appointment: {
-    patient: {
-      dob: string;
-      address: string;
-      name: string;
-    };
-    appointment_date: string;
-  };
-};
-
+// Define more specific types
 interface Patient {
   dob: string;
-  // Add other patient properties as needed
+  address: string;
+  name: string;
 }
 
 interface Appointment {
   patient: Patient;
-  // Add other appointment properties as needed
+  appointment_date: string;
 }
 
+interface Prescription {
+  appointment_id: string;
+  prescription_details: string;
+  appointment: Appointment;
+}
 
 interface PrescriptionState {
   prescriptions: Prescription[];
@@ -108,9 +101,13 @@ const Prescription = () => {
     );
   }
 
-  // Extract data from the prescription
-  let appointmentData: any = null;
-  let dob: number | null = null;
+  // Update the parsing and type handling
+  let appointmentData: {
+    "Doctor Name": string;
+    "Patient Name": string;
+    [key: string]: string;
+  } | null = null;
+  let dob: number = 0;
 
   if (prescription) {
     try {
@@ -130,7 +127,7 @@ const Prescription = () => {
             Digitech <span className="text-emerald-500">CHOICE</span> CLINIC
           </h1>
           <h2 className="text-lg font-semibold text-gray-800">
-            Dr. {appointmentData["Doctor Name"]}
+            Dr. {appointmentData?.["Doctor Name"] || ""}
           </h2>
         </div>
         <div className="p-8 pt-5">
@@ -141,7 +138,7 @@ const Prescription = () => {
                   NAME OF PATIENT
                 </label>
                 <div className="mt-1 p-2 bg-emerald-50 rounded">
-                  {appointmentData["Patient Name"]}
+                  {appointmentData?.["Patient Name"] || ""}
                 </div>
               </div>
               <div className="flex-1">
@@ -149,7 +146,7 @@ const Prescription = () => {
                   Appointment ID
                 </label>
                 <div className="mt-1 p-2 bg-emerald-50 rounded">
-                  {prescription.appointment_id}
+                  {prescription?.appointment_id || ""}
                 </div>
               </div>
               <div className="flex-1">
@@ -166,7 +163,7 @@ const Prescription = () => {
                 ADDRESS
               </label>
               <div className="mt-1 p-2 bg-emerald-50 rounded">
-                {prescription.appointment.patient.address}
+                {prescription?.appointment.patient.address || ""}
               </div>
             </div>
             <div className="h-80">

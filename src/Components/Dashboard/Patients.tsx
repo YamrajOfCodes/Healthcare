@@ -7,86 +7,57 @@ import PatientEditForm from './EditPatient';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 
+interface Patient {
+  id: string;
+  name: string;
+  dob: string;
+  visit_count: number;
+}
 
+const Patients: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const [search, setSearch] = useState<string>("");
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editPatient, setEditPatient] = useState<Patient | null>(null);
+  const { deletepatient } = useSelector((state: RootState) => state.Patient);
+  const { allpatients } = useSelector((state: RootState) => state.Patient);
+  const [patients, setPatients] = useState<Patient[]>([]);
 
-const Patients = () => {
-    const dispatch = useAppDispatch();
-    const [search,setsearch]=useState("");
-    const [isEditing, setIsEditing] = useState(false);
-    const [editpatient,seteditpatient]=useState(null)
-    const {deletepatient} = useSelector((state:RootState)=>state.Patient);
-
-   
-    
-
-    console.log(deletepatient);
-
-   
-
-
-    const handleeditpatient = (e:any)=>{
-      window.scrollTo(0,0);
-      setIsEditing(true);
-      seteditpatient(e)
-    }
-    
-    
-    
-     
-   useEffect(()=>{
-    dispatch(getallPatients())
-   },[])
-
-
-
-
-    const {allpatients} = useSelector((state:RootState)=>state.Patient)
-    console.log("data",allpatients)
-    
-    const [patients,setPatients] = useState(allpatients);
-
-
-    const handlesearch = (e:any) => {
-      setsearch(e)
-      console.log(search);
-      
-   
-      const data = allpatients.filter((element:any)=>{
-           let tempname = element.name.slice(0,search.length).toLowerCase();;
-            console.log("tempname",tempname);
-            
-           if(search.toLocaleLowerCase() == tempname){
-            return element
-            
-           }
-         
-      })
-
-      setPatients(data)
-      
-
-       
+  const handleEditPatient = (patient: Patient): void => {
+    window.scrollTo(0, 0);
+    setIsEditing(true);
+    setEditPatient(patient);
   };
 
+  const handleSearch = (e: string): void => {
+    setSearch(e);
+    
+    if (e === "") {
+      setPatients(allpatients as Patient[]);
+      return;
+    }
 
-  const resethandle = ()=>{
-    setPatients(allpatients);
-    setsearch("");
-  }
+    const data = (allpatients as Patient[]).filter((element) => {
+      return element.name.toLowerCase().includes(e.toLowerCase());
+    });
 
-  const handledeletepatient = (data)=>{
-    console.log("id",data);
-    dispatch(deletePatient(data));
-   let filterdata = patients.filter((dataa)=>{
-    return dataa.id !== data
-   })
+    setPatients(data);
+  };
 
-   setPatients(filterdata)
+  const resetHandle = (): void => {
+    setPatients(allpatients as Patient[]);
+    setSearch("");
+  };
 
+  const handleDeletePatient = (id: string): void => {
+    dispatch(deletePatient(id));
+    const filterdata = patients.filter((data) => data.id !== id);
+    setPatients(filterdata);
+  };
 
-  }
-
- 
+  useEffect(() => {
+    dispatch(getallPatients());
+  }, [dispatch]);
 
   return (
     <div>
@@ -104,10 +75,10 @@ const Patients = () => {
         className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         placeholder="Search patients..."
         value={search}
-        onChange={(e)=>{handlesearch(e.target.value)}}
+        onChange={(e)=>{handleSearch(e.target.value)}}
       />
     </div>
-    <button onClick={resethandle} className='px-6 py-2 bg-white/40 rounded-md text-gray-500 md:text-white hover:bg-white/20 font-semibold'>Reset</button>
+    <button onClick={resetHandle} className='px-6 py-2 bg-white/40 rounded-md text-gray-500 md:text-white hover:bg-white/20 font-semibold'>Reset</button>
   </div>
 
   {/* Main table */}
@@ -132,7 +103,7 @@ const Patients = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-gray-900">#{profile.id}</td>
                 <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{profile.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                  {new Date().getFullYear() - profile.dob.slice(0, 4)}
+                  {new Date().getFullYear() - parseInt(profile.dob.slice(0, 4))}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
@@ -140,13 +111,16 @@ const Patients = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
-                  <button className="text-blue-600 hover:text-blue-900 inline-flex items-center space-x-1"onClick={handleeditpatient} >
+                  <button 
+                    className="text-blue-600 hover:text-blue-900 inline-flex items-center space-x-1" 
+                    onClick={() => handleEditPatient(profile)} 
+                  >
                     <Edit2 className="h-4 w-4" />
                     <span>Edit</span>
                   </button>
                   <button className="text-red-600 hover:text-red-900 inline-flex items-center space-x-1">
                     <Trash2 className="h-4 w-4" />
-                    <span onClick={()=>{handledeletepatient(profile.id)}}>Delete</span>
+                    <span onClick={()=>{handleDeletePatient(profile.id)}}>Delete</span>
                   </button>
                 </td>
           
@@ -161,7 +135,11 @@ const Patients = () => {
 
   <div className={`"overlay absolute -top-28 w-[100%] h-[120vh] bg-black/40 left-0 py-10 " ${isEditing? 'block' : 'hidden'}`}>
               <PatientEditForm 
-              patientdata={editpatient}
+              patientdata={editPatient ? {
+                id: editPatient.id,
+                name: editPatient.name,
+                dob: editPatient.dob
+              } : {}}
               onClose={() => setIsEditing(false)}
               />
             </div>
@@ -169,7 +147,7 @@ const Patients = () => {
 
   {/* Mobile View - Cards */}
   <div className="space-y-4 px-3 py-4 max-w-sm lg:hidden w-full overflow-hidden">
-  {patients?.map((profile: any) => (
+  {patients?.map((profile: Patient) => (
     <div
       key={profile.id}
       className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100"
@@ -251,7 +229,7 @@ const Patients = () => {
         <button
           className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-200 text-blue-600 transition-all duration-200"
           onClick={() => {
-            handleeditpatient(profile);
+            handleEditPatient(profile);
           }}
         >
           <Edit2 className="h-3 w-3" />
@@ -260,7 +238,7 @@ const Patients = () => {
         <button
           className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-red-50 hover:border-red-200 text-red-600 transition-all duration-200"
           onClick={() => {
-            handledeletepatient(profile.id);
+            handleDeletePatient(profile.id);
           }}
         >
           <Trash2 className="h-3 w-3" />
