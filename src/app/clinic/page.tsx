@@ -15,6 +15,7 @@ import Register from "@/Components/Register";
 import Allappointment from "@/Components/Allappointment";
 import Appointment from "@/Components/Appontment";
 import StatusCard from "@/Components/Card";
+import Transactions from "@/Components/Transactions";
 
 
 interface NavItemProps {
@@ -270,7 +271,7 @@ const DashboardLayout: React.FC = () => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 flex flex-col gap-4 bg-white/20 ">
+          <div className="flex-1 flex flex-col gap-4 bg-white/20  ">
             {activeItem === 'Home' && (
               <>
                 <div className="cards bg-white/20 h-[auto] flex justify-center  gap-5 sm:flex-row flex-wrap rounded-md shadow-lg p-4">
@@ -291,7 +292,7 @@ const DashboardLayout: React.FC = () => {
               activeItem === "allpatients" ? <Patients /> : 
               activeItem === "waitingroom" ? <Waitingroom /> : 
               activeItem === "register" ? <Register /> : 
-              activeItem === "allappointments" ? <Allappointment /> : null
+              activeItem === "allappointments" ? <Allappointment /> : activeItem === "Settings"? <Transactions/> : null
             }
           </div>
 
