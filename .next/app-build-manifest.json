@@ -1,49 +1,15 @@
 {
   "pages": {
-    "/_not-found/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/app/_not-found/page-43b8b49ad7e4e8d6.js"
-    ],
     "/layout": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/css/f4838e61b10b5fd5.css",
-      "static/css/a598a802759553b3.css",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/app/layout-15a073c4272f56ff.js"
-    ],
-    "/clinic/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/466-cb70e6530e2b8147.js",
-      "static/chunks/949-a980fe89f8131d6a.js",
-      "static/chunks/app/clinic/page-be06e38c9d07193f.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
     "/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/466-cb70e6530e2b8147.js",
-      "static/chunks/949-a980fe89f8131d6a.js",
-      "static/chunks/app/page-6b947d6320343ef9.js"
-    ],
-    "/prescription/[id]/page": [
-      "static/chunks/webpack-324d4749ebae0d38.js",
-      "static/chunks/4bd1b696-aabf0dc6e16e5811.js",
-      "static/chunks/517-7e9538c1ed630e16.js",
-      "static/chunks/main-app-33e9d9234744730b.js",
-      "static/chunks/240-8fcfdbf576dd9191.js",
-      "static/chunks/app/prescription/[id]/page-318298310ca30a70.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
     ]
   }
 }

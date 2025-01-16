@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/Redux/App/store';
 import Register from './Register';
 import {XCircleIcon} from "lucide-react"
-import Appointment from './Appontment';
+import Appointment from './Appointment';
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 const Showdashboard = () => {
@@ -46,11 +46,11 @@ const toggleAppointment = ()=>{
       {/* Cards Container */}
       <div className="p-6">
         <div className="flex justify-between">
-          <p className="text-sm sm:text-lg border font-semibold text-black sm:text-white bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300">
+          <p className="text-sm sm:text-lg border font-semibold text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300">
             Recently Added
           </p>
           <p
-            className="text-sm sm:text-lg border font-semibold text-black sm:text-white bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300 cursor-pointer"
+            className="text-sm sm:text-lg border font-semibold text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300 cursor-pointer"
             onClick={toggleSidebar}
           >
             Add new Patient
@@ -77,7 +77,7 @@ const toggleAppointment = ()=>{
 >
   <div className="p-4">
   <div className='flex justify-between'>
-    <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add New Patient</h2>
+    <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add Appointment</h2>
   <button
       onClick={toggleSidebar}
       className="text-black font-semibold mb-4"
@@ -99,7 +99,7 @@ const toggleAppointment = ()=>{
 >
   <div className="p-4">
   <div className='flex justify-between'>
-    <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add New Patient</h2>
+    <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add Appointment</h2>
   <button
       onClick={toggleSidebar}
       className="text-black font-semibold mb-4"
@@ -129,7 +129,7 @@ const toggleAppointment = ()=>{
 >
   <div className="p-4">
   <div className='flex justify-between'>
-    {/* <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2">Add New Patient</h2> */}
+    <h2 className="text-sm px-4 py-2  text-black text-center cursor-pointer mb-2">Add Appointment</h2>
   <button
       onClick={toggleAppointment}
       className="text-black font-semibold mb-4"
@@ -150,7 +150,7 @@ const toggleAppointment = ()=>{
 >
   <div className="p-4">
   <div className='flex justify-between'>
-    {/* <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2">Add New Patient</h2> */}
+    <h2 className="text-sm px-4 py-2 text-center cursor-pointer mb-2">Add Appointment </h2>
   <button
       onClick={toggleAppointment}
       className="text-black font-semibold mb-4"

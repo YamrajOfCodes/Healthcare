@@ -1,5 +1,10 @@
-import React from 'react';
+'use-client'
+import React, { useEffect } from 'react';
 import { Activity, Clock } from 'lucide-react';
+import { getallPatients } from '@/Redux/Slices/Patient/patientSlices';
+import { useAppDispatch } from '@/hooks';
+import { RootState } from '@/Redux/App/store';
+import { useSelector } from 'react-redux';
 
 interface StatusCardProps {
   status?: "Active" | "Waiting" | "New" | "Follow-up" | "Out"; // Optional
@@ -7,11 +12,15 @@ interface StatusCardProps {
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ status = "Active", number }) => {
+
+
+
+
   
   return (
 <>
 <div className="relative group w-[300px] h-[220px] md:w-[300px] md:h-[340px] hidden lg:block">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-green-300 rounded-2xl blur opacity-20 
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-pink-300 rounded-2xl blur opacity-20 
                   group-hover:opacity-40 transition-all duration-500 animate-tilt"></div>
       
       <div className="relative h-full bg-white/80 backdrop-blur-xl border border-white/20 rounded-xl 

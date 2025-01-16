@@ -2,17 +2,25 @@
 import React, { useState } from 'react'
 import { Calendar, Clock, Phone, MapPin } from 'lucide-react';
 
-const OTD_Billing = () => {
+interface ProfileInfoProps {
+  icon: React.ElementType;
+  children: React.ReactNode;
+}
 
-    const [activePayMode, setActivePayMode] = useState('cash');
+const OTD_Billing: React.FC = () => {
 
+    const [activePayMode, setActivePayMode] = useState<string>('cash');
 
-    const ProfileInfo = ({ icon: Icon, children }) => (
+    const ProfileInfo: React.FC<ProfileInfoProps> = ({ icon: Icon, children }) => (
         <div className="flex items-center gap-2 text-gray-600">
           <Icon className="w-4 h-4" />
           <span>{children}</span>
         </div>
       );
+
+    const handlePayModeChange = (mode: string): void => {
+        setActivePayMode(mode.toLowerCase());
+    };
 
   return (
     <div className='otd_billing w-full'>
@@ -251,7 +259,7 @@ const OTD_Billing = () => {
                 {['Cash', 'Bank', 'Card'].map((mode) => (
                   <button
                     key={mode}
-                    onClick={() => setActivePayMode(mode.toLowerCase())}
+                    onClick={() => handlePayModeChange(mode.toLowerCase())}
                     className={`flex-1 px-4 py-2.5 rounded-lg border transition-all text-sm ${
                       activePayMode === mode.toLowerCase()
                         ? 'bg-blue-500 text-white border-blue-500'
