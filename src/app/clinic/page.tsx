@@ -13,7 +13,7 @@ import Patients from "@/Components/Dashboard/Patients";
 import Waitingroom from "@/Components/Dashboard/Waitingroom";
 import Register from "@/Components/Register";
 import Allappointment from "@/Components/Allappointment";
-import Appointment from "@/Components/Appontment";
+import Appointment from "@/Components/Appointment";
 import StatusCard from "@/Components/Card";
 import Transactions from "@/Components/Transactions";
 import { useAppDispatch } from '@/hooks';

@@ -45,7 +45,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
   entryTime,
   updated_at
 },) => {
-  const [redirected,setredirected] = useState<Boolean>(false)
+  const [redirected,setredirected] = useState<boolean>(false)
 
 
  
@@ -100,9 +100,8 @@ const ProfileCard: React.FC<ProfileProps> = ({
   };
 
   // Function to stop the event propagation when clicking inside the modal
-  const handleModalClick = (event) => {
-    event.stopPropagation();  // Prevent click from bubbling up to the overlay
-   
+  const handleModalClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
   };
 
   if(redirected){
@@ -314,7 +313,10 @@ const ProfileCard: React.FC<ProfileProps> = ({
         >
           {/* Inside the modal (EditPatient), click will stop propagation */}
           <div onClick={handleModalClick} className='w-2/3'>
-            <EditPatient patientdata={EditPatient} onClose={false}/>
+            <EditPatient 
+              patientdata={{}}
+              onClose={() => setredirected(false)}
+            />
           </div>
         </div>
       )}

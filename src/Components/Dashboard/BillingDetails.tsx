@@ -2,16 +2,26 @@
 import React, { useState } from 'react'
 import { Calendar, Phone, MapPin } from 'lucide-react';
 
-const ProfileInfo = ({ icon: Icon, children }) => (
-    <div className="flex items-center gap-2 text-gray-600">
-      <Icon className="w-4 h-4" />
-      <span>{children}</span>
-    </div>
-  );
+// Add interfaces for type safety
+interface ProfileInfoProps {
+  icon: React.ElementType;
+  children: React.ReactNode;
+}
 
+// Fix ProfileInfo component props
+const ProfileInfo: React.FC<ProfileInfoProps> = ({ icon: Icon, children }) => (
+  <div className="flex items-center gap-2 text-gray-600">
+    <Icon className="w-4 h-4" />
+    <span>{children}</span>
+  </div>
+);
 
-const BillingDetails = () => {
-     const [activePayMode, setActivePayMode] = useState('cash');
+const BillingDetails: React.FC = () => {
+  const [activePayMode, setActivePayMode] = useState<string>('cash');
+
+  // Type the mapped array items
+  const billingItems: Array<number> = [1, 2, 3, 4];
+
   return (
     <div className='w-full'>
       <div className="header">

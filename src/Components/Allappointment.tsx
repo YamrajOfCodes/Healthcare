@@ -6,12 +6,33 @@ import { Calendar, Phone, Mail, User, Clock, MapPin, Activity, Hash, Monitor } f
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 
+interface Appointment {
+  id: string;
+  status: string;
+  appointment: {
+    id: string;
+    mode: string;
+    appointment_date: string;
+    type: string;
+  };
+  patient: {
+    name: string;
+    email: string;
+    phone: string;
+    visit_count: number;
+  };
+  doctor: {
+    name: string;
+    specialization: string;
+  };
+}
+
 const Allappointment = () => {
     const dispatch = useAppDispatch();
-    const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
+    const { waitingroom }: { waitingroom: Appointment[][] } = useSelector((state: RootState) => state.Doctor);
     console.log("waitingroom",waitingroom[0]?.[0]);
 
-    const getStatusColor = (status) => {
+    const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
           case 'confirmed':
             return 'bg-emerald-50 text-emerald-700 border-emerald-200';
