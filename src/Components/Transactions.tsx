@@ -9,9 +9,20 @@ import {   Stethoscope,
     Users } from 'lucide-react';
 import React, { useState } from 'react'
 
+// Add interfaces for type safety
+interface Transaction {
+  id: number;
+  type: 'Package' | 'Service' | 'pharmacy' | 'expenses';
+  description: string;
+  patientName: string;
+  date: string;
+  amount: number;
+}
+
 const Transactions = () => {
    
-    const transactions = [
+    // Type the transactions array
+    const transactions: Transaction[] = [
         { 
           id: 1, 
           type: 'Package', 
@@ -62,12 +73,12 @@ const Transactions = () => {
         },
       ];
     
-      const [activeFilter, setActiveFilter] = useState('all');
+      const [activeFilter, setActiveFilter] = useState<string>('all');
       // Calculate current balance
       const currentBalance = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
     
       // Function to get icon based on transaction type
-      const getTransactionIcon = (type) => {
+      const getTransactionIcon = (type: Transaction['type']) => {
         switch (type) {
           case 'Package':
             return <Stethoscope className="w-4 h-4" />;
@@ -88,7 +99,7 @@ const Transactions = () => {
 
       const filteredTransactions = activeFilter === 'all' 
       ? transactions 
-      : transactions.filter(t => t.type === activeFilter);
+      : transactions.filter((t: Transaction) => t.type === activeFilter);
     
       return (
 

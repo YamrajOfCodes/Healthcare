@@ -12,7 +12,16 @@ import toast from 'react-hot-toast';
 import { AppDispatch } from '@/Redux/App/store';
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
-
+// Add type for form data
+interface FormData {
+  name: string;
+  dob: string;
+  gender: string;
+  phone: string;
+  email: string;
+  address: string;
+  password: string;
+}
 
 export default function Register() {
   const router = useRouter();
@@ -40,17 +49,18 @@ export default function Register() {
 
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();  // Prevent page refresh on form submission
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    // Create an object to capture the form data
-    const formData = {
+    // Type the formData object
+    const formData: FormData = {
       name,
       dob,
       gender,
       phone,
       email,
-      address
+      address,
+      password // Add password to match the interface
     };
 
     // You can now do something with the form data, like sending it to an API
