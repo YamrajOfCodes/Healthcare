@@ -16,7 +16,7 @@ interface PatientData {
 const PatientEditForm = ({ patientdata, onClose }) => {
 
 
-  // console.log(patientdata);
+  console.log(patientdata);
   
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState({

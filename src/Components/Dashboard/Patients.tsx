@@ -2,11 +2,10 @@
 import { deletePatient, getallPatients} from '@/Redux/Slices/Patient/patientSlices';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Activity, Calendar, ChevronRight, Clock, Edit2, Search, Trash2, Users } from 'lucide-react';
+import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Edit2, Search, Trash2, Users } from 'lucide-react';
 import PatientEditForm from './EditPatient';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
-
 
 
 const Patients = () => {
@@ -15,6 +14,11 @@ const Patients = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editpatient,seteditpatient]=useState(null)
     const {deletepatient} = useSelector((state:RootState)=>state.Patient);
+    const [popup,setpopup] = useState(false)
+    const [selectpatient,setselectedpatient] = useState(null)
+
+    console.log("selectpatient",selectpatient);
+    
 
    
     
@@ -76,12 +80,14 @@ const Patients = () => {
 
   const handledeletepatient = (data)=>{
     console.log("id",data);
-    dispatch(deletePatient(data));
+    dispatch(deletePatient(selectpatient));
    let filterdata = patients.filter((dataa)=>{
-    return dataa.id !== data
+    return dataa.id !== selectpatient
    })
 
    setPatients(filterdata)
+
+   setpopup(false)
 
 
   }
@@ -140,13 +146,16 @@ const Patients = () => {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
-                  <button className="text-blue-600 hover:text-blue-900 inline-flex items-center space-x-1"onClick={handleeditpatient} >
+                  <button className="text-blue-600 hover:text-blue-900 inline-flex items-center space-x-1" onClick={()=>{ handleeditpatient(profile);}} >
                     <Edit2 className="h-4 w-4" />
                     <span>Edit</span>
                   </button>
                   <button className="text-red-600 hover:text-red-900 inline-flex items-center space-x-1">
                     <Trash2 className="h-4 w-4" />
-                    <span onClick={()=>{handledeletepatient(profile.id)}}>Delete</span>
+                    {/* <span onClick={()=>{handledeletepatient(profile.id)}}>Delete</span> */}
+                    <span onClick={()=>{setpopup(true)
+                      setselectedpatient(profile?.id)
+                    }}>Delete</span>
                   </button>
                 </td>
           
@@ -164,6 +173,51 @@ const Patients = () => {
               patientdata={editpatient}
               onClose={() => setIsEditing(false)}
               />
+            </div>
+
+            <div>
+              {/* popup */}
+            <div className={`absolute -top-1/2 inset-0   bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50 ${popup? 'block' : 'hidden'}`}>
+      <div className="bg-white rounded-lg shadow-lg max-w-sm w-full animate-in fade-in duration-200">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-red-100 rounded-full">
+              <AlertCircle className="w-6 h-6 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Confirm Deletion
+            </h3>
+          </div>
+
+          {/* Content */}
+          <p className="text-gray-600 mb-6">
+            Are you sure you want to delete this  This action cannot be undone.
+          </p>
+
+          {/* Icon */}
+          <div className="flex justify-center mb-6">
+            <Trash2 className="w-12 h-12 text-red-500 opacity-80" />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 justify-between">
+            <button
+              // onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"onClick={()=>{setpopup(false)}}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handledeletepatient}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+             </div>
             </div>
   
 
@@ -260,7 +314,8 @@ const Patients = () => {
         <button
           className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-red-50 hover:border-red-200 text-red-600 transition-all duration-200"
           onClick={() => {
-            handledeletepatient(profile.id);
+            setpopup(true),
+            setselectedpatient(profile?.id)
           }}
         >
           <Trash2 className="h-3 w-3" />

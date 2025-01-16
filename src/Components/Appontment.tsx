@@ -39,7 +39,7 @@ type Appointment = {
   appointment_date: string;
 };
 
-const Appointment = () => {
+const Appointment = ({show}) => {
   const [time, setTime] = useState<string>("");
   const [aptDate, setAptDate] = useState<string>("");
   const [searchInput, setSearchInput] = useState<string>("");
@@ -73,17 +73,21 @@ const [appointment, setAppointment] = useState<Appointment>({
   const dispatch = useAppDispatch();
 
   const handleSearch = () => {
-    setIsHidden(false)
-    const matchedPatient = allpatients?.find((element:any) => element.name.toLowerCase() === searchInput.toLowerCase());
-    if (matchedPatient) {
-      setSearchResult(`Patient found: ${matchedPatient.name}`);
-      setAppointment((prevAppointment) => ({
-        ...prevAppointment,
-        patient_id: matchedPatient.id,
-      }));
-    } else {
-      setSearchResult("Patient not found");
-    }
+    setIsHidden(false);
+
+const matchedPatient = allpatients?.find((patient: any) => 
+  patient.name.toLowerCase() === searchInput.trim().toLowerCase()
+);
+
+if (matchedPatient) {
+  setSearchResult(`Patient found: ${matchedPatient.name}`);
+  setAppointment((prevAppointment) => ({
+    ...prevAppointment,
+    patient_id: matchedPatient.id,
+  }));
+} else {
+  setSearchResult("Patient not found");
+}
   };
 
 
@@ -162,7 +166,7 @@ const handleInputChange = (e:any) => {
       <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
         <div className="flex flex-col lg:flex-row">
           {/* Left Side - Hero Section */}
-          <div className="lg:w-2/5 h-[40vh] md:h-[auto] bg-gradient-to-br from-emerald-500 to-teal-600 p-12 flex flex-col justify-between">
+          <div className={`lg:w-2/5 h-[40vh] md:h-[auto] bg-gradient-to-br from-emerald-500 to-teal-600 p-12 flex flex-col justify-between ${!show && 'hidden'}`}>
             <div className="text-white">
               <h1 className="text-3xl font-bold mb-4">Book Your Medical Visit</h1>
               <p className="text-emerald-50 text-lg">Schedule your appointment with our expert healthcare professionals.</p>
@@ -187,7 +191,7 @@ const handleInputChange = (e:any) => {
           </div>
 
           {/* Right Side - Form */}
-          <div className="lg:w-3/5 p-8 md:p-12 bg-white">
+          <div className={`p-8 md:p-12 bg-white ${!show && 'w-full'}`}>
 
           <div className="search flex gap-2 relative">
   <input
@@ -224,7 +228,7 @@ const handleInputChange = (e:any) => {
         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
         <option value="" key={14}>Select doctor</option>
-        {doctors?.[0]?.map((doctor) => (
+        {doctors?.[0]?.map((doctor:any) => (
           <option key={doctor.id} value={doctor.id}>
             {doctor.name}
           </option>
@@ -244,9 +248,9 @@ const handleInputChange = (e:any) => {
                 <label className="text-gray-700 text-sm font-semibold">Appointment Mode</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
-                    onClick={() => handleappointment("online")}
+                    onClick={() => handleappointment("offline")}
                     className={`flex items-center justify-center space-x-2 p-4 rounded-xl border transition-all ${
-                      appointment.mode === 'online'
+                      appointment.mode === 'offline'
                         ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
                         : 'border-gray-200 hover:border-emerald-200'
                     }`}
@@ -255,9 +259,9 @@ const handleInputChange = (e:any) => {
                     <span className="text-gray-700">In-Person Visit</span>
                   </button>
                   <button
-                    onClick={() => handleappointment("offline")}
+                    onClick={() => handleappointment("online")}
                     className={`flex items-center justify-center space-x-2 p-4 rounded-xl border transition-all ${
-                      appointment.mode === 'offline'
+                      appointment.mode === 'online'
                         ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
                         : 'border-gray-200 hover:border-emerald-200'
                     }`}

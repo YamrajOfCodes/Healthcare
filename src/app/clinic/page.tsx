@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {Calendar,Users,FileText, Menu,X,  
   LayoutDashboard,
   UserPlus,
@@ -16,6 +16,11 @@ import Allappointment from "@/Components/Allappointment";
 import Appointment from "@/Components/Appontment";
 import StatusCard from "@/Components/Card";
 import Transactions from "@/Components/Transactions";
+import { useAppDispatch } from '@/hooks';
+import { RootState } from '@/Redux/App/store';
+import { useSelector } from 'react-redux';
+import { getallPatients } from "@/Redux/Slices/Patient/patientSlices";
+import { getWaitingroom } from "@/Redux/Slices/Admin/adminSlice";
 
 
 interface NavItemProps {
@@ -90,9 +95,41 @@ const SubNavItem: React.FC<SubNavItemProps> = ({ icon: Icon, label, onClick, hig
 
 const DashboardLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [activeItem, setActiveItem] = useState<string>('Home');
-  // const [patientOpen, setPatientOpen] = useState<boolean>(true);
+  const [activeItem, setActiveItem] = useState<string>('Home')
   const [isSubNavOpen, setIsSubNavOpen] = useState<boolean>(true);
+  const {allpatients} = useSelector((state:RootState)=>state.Patient)
+  console.log("data",allpatients)
+
+  const dispatch = useAppDispatch();
+
+   let newpatients = allpatients?.filter((element:any)=>{
+       if(element.visit_count == 0){
+        return element
+       }
+   })
+
+   let oldpatient = allpatients?.filter((element:any)=>{
+    if(element.visit_count > 0){
+     return element
+    }
+})
+
+   console.log("newpatients",newpatients);
+   
+   const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
+    let waitingpatients_data =   waitingroom?.[0].length || 0;
+    let newPatients_data = newpatients.length || 0 
+    let oldpatients_data = oldpatient.length || 0
+
+  useEffect(()=>{
+    dispatch(getallPatients())
+    dispatch(getWaitingroom())
+  },[])
+
+
+  
+
+
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
@@ -100,7 +137,7 @@ const DashboardLayout: React.FC = () => {
     <>
       <div className="relative max-h-screen">
         {/* Background */}
-        <div className="fixed inset-0 bg-webbg md:bg-gradient-to-r from-orange-600 to-orange-400">
+        <div className="fixed inset-0 bg-webbg md:bg-gradient-to-r from-pink-100 to-pink-50">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,...')] opacity-[0.15] bg-repeat bg-center"></div>
           <div className="absolute top-0 left-0 right-0 h-96 md:bg-gradient-to-b from-blue-50/50 to-transparent"></div>
         </div>
@@ -275,9 +312,9 @@ const DashboardLayout: React.FC = () => {
             {activeItem === 'Home' && (
               <>
                 <div className="cards bg-white/20 h-[auto] flex justify-center  gap-5 sm:flex-row flex-wrap rounded-md shadow-lg p-4">
-                     <StatusCard status="Waiting" number={5} />
-                     <StatusCard status="New" number={4} />
-                    <StatusCard status="Follow-up" number={8} />
+                     <StatusCard status="Waiting" number={waitingpatients_data} />
+                     <StatusCard status="New" number={newPatients_data} />
+                    <StatusCard status="Follow-up" number={oldpatients_data} />
                     <StatusCard status="Out" number={9} />
                 </div>
                 <div className="dash w-full">
@@ -288,10 +325,10 @@ const DashboardLayout: React.FC = () => {
             
             {
               activeItem === "Calendar" ? <DashCalender /> : 
-              activeItem === "Patients" ? <Appointment /> : 
+              activeItem === "Patients" ? <Appointment show={true} /> : 
               activeItem === "allpatients" ? <Patients /> : 
               activeItem === "waitingroom" ? <Waitingroom /> : 
-              activeItem === "register" ? <Register /> : 
+              activeItem === "register" ? <Register show={true} /> : 
               activeItem === "allappointments" ? <Allappointment /> : activeItem === "Transactions"? <Transactions/> : null
             }
           </div>

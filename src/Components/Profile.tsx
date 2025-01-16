@@ -48,11 +48,14 @@ const ProfileCard: React.FC<ProfileProps> = ({
   const [redirected,setredirected] = useState<Boolean>(false)
 
 
-  // console.log(entryTime)
+ 
 
   let entryyear = entryTime.slice(0,4);
   let entrymonth:any = entryTime.slice(5,7)
   let entryday = entryTime.slice(8,10)
+
+  
+  
 
   if(entrymonth == 1){
     entrymonth = "Jan"
@@ -124,7 +127,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
 {/* For big screens */}
 
 <div 
-      className="w-full max-w-4xl bg-gradient-to-br from-white/80 to-white/60 rounded-2xl shadow-lg p-8 hidden xl:block
+      className="w-full max-w-4xl bg-gradient-to-br from-pink-100 to-pink-50 border border-gray-400 rounded-2xl shadow-lg p-8 hidden xl:block
                  backdrop-blur-xl border border-white/20 transition-all duration-500 
                  hover:shadow-2xl hover:border-blue-200/30"
     >
@@ -245,7 +248,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
       <div className="flex flex-col items-center gap-2 mt-4">
         <div className="flex items-center gap-2 text-gray-600">
           <Clock className="h-4 w-4" />
-          <span className="text-xs font-medium">Entry at 2:00 PM</span>
+          <span className="text-xs font-medium">No entry time available</span>
         </div>
         <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
           <div className="w-1/3 h-full bg-orange-500 rounded-full"></div>
