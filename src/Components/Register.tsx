@@ -14,7 +14,7 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 
 
-export default function Register() {
+export default function Register({show}) {
   const router = useRouter();
   const [order, setOrder] = useState(1); // Track the order of the sections
   const [isSliding, setIsSliding] = useState(false); // Track sliding animation state
@@ -105,10 +105,11 @@ export default function Register() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="flex flex-col sm:flex-row min-h-screen overflow-hidden">
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 ${!show && 'flex justify-start w-[200%]'}`}>
+      <div className={`flex flex-col sm:flex-row min-h-screen overflow-hidden ${!show && 'w-[100vw] sm:w[300vw]'}`}>
         {/* Left Image Section */}
-        <div
+        {
+          show &&  <div
           className={`w-full sm:w-1/2 flex flex-col justify-center items-center p-8 sm:p-12 ${isSliding? 'bg-gradient-to-br from-red-600 to-orange-500' :'bg-gradient-to-br from-green-400 to-green-500'} text-white transition-transform duration-500 ease-in-out sm:transform ${isSliding ? "    sm:translate-x-full " : "sm:translate-x-0"} `}
         >
           <div className="max-w-xl space-y-6">
@@ -149,10 +150,11 @@ export default function Register() {
             </div>
           </div>
         </div>
+        }
 
         {/* Right Login Form Section */}
         <div
-          className={`w-full sm:w-1/2 flex justify-center items-center p-8 sm:p-12 transition-transform duration-500 ease-in-out transform ${isSliding ? "sm:-translate-x-full" : "sm:translate-x-0"}`}
+          className={`w-[100%] sm:w-1/2 flex justify-center items-center p-8 sm:p-12 transition-transform duration-500 ease-in-out transform ${isSliding ? "sm:-translate-x-full" : "sm:translate-x-0"}`}
         >
           <div className="w-full max-w-md space-y-8">
             <div className="text-center space-y-2">
@@ -272,19 +274,7 @@ export default function Register() {
         />
       </div>
 
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-900">
-          <Lock className="w-4 h-4 mr-2 text-blue-600" />
-          Password
-        </label>
-        <input
-          type="password"
-          placeholder="****"
-          className="w-full px-4 py-3 rounded-xl text-gray-900 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={password}
-          onChange={(e) => setpassword(e.target.value)} // Update state on input change
-        />
-      </div>
+      
 
       <div className="space-y-2">
         <label className="flex items-center text-sm font-medium text-gray-900">
@@ -310,7 +300,7 @@ export default function Register() {
     </form>
             }
 
-            <p className="text-center text-gray-900">
+            {/* <p className="text-center text-gray-900">
             {
                 isSliding?  " Don't have an account " : "already have an account?"
             }
@@ -323,7 +313,7 @@ export default function Register() {
                 isSliding?  " Register" : "login"
             }
               </a>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

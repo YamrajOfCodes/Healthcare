@@ -288,10 +288,10 @@ const DashboardLayout: React.FC = () => {
             
             {
               activeItem === "Calendar" ? <DashCalender /> : 
-              activeItem === "Patients" ? <Appointment /> : 
+              activeItem === "Patients" ? <Appointment show={true} /> : 
               activeItem === "allpatients" ? <Patients /> : 
               activeItem === "waitingroom" ? <Waitingroom /> : 
-              activeItem === "register" ? <Register /> : 
+              activeItem === "register" ? <Register show={true} /> : 
               activeItem === "allappointments" ? <Allappointment /> : activeItem === "Transactions"? <Transactions/> : null
             }
           </div>

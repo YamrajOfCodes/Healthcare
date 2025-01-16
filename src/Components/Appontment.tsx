@@ -39,7 +39,7 @@ type Appointment = {
   appointment_date: string;
 };
 
-const Appointment = () => {
+const Appointment = ({show}) => {
   const [time, setTime] = useState<string>("");
   const [aptDate, setAptDate] = useState<string>("");
   const [searchInput, setSearchInput] = useState<string>("");
@@ -162,7 +162,7 @@ const handleInputChange = (e:any) => {
       <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden">
         <div className="flex flex-col lg:flex-row">
           {/* Left Side - Hero Section */}
-          <div className="lg:w-2/5 h-[40vh] md:h-[auto] bg-gradient-to-br from-emerald-500 to-teal-600 p-12 flex flex-col justify-between">
+          <div className={`lg:w-2/5 h-[40vh] md:h-[auto] bg-gradient-to-br from-emerald-500 to-teal-600 p-12 flex flex-col justify-between ${!show && 'hidden'}`}>
             <div className="text-white">
               <h1 className="text-3xl font-bold mb-4">Book Your Medical Visit</h1>
               <p className="text-emerald-50 text-lg">Schedule your appointment with our expert healthcare professionals.</p>
@@ -187,7 +187,7 @@ const handleInputChange = (e:any) => {
           </div>
 
           {/* Right Side - Form */}
-          <div className="lg:w-3/5 p-8 md:p-12 bg-white">
+          <div className={`p-8 md:p-12 bg-white ${!show && 'w-full'}`}>
 
           <div className="search flex gap-2 relative">
   <input
