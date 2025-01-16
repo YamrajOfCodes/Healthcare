@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import * as React from 'react';
+import { useEffect, useState } from "react";
 import { format, addDays, isSameDay } from "date-fns";
 import { Calendar, Clock, User, FileText, AlertCircle } from "lucide-react";
 import { useSelector } from "react-redux";
@@ -6,43 +7,80 @@ import { getAppointments } from "@/Redux/Slices/Patient/patientSlices";
 import { RootState } from "@/Redux/App/store";
 import { useAppDispatch } from "@/hooks";
 
-// Sample appointments data
-// const appointments = [
-//   { date: "2025-01-08", time: "09:00", patient: "John Doe", details: "Routine Checkup", status: "confirmed", priority: "normal" },
-//   { date: "2025-01-08", time: "11:00", patient: "Jane Smith", details: "Follow-up Visit", status: "pending", priority: "high" },
-//   { date: "2025-01-09", time: "10:00", patient: "Michael Brown", details: "Emergency Appointment", status: "confirmed", priority: "urgent" },
-//   { date: "2025-01-10", time: "14:00", patient: "Emily Davis", details: "Consultation", status: "confirmed", priority: "normal" },
-//   { date: "2025-01-11", time: "16:00", patient: "Chris Johnson", details: "Blood Test", status: "cancelled", priority: "normal" },
-// ];
+// Add interfaces for type safety
+interface Appointment {
+  patient_id: string;
+  doctor_id: string;
+  mode: string;
+  appointment_date: string;
+  patient?: {
+    name: string;
+  };
+  status: 'confirmed' | 'pending' | 'cancelled';
+}
 
-const ClinicCalendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const dispatch =  useAppDispatch();
-  const { getappointments } = useSelector((state:RootState)=>state.Patient);
-  console.log("getappointments",getappointments?.appointments);
-  // console.log("getappointments",getappointments[0].appointments[0].appointment_date.slice(0,10));
+interface FormattedAppointment {
+  date: string;
+  time: string;
+  patient: string;
+  status: 'confirmed' | 'pending' | 'cancelled';
+  priority: 'normal' | 'high' | 'low';
+  details: string;
+}
 
-  let calenderData = [];
+// Add proper typing for the Redux state
+interface PatientState {
+  Patient: {
+    getappointments: {
+      appointments: Appointment[] | null;
+      error: string | null;
+    };
+  }
+}
 
-  calenderData = getappointments?.appointments?.map(element => {
-   return {
-    date:element.appointment_date.slice(0,10),
-    time:element.appointment_date.slice(10,19),
-    patient:element.patient.name,
-    status: element.status, 
-    priority: "normal",
-    details:element.mode
-   }
-    
- });
+interface DashCalenderProps {
+  className?: string;
+}
 
-//  console.log("calenderData",calenderData);
- 
-  
+const DashCalender: React.FC<DashCalenderProps> = ({ className }) => {
+  const [calenderData, setCalenderData] = useState<FormattedAppointment[]>([]);
+  const [selectedAppointment, setSelectedAppointment] = useState<FormattedAppointment | null>(null);
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
 
-  const getAppointmentsForDate = (date) => {
-    return calenderData?.filter(
+  const { getappointments } = useSelector((state: RootState) => state.Patient);
+  const dispatch = useAppDispatch();
+
+  // Type-safe appointment mapping
+  useEffect(() => {
+    if (getappointments?.appointments && Array.isArray(getappointments.appointments)) {
+      const formattedData: FormattedAppointment[] = getappointments.appointments.map((element) => ({
+        date: element.appointment_date.slice(0, 10),
+        time: element.appointment_date.slice(11, 19),
+        patient: element.patient?.name || 'No Name',
+        status: element.status,
+        priority: "normal",
+        details: element.mode
+      }));
+      setCalenderData(formattedData);
+    }
+  }, [getappointments]);
+
+  // Add proper return type for helper functions
+  const getStatusColor = (status: FormattedAppointment['status']): string => {
+    switch (status) {
+      case 'confirmed':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getAppointmentsForDate = (date: Date): FormattedAppointment[] => {
+    return calenderData.filter(
       (appointment) => appointment.date === format(date, "yyyy-MM-dd")
     );
   };
@@ -59,7 +97,7 @@ const ClinicCalendar = () => {
     setCurrentDate((prev) => addDays(prev, -1));
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = (priority: string): string => {
     switch (priority) {
       case "urgent": return "bg-red-100 text-red-800";
       case "high": return "bg-orange-100 text-orange-800";
@@ -67,7 +105,7 @@ const ClinicCalendar = () => {
     }
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: 'confirmed' | 'pending' | 'cancelled'): React.ReactElement => {
     const statusStyles = {
       confirmed: "bg-green-100 text-green-800",
       pending: "bg-yellow-100 text-yellow-800",
@@ -80,7 +118,7 @@ const ClinicCalendar = () => {
     );
   };
 
-  const renderAppointmentCard = (appointment, idx) => (
+  const renderAppointmentCard = (appointment: FormattedAppointment, idx: number): React.ReactElement => (
     <div
       key={idx}
       className="bg-white/20 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer mb-3"
@@ -112,7 +150,7 @@ const ClinicCalendar = () => {
     </div>
   );
 
-  const renderDay = (day) => {
+  const renderDay = (day: Date): React.ReactElement => {
     const appointmentsForDay = getAppointmentsForDate(day);
     const isToday = isSameDay(day, new Date());
 
@@ -134,7 +172,7 @@ const ClinicCalendar = () => {
         </div>
 
         <div className="p-4 bg-white">
-          {appointmentsForDay?.length > 0 ? (
+          {(appointmentsForDay?.length ?? 0) > 0 ? (
             appointmentsForDay?.map((appointment, idx) =>
               renderAppointmentCard(appointment, idx)
             )
@@ -192,4 +230,4 @@ const ClinicCalendar = () => {
   );
 };
 
-export default ClinicCalendar;
+export default DashCalender;

@@ -10,6 +10,38 @@ import toast from 'react-hot-toast';
 import { RootState } from '@/Redux/App/store';
 import { useAppDispatch } from '@/hooks';
 
+// Type definitions
+interface Patient {
+  id: string;
+  name: string;
+}
+
+interface Doctor {
+  id: string;
+  name: string;
+}
+
+interface PatientState {
+  allpatients: Patient[];
+  error: null;
+  loader: boolean;
+}
+
+interface DoctorState {
+  doctors: Doctor[];
+  waitingroom: Appointment[] | null;
+  error: null;
+  loader: boolean;
+}
+
+
+interface Appointment {
+  patient_id: string;
+  doctor_id: string;
+  mode: string;
+  appointment_date: string;
+}
+
 const MedicalIllustration = () => (
   <svg className="w-full h-auto" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
     <circle cx="120" cy="120" r="90" fill="rgba(255,255,255,0.2)" />
@@ -31,131 +63,89 @@ const MedicalIllustration = () => (
   </svg>
 );
 
+const Appointment: React.FC = () => {
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchResult, setSearchResult] = useState<string>('');
+  const [isHidden, setIsHidden] = useState<boolean>(true);
+  const [doctor, setdoctor] = useState<string>('');
+  const [aptDate, setAptDate] = useState<string>('');
+  const [time, setTime] = useState<string>('');
+  const [appointment, setAppointment] = useState<Appointment>({
+    patient_id: '',
+    doctor_id: '',
+    mode: '',
+    appointment_date: ''
+  });
 
-type Appointment = {
-  patient_id: string;
-  doctor_id: string;
-  mode: string;
-  appointment_date: string;
-};
+  // Update selectors
+  const { allpatients } = useSelector((state: RootState) => state.Patient);
+  const { doctors } = useSelector((state: RootState) => state.Doctor);
 
-const Appointment = () => {
-  const [time, setTime] = useState<string>("");
-  const [aptDate, setAptDate] = useState<string>("");
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [doctor,setdoctor] = useState("");
-const [searchResult, setSearchResult] = useState<string>("");
-const [isHidden, setIsHidden] = useState(false);
-
-
-
-
-const [appointment, setAppointment] = useState<Appointment>({
-  patient_id: "",
-  doctor_id: "",
-  mode: "",
-  appointment_date: "",
-});
-  const { allpatients } = useSelector((state:RootState) => state.Patient);
-  const {doctors} = useSelector((state:RootState)=>state.Doctor)
-
-  // handledoctor
-
-  const handledoctors = (e:any)=>{
-    setdoctor(e);
-    
-    setAppointment((prevappointment)=>({
-      ...prevappointment,
-      doctor_id:doctor
-    }))
-  }
-  
   const dispatch = useAppDispatch();
 
+  // Update event handlers
   const handleSearch = () => {
-    setIsHidden(false)
-    const matchedPatient = allpatients?.find((element:any) => element.name.toLowerCase() === searchInput.toLowerCase());
+    setIsHidden(false);
+    const matchedPatient = (allpatients as Patient[]).find(
+      (patient) => patient.name.toLowerCase() === searchInput.toLowerCase()
+    );
     if (matchedPatient) {
       setSearchResult(`Patient found: ${matchedPatient.name}`);
-      setAppointment((prevAppointment) => ({
-        ...prevAppointment,
-        patient_id: matchedPatient.id,
+      setAppointment(prev => ({
+        ...prev,
+        patient_id: matchedPatient.id
       }));
     } else {
       setSearchResult("Patient not found");
     }
   };
 
+  const handledoctors = (e: string) => {
+    setdoctor(e);
+    setAppointment(prev => ({
+      ...prev,
+      doctor_id: e
+    }));
+  };
 
-const handleInputChange = (e:any) => {
-  setSearchInput(e.target.value);
-};
+  const handleappointment = (mode: string) => {
+    setAppointment(prev => ({
+      ...prev,
+      mode
+    }));
+  };
 
-  const handleDateChange = (e:any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
     setAptDate(newDate);
-    setAppointment((prev) => ({
+    setAppointment(prev => ({
       ...prev,
-      appointment_date: `${newDate} ${time}`, // Concatenate updated date and existing time
+      appointment_date: `${newDate} ${time}`
     }));
   };
 
-
-  const handleTimeChange = (e:any) => {
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = e.target.value;
     setTime(newTime);
-    setAppointment((prev) => ({
+    setAppointment(prev => ({
       ...prev,
-      appointment_date: `${aptDate} ${newTime}`, // Concatenate existing date and updated time
+      appointment_date: `${aptDate} ${newTime}`
     }));
   };
 
-  const handleappointment = (e:any)=>{
-    setAppointment((prevappointments)=>({
-      ...prevappointments,
-      mode:e
-    }))
-    
-  }
-
-
-
-  const submitAppointment = (e:any) => {
+  const submitAppointment = (e: React.FormEvent) => {
     e.preventDefault();
-  
-   
-       const {doctor_id,patient_id,mode,} = appointment
-
-       if(patient_id == ""){
-        toast.error("Select patient for appointment")
-       }else if(doctor_id == ""){
-        toast.error("kindly select doctor")
-       }else if(mode == ""){
-        toast.error("Please select visit mode!")
-       }else if (!aptDate || !time) {
-        toast.error("Please select both date and time.");
-        return;
-      }else{
-        dispatch(Addappointment(appointment))
-  .unwrap()
-  .then((result) => {
-    toast.success("appointment created successfully");
-  })
-  .catch((error) => {
-    toast.error('Error while adding appointment');
-  });
-  }
-}
- 
-     
-
-  
+    // Add your submission logic here
+  };
 
   useEffect(() => {
     dispatch(getallPatients());
     dispatch(getDoctors());
   }, [dispatch]);
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -224,7 +214,7 @@ const handleInputChange = (e:any) => {
         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
         <option value="" key={14}>Select doctor</option>
-        {doctors?.[0]?.map((doctor) => (
+        {doctors?.map((doctor: Doctor) => (
           <option key={doctor.id} value={doctor.id}>
             {doctor.name}
           </option>
