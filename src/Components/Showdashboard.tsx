@@ -4,7 +4,7 @@ import { getallPatients } from '@/Redux/Slices/Patient/patientSlices';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/Redux/App/store';
 import Register from './Register';
-import { XCircleIcon } from "lucide-react";
+import { X, XCircle, XCircleIcon } from "lucide-react";
 import Appointment from './Appointment';
 import { Patient } from '@/types/patient';
 
@@ -65,12 +65,13 @@ const Showdashboard: React.FC = () => {
   <div className="p-4">
   <div className='flex justify-between'>
     <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add Appointment</h2>
-  <button
-      onClick={toggleSidebar}
-      className="text-black font-semibold mb-4"
-    >
-      <XCircleIcon className='w-8 h-8 text-red-500'/>
-    </button>
+    <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+            aria-label="Close sidebar"
+          >
+            <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
+          </button>
   </div>
     
    <Register show={false}/>
@@ -89,12 +90,13 @@ const Showdashboard: React.FC = () => {
   <div className="p-4">
   <div className='flex justify-between'>
     <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add Appointment</h2>
-  <button
-      onClick={toggleSidebar}
-      className="text-black font-semibold mb-4"
-    >
-      <XCircleIcon className='w-8 h-8 text-red-500'/>
-    </button>
+    <button
+            onClick={toggleSidebar}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+            aria-label="Close sidebar"
+          >
+            <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
+          </button>
   </div>
     {/* Add Patient Form */}
  <div >
@@ -119,12 +121,13 @@ const Showdashboard: React.FC = () => {
   <div className="p-4">
   <div className='flex justify-between'>
     <h2 className="text-sm px-4 py-2  text-black text-center cursor-pointer mb-2">Add Appointment</h2>
-  <button
-      onClick={toggleAppointment}
-      className="text-black font-semibold mb-4"
-    >
-      <XCircleIcon className='w-8 h-8 text-red-500'/>
-    </button>
+    <button
+            onClick={toggleAppointment}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+            aria-label="Close sidebar"
+          >
+            <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
+          </button>
   </div>
     {/* Add Patient Form */}
    <Appointment show={false}/>
@@ -140,12 +143,13 @@ const Showdashboard: React.FC = () => {
   <div className="p-4">
   <div className='flex justify-between'>
     <h2 className="text-sm px-4 py-2 text-center cursor-pointer mb-2">Add Appointment </h2>
-  <button
-      onClick={toggleAppointment}
-      className="text-black font-semibold mb-4"
-    >
-      <XCircleIcon className='w-8 h-8 text-red-500'/>
-    </button>
+    <button
+            onClick={toggleAppointment}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+            aria-label="Close sidebar"
+          >
+            <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
+          </button>
   </div>
     {/* Add Patient Form */}
     <Appointment show={false}/>
