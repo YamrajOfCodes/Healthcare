@@ -84,7 +84,7 @@ const ModernNavbar = () => {
                     />
 
                     {/* Search Results Dropdown */}
-                    {search && patient && (
+                    {/* {search && patient && (
                       <div className="absolute mt-1 w-full bg-white rounded-xl border border-gray-100 shadow-lg z-[9999]">
                         <div className="max-h-[280px] overflow-y-auto py-2">
                           {patient.length > 0 ? (
@@ -105,7 +105,7 @@ const ModernNavbar = () => {
                           )}
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
 
