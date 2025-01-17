@@ -64,10 +64,9 @@ const StatusCard: React.FC<StatusCardProps> = ({ status = "Active", number }) =>
             <div className="bg-white/50 backdrop-blur-sm rounded-lg p-2 md:p-3 shadow-sm
                         hover:shadow-md transition-all duration-300">
               <div className="flex items-center gap-1 md:gap-2">
-                <Activity className="h-3 w-3 md:h-4 md:w-4 text-blue-500" />
-                <span className="text-xs md:text-sm font-medium text-gray-600">Process</span>
+                <Activity className="h-10 w-5 md:h-10 md:w-8 ml-5 mt-2 text-blue-500" />
               </div>
-              <p className="mt-0.5 md:mt-1 text-sm md:text-xl font-semibold text-gray-800">86%</p>
+              {/* <p className="mt-0.5 md:mt-1 text-sm md:text-lg font-semibold text-gray-800">Processing</p> */}
             </div>
             <div className="bg-white/50 backdrop-blur-sm rounded-lg p-2 md:p-3 shadow-sm
                         hover:shadow-md transition-all duration-300">
