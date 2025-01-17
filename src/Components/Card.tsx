@@ -4,12 +4,8 @@ import { Activity, Clock } from 'lucide-react';
 import { getallPatients } from '@/Redux/Slices/Patient/patientSlices';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
+import { StatusCardProps } from '@/types/components';
 import { useSelector } from 'react-redux';
-
-interface StatusCardProps {
-  status?: "Active" | "Waiting" | "New" | "Follow-up" | "Out"; // Optional
-  number: number; // Required
-}
 
 const StatusCard: React.FC<StatusCardProps> = ({ status = "Active", number }) => {
 

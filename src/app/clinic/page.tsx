@@ -54,7 +54,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, isActive, onClick,
         }
       `}>
         <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-600 group-hover:text-blue-500'}`} />
-        {notification && <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full" />}
+        {/* {notification && <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full" />} */}
       </div>
       <span className={`font-medium ${isActive ? 'text-white' : 'text-gray-700 group-hover:text-blue-500'}`}>
         {label}
@@ -95,6 +95,7 @@ const SubNavItem: React.FC<SubNavItemProps> = ({ icon: Icon, label, onClick, hig
 
 const DashboardLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [issubOpen, setsubIsOpen] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<string>('Home')
   const [isSubNavOpen, setIsSubNavOpen] = useState<boolean>(true);
   const {allpatients} = useSelector((state:RootState)=>state.Patient)
@@ -117,9 +118,16 @@ const DashboardLayout: React.FC = () => {
    console.log("newpatients",newpatients);
    
    const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
-    let waitingpatients_data =  0
-    let newPatients_data = newpatients.length || 0 
-    let oldpatients_data = oldpatient.length || 0
+   const { complete } = useSelector((state:RootState)=>state.Patient)
+  //  console.log(waitingroom[0].length);
+  console.log("com",complete);
+  
+   
+    let waitingpatients_data =  waitingroom?.[0]?.length || "0"
+    let newPatients_data = newpatients?.length || 0 
+    let oldpatients_data = oldpatient?.length || 0
+    // let outpatient_data = newPatients_data + oldpatients_data - waitingpatients_data;
+    let outpatient_data = complete?.length || 0;
  
   useEffect(()=>{
     dispatch(getallPatients())
@@ -132,58 +140,38 @@ const DashboardLayout: React.FC = () => {
 
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+  const togglesubSidebar = () => setsubIsOpen(!issubOpen)
 
   return (
     <>
       <div className="relative max-h-screen">
         {/* Background */}
-        <div className="fixed inset-0 bg-webbg md:bg-gradient-to-r from-pink-100 to-pink-50">
+          <div className="fixed inset-0 bg-webbg md:bg-gradient-to-r from-pink-100 to-pink-50">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,...')] opacity-[0.15] bg-repeat bg-center"></div>
           <div className="absolute top-0 left-0 right-0 h-96 md:bg-gradient-to-b from-blue-50/50 to-transparent"></div>
         </div>
 
-        {/* Header */}
-        {/* <Header /> */}
-
-        <div className="relative flex w-full">
+        <div className="relative flex min-h-screen">
           {/* Sidebar Toggle Button */}
-          {
-            isOpen ? (
-              <button
-                onClick={toggleSidebar}
-                className="fixed top-4 left-4 z-50 p-2 rounded-xl bg-white/20 backdrop-blur-sm shadow-lg
-                hover:shadow-xl transition-all duration-300 hidden"
-              >
-                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            ) : (
-              <button
-                onClick={toggleSidebar}
-                className="fixed top-4 left-4 z-50 p-2 rounded-xl bg-white/80 backdrop-blur-sm shadow-lg
-                hover:shadow-xl transition-all duration-300 md:hidden"
-              >
-                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            )
-          }
+          <button
+            onClick={toggleSidebar}
+            className={`fixed top-4 left-4 z-50 p-2 rounded-xl backdrop-blur-sm shadow-lg
+              hover:shadow-xl transition-all duration-300 md:hidden
+              ${isOpen ? 'bg-white/20' : 'bg-white/80'}`}
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
 
           {/* Sidebar */}
-          <div className={`
+          <aside className={`
             fixed md:static inset-y-0 left-0 z-50 md:z-auto w-80
-            transform transition-transform duration-500 ease-out
+            transform transition-transform duration-300 ease-in-out
             ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
-            md:translate-x-0
+            md:translate-x-0 md:h-screen
           `}>
-            <div className="relative  bg-white backdrop-blur-2xl h-[100%] md:h-[180vh]
+            <div className="h-full bg-white backdrop-blur-2xl
               border-r border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.1)]
-              overflow-hidden">
-              
-              {/* Decorative Background Elements */}
-              <div className="absolute inset-0 -z-10">
-                <div className="absolute top-0 -left-32 w-96 h-96 bg-orange-500 rounded-full opacity-10 blur-3xl animate-pulse"></div>
-                <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-500 rounded-full opacity-10 blur-3xl animate-pulse delay-1000"></div>
-              </div>
-              
+              overflow-y-auto">
               <div className="p-6 h-full flex flex-col">
                 {/* Logo Section */}
                 <div className="flex items-center gap-4 mb-12">
@@ -206,6 +194,13 @@ const DashboardLayout: React.FC = () => {
                   <X onClick={toggleSidebar} 
                     className="md:hidden ml-auto cursor-pointer hover:text-blue-500 transition-all" />
                 </div>
+                 
+
+                  {/* decoration */}
+                {/* <div className="fixed inset-0 -z-10">
+                <div className="absolute top-0 -left-32 w-96 h-96 bg-orange-500 rounded-full opacity-10 blur-3xl animate-pulse"></div>
+                <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-500 rounded-full opacity-10 blur-3xl animate-pulse delay-1000"></div>
+              </div> */}
 
                 {/* User Profile */}
                 <div className="mb-8 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
@@ -223,8 +218,8 @@ const DashboardLayout: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Navigation */}
-                <nav className="space-y-3 flex-grow">
+                {/* Navigation - Make it scrollable */}
+                <nav className="space-y-3 flex-grow overflow-y-auto">
                   <NavItem 
                     icon={LayoutDashboard} 
                     label="Dashboard" 
@@ -256,15 +251,40 @@ const DashboardLayout: React.FC = () => {
                           highlight={true}
                         />
                         <SubNavItem 
-                          icon={CalendarPlus} 
-                          label="Schedule Appointment" 
-                          onClick={() => setActiveItem('Patients')}
-                        />
-                        <SubNavItem 
                           icon={UserPlus} 
                           label="Patient Register" 
                           onClick={() => setActiveItem('register')}
                         />
+                      
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <NavItem 
+                      icon={Users} 
+                      label="Appointments" 
+                      isActive={activeItem === 'appointments'}
+                      onClick={togglesubSidebar}
+                      hasSubNav
+                      notification={true}
+                    />
+                    
+                    {issubOpen && (
+                      <div className="ml-4 pl-4 border-l-2 border-blue-100/20 space-y-2">
+                      
+                        <SubNavItem 
+                          icon={Clock} 
+                          label="upcoming " 
+                          onClick={() => setActiveItem('upcoming')}
+                          highlight={true}
+                        />
+                        <SubNavItem 
+                          icon={CalendarPlus} 
+                          label="Schedule Appointment" 
+                          onClick={() => setActiveItem('Patients')}
+                        />
+                    
                         <SubNavItem 
                           icon={UserPlus} 
                           label="All appointments" 
@@ -305,40 +325,45 @@ const DashboardLayout: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </aside>
 
           {/* Main Content */}
-          <div className="flex-1 flex flex-col gap-4 bg-white/20  ">
-            {activeItem === 'Home' && (
-              <>
-                <div className="cards bg-white/20 h-[auto] flex justify-center  gap-5 sm:flex-row flex-wrap rounded-md shadow-lg p-4">
-                     <StatusCard status="Waiting" number={waitingpatients_data} />
-                     <StatusCard status="New" number={newPatients_data} />
+          <main className="flex-1 min-h-screen overflow-y-auto">
+            <div className="container mx-auto p-4">
+              {activeItem === 'Home' && (
+                <>
+                  <div className="cards bg-white/20 flex justify-center gap-5 sm:flex-row flex-wrap rounded-md shadow-lg p-4">
+                    <StatusCard status="Waiting" number={waitingpatients_data} />
+                    <StatusCard status="New" number={newPatients_data} />
                     <StatusCard status="Follow-up" number={oldpatients_data} />
-                    <StatusCard status="Out" number={9} />
-                </div>
-                <div className="dash w-full">
-                  <Showdashboard />
-                </div>
-              </>
-            )}
-            
-            {
-              activeItem === "Calendar" ? <DashCalender /> : 
-              activeItem === "Patients" ? <Appointment show={true} /> : 
-              activeItem === "allpatients" ? <Patients /> : 
-              activeItem === "waitingroom" ? <Waitingroom /> : 
-              activeItem === "register" ? <Register show={true} /> : 
-              activeItem === "allappointments" ? <Allappointment /> : activeItem === "Transactions"? <Transactions/> : null
-            }
-          </div>
+                    <StatusCard status="Out" number={outpatient_data} />
+                  </div>
+                  <div className="dash w-full">
+                    <Showdashboard />
+                  </div>
+                </>
+              )}
+              
+              <div className="w-full">
+                {
+                  activeItem === "Calendar" ? <DashCalender /> : 
+                  activeItem === "Patients" ? <Appointment show={true} /> : 
+                  activeItem === "allpatients" ? <Patients /> : 
+                  activeItem === "waitingroom" ? <Waitingroom /> : 
+                  activeItem === "register" ? <Register show={true} /> : 
+                  activeItem === "allappointments" ? <Allappointment /> : 
+                  activeItem === "Transactions" ? <Transactions/> : null
+                }
+              </div>
+            </div>
+          </main>
 
           {/* Mobile Overlay */}
           {isOpen && (
             <div
               className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
               onClick={toggleSidebar}
-            ></div>
+            />
           )}
         </div>
       </div>

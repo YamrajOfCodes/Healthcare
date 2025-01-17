@@ -9,6 +9,8 @@ import { getDoctors } from '@/Redux/Slices/Admin/adminSlice';
 import toast from 'react-hot-toast';
 import { RootState } from '@/Redux/App/store';
 import { useAppDispatch } from '@/hooks';
+import { AppointmentFormData,Doctor } from '../types/appointment';
+import { Patient } from '../types/patient';
 
 const MedicalIllustration = () => (
   <svg className="w-full h-auto" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
@@ -31,15 +33,12 @@ const MedicalIllustration = () => (
   </svg>
 );
 
+// Add proper type for props
+interface AppointmentProps {
+  show?: boolean;
+}
 
-type Appointment = {
-  patient_id: string;
-  doctor_id: string;
-  mode: string;
-  appointment_date: string;
-};
-
-const Appointment = ({show}:any) => {
+const Appointment = ({ show }: AppointmentProps) => {
   const [time, setTime] = useState<string>("");
   const [aptDate, setAptDate] = useState<string>("");
   const [searchInput, setSearchInput] = useState<string>("");
@@ -50,7 +49,7 @@ const [isHidden, setIsHidden] = useState(false);
 
 
 
-const [appointment, setAppointment] = useState<Appointment>({
+const [appointment, setAppointment] = useState<AppointmentFormData>({
   patient_id: "",
   doctor_id: "",
   mode: "",
@@ -61,33 +60,32 @@ const [appointment, setAppointment] = useState<Appointment>({
 
   // handledoctor
 
-  const handledoctors = (e:any)=>{
-    setdoctor(e);
-    
-    setAppointment((prevappointment)=>({
-      ...prevappointment,
-      doctor_id:doctor
-    }))
-  }
+  const handledoctors = (doctorId: string) => {
+    setdoctor(doctorId);
+    setAppointment(prev => ({
+      ...prev,
+      doctor_id: doctorId
+    }));
+  };
   
   const dispatch = useAppDispatch();
 
   const handleSearch = () => {
     setIsHidden(false);
+    
+    const matchedPatient = allpatients?.find((patient: Patient) => 
+      patient.name.toLowerCase() === searchInput.trim().toLowerCase()
+    );
 
-const matchedPatient = allpatients?.find((patient: any) => 
-  patient.name.toLowerCase() === searchInput.trim().toLowerCase()
-);
-
-if (matchedPatient) {
-  setSearchResult(`Patient found: ${matchedPatient.name}`);
-  setAppointment((prevAppointment) => ({
-    ...prevAppointment,
-    patient_id: matchedPatient.id,
-  }));
-} else {
-  setSearchResult("Patient not found");
-}
+    if (matchedPatient) {
+      setSearchResult(`Patient found: ${matchedPatient.name}`);
+      setAppointment(prev => ({
+        ...prev,
+        patient_id: matchedPatient.id,
+      }));
+    } else {
+      setSearchResult("Patient not found");
+    }
   };
 
 
@@ -124,36 +122,36 @@ const handleInputChange = (e:any) => {
 
 
 
-  const submitAppointment = (e:any) => {
+  const submitAppointment = (e: React.FormEvent) => {
     e.preventDefault();
-  
-   
-       const {doctor_id,patient_id,mode,} = appointment
+    
+    const { doctor_id, patient_id, mode } = appointment;
 
-       if(patient_id == ""){
-        toast.error("Select patient for appointment")
-       }else if(doctor_id == ""){
-        toast.error("kindly select doctor")
-       }else if(mode == ""){
-        toast.error("Please select visit mode!")
-       }else if (!aptDate || !time) {
-        toast.error("Please select both date and time.");
-        return;
-      }else{
-        dispatch(Addappointment(appointment))
-  .unwrap()
-  .then((result) => {
-    toast.success("appointment created successfully");
-  })
-  .catch((error) => {
-    toast.error('Error while adding appointment');
-  });
-  }
-}
- 
-     
-
-  
+    if (!patient_id) {
+      toast.error("Select patient for appointment");
+    } else if (!doctor_id) {
+      toast.error("Kindly select doctor");
+    } else if (!mode) {
+      toast.error("Please select visit mode!");
+    } else if (!aptDate || !time) {
+      toast.error("Please select both date and time.");
+    } else {
+      dispatch(Addappointment({
+        ...appointment,
+        id: '', // or generate a temporary ID
+        status: 'pending'
+      }))
+        .unwrap()
+        .then(() => {
+          toast.success("Appointment created successfully");
+          // Consider resetting form here
+        })
+        .catch((error) => {
+          toast.error('Error while adding appointment');
+          console.error('Appointment creation failed:', error);
+        });
+    }
+  };
 
   useEffect(() => {
     dispatch(getallPatients());
@@ -227,8 +225,8 @@ const handleInputChange = (e:any) => {
         onClick={(e) => handledoctors((e.target as HTMLSelectElement).value)}
         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
-        <option value="" key={14}>Select doctor</option>
-        {doctors?.[0]?.map((doctor:any) => (
+        <option value="">Select doctor</option>
+        {doctors[0]?.map((doctor: Doctor) => (
           <option key={doctor.id} value={doctor.id}>
             {doctor.name}
           </option>

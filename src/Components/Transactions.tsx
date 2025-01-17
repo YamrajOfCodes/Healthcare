@@ -8,18 +8,9 @@ import {   Stethoscope,
     FileText,
     Users } from 'lucide-react';
 import React, { useState } from 'react'
+import { Transaction } from '@/types/transaction';
 
-// Add interfaces for type safety
-interface Transaction {
-  id: number;
-  type: 'Package' | 'Service' | 'pharmacy' | 'expenses';
-  description: string;
-  patientName: string;
-  date: string;
-  amount: number;
-}
-
-const Transactions = () => {
+const Transactions: React.FC = () => {
    
     // Type the transactions array
     const transactions: Transaction[] = [
@@ -27,9 +18,9 @@ const Transactions = () => {
           id: 1, 
           type: 'Package', 
           description: 'Annual Health Checkup', 
-          patientName: 'Ritik Sir',
-          date: '2025-01-15', 
-          amount: 150 
+          patientName: 'John Doe',
+          date: '2024-02-20',
+          amount: 299.99
         },
         { 
           id: 2, 

@@ -1,12 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { Calendar, Phone, MapPin } from 'lucide-react';
-
-// Add interfaces for type safety
-interface ProfileInfoProps {
-  icon: React.ElementType;
-  children: React.ReactNode;
-}
+import { ProfileInfoProps } from '@/types/billing';
 
 // Fix ProfileInfo component props
 const ProfileInfo: React.FC<ProfileInfoProps> = ({ icon: Icon, children }) => (

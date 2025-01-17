@@ -10,28 +10,25 @@ import { RegisterPatient } from '@/Redux/Slices/Patient/patientSlices';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { AppDispatch } from '@/Redux/App/store';
+import { RegisterFormData, RegisterProps } from '@/types/auth';
+
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
-// Add type for form data
-interface FormData {
-  name: string;
-  dob: string;
-  gender: string;
-  phone: string;
-  email: string;
-  address: string;
-  password: string;
-}
-
-
-
-
-export default function Register({show}:any) {
+export default function Register({ show }: RegisterProps) {
   const router = useRouter();
   const [order, setOrder] = useState(1); // Track the order of the sections
   const [isSliding, setIsSliding] = useState(false); // Track sliding animation state
   const dispatch = useAppDispatch();
   
+  const [formData, setFormData] = useState<RegisterFormData>({
+    name: '',
+    dob: '',
+    gender: '',
+    phone: '',
+    email: '',
+    address: '',
+    password: ''
+  });
 
   const handleOrderChange = () => {
     setIsSliding(!isSliding);
@@ -39,83 +36,44 @@ export default function Register({show}:any) {
    
   };
 
-
-
-
-  const [name, setname] = useState('');
-  const [dob, setDob] = useState('');
-  const [gender, setGender] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setaddress] = useState('');
-  const [password, setpassword] = useState('');
-
-
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Type the formData object
-    const formData: FormData = {
-      name,
-      dob,
-      gender,
-      phone,
-      email,
-      address,
-      password // Add password to match the interface
-    };
+    // Remove redundant formData declaration - we already have the state
+    const { name, dob, gender, phone, email, address, password } = formData;
 
-    // You can now do something with the form data, like sending it to an API
-    // console.log(formData);
-    // alert('Form submitted successfully!');
-    // console.log(formData)
-
-    if(name == ""){
-      toast.error("name is required")
-    }else if(dob === ""){
-      toast.error("Date of birth is required")
-    }else if(gender == ""){
-      toast.error("please set the gender")
-    }else if(phone === ""){
-      toast.error("please enter phone number")
-    }else if(phone.length > 10 || phone.length < 10 ){
-      toast.error("please Enter valid phone number!")
-    }else if(email === ""){
-      toast.error("Email is mandatory")
-    }else if(!email.includes("@")){
-      toast.error("enter valid email")
-    }else{
+    if (name === "") {
+      toast.error("Name is required");
+    } else if (dob === "") {
+      toast.error("Date of birth is required");
+    } else if (gender === "") {
+      toast.error("Please select a gender");
+    } else if (phone === "") {
+      toast.error("Please enter phone number");
+    } else if (phone.length !== 10) {
+      toast.error("Please enter a valid 10-digit phone number");
+    } else if (email === "") {
+      toast.error("Email is mandatory");
+    } else if (!email.includes("@")) {
+      toast.error("Please enter a valid email");
+    } else {
       dispatch(RegisterPatient(formData))
-      .then((res) => {
-        if (res?.payload) {
-          router.push("/clinic");
-        } else {
-          console.error("Registration failed: No payload returned.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error during registration:", error);
-      });
-    
-  
-      setname('');
-      setDob('');
-      setGender('');
-      setPhone('');
-      setEmail('');
-      setaddress("")
+        .then((res) => {
+          if (res?.payload) {
+            toast.success("Registration successful!");
+            router.push("/clinic");
+          } else {
+            toast.error("Registration failed");
+            console.error("Registration failed: No payload returned.");
+          }
+        })
+        .catch((error) => {
+          toast.error("Registration failed");
+          console.error("Error during registration:", error);
+        });
     }
-
-    // Optionally, reset form fields after submission
-
-    
   };
-
-
- 
-
-
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 ${!show && 'flex justify-start w-[200%]'}`}>
@@ -220,8 +178,8 @@ export default function Register({show}:any) {
           type="text"
           placeholder="John Doe"
           className="w-full px-4 py-3 text-gray-900 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={name}
-          onChange={(e) => setname(e.target.value)} // Update state on input change
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })} // Update state on input change
         />
       </div>
 
@@ -234,8 +192,8 @@ export default function Register({show}:any) {
         <input
           type="date"
           className="w-full px-4 py-3 rounded-xl border text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={dob}
-          onChange={(e) => setDob(e.target.value)}
+          value={formData.dob}
+          onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
         />
       </div>
 
@@ -247,8 +205,8 @@ export default function Register({show}:any) {
         </label>
         <select
           className="w-full px-4 py-3 rounded-xl border text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={gender}
-          onChange={(e) => setGender(e.target.value)} // Update state on select change
+          value={formData.gender}
+          onChange={(e) => setFormData({ ...formData, gender: e.target.value })} // Update state on select change
         >
           <option value="">Select Gender</option>
           <option value="male">Male</option>
@@ -267,8 +225,8 @@ export default function Register({show}:any) {
           type="tel"
           placeholder="+1 (555) 000-0000"
           className="w-full px-4 py-3 rounded-xl border text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)} // Update state on input change
+          value={formData.phone}
+          onChange={(e) => setFormData({ ...formData, phone: e.target.value })} // Update state on input change
         />
       </div>
 
@@ -282,8 +240,8 @@ export default function Register({show}:any) {
           type="email"
           placeholder="john@example.com"
           className="w-full px-4 py-3 rounded-xl text-gray-900 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} // Update state on input change
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })} // Update state on input change
         />
       </div>
 
@@ -298,8 +256,8 @@ export default function Register({show}:any) {
           type="textarea"
           placeholder="plot no 10,Pune"
           className="w-full px-4 py-3 rounded-xl text-gray-900 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={address}
-          onChange={(e) => setaddress(e.target.value)} // Update state on input change
+          value={formData.address}
+          onChange={(e) => setFormData({ ...formData, address: e.target.value })} // Update state on input change
         />
       </div>
 

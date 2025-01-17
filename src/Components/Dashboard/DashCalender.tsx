@@ -6,54 +6,19 @@ import { useSelector } from "react-redux";
 import { getAppointments } from "@/Redux/Slices/Patient/patientSlices";
 import { RootState } from "@/Redux/App/store";
 import { useAppDispatch } from "@/hooks";
+import { DashCalenderProps, FormattedAppointment } from "@/types/appointment";
 
-// Add interfaces for type safety
-interface Appointment {
-  patient_id: string;
-  doctor_id: string;
-  mode: string;
-  appointment_date: string;
-  patient?: {
-    name: string;
-  };
-  status: 'confirmed' | 'pending' | 'cancelled';
-}
-
-interface FormattedAppointment {
-  date: string;
-  time: string;
-  patient: string;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  priority: 'normal' | 'high' | 'low';
-  details: string;
-}
-
-// Add proper typing for the Redux state
-interface PatientState {
-  Patient: {
-    getappointments: {
-      appointments: Appointment[] | null;
-      error: string | null;
-    };
-  }
-}
-
-interface DashCalenderProps {
-  className?: string;
-}
-
-const DashCalender: React.FC<DashCalenderProps> = ({ className }) => {
-  const [calenderData, setCalenderData] = useState<FormattedAppointment[]>([]);
-  const [selectedAppointment, setSelectedAppointment] = useState<FormattedAppointment | null>(null);
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
-
-  const { getappointments } = useSelector((state: RootState) => state.Patient);
+const DashCalender: React.FC<DashCalenderProps> = () => {
   const dispatch = useAppDispatch();
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedAppointment, setSelectedAppointment] = useState<FormattedAppointment | null>(null);
+  const { appointments } = useSelector((state: RootState) => state.Patient.getappointments);
+  const [calenderData, setCalenderData] = useState<FormattedAppointment[]>([]);
 
   // Type-safe appointment mapping
   useEffect(() => {
-    if (getappointments?.appointments && Array.isArray(getappointments.appointments)) {
-      const formattedData: FormattedAppointment[] = getappointments.appointments.map((element) => ({
+    if (appointments && Array.isArray(appointments)) {
+      const formattedData: FormattedAppointment[] = appointments.map((element) => ({
         date: element.appointment_date.slice(0, 10),
         time: element.appointment_date.slice(11, 19),
         patient: element.patient?.name || 'No Name',
@@ -63,7 +28,7 @@ const DashCalender: React.FC<DashCalenderProps> = ({ className }) => {
       }));
       setCalenderData(formattedData);
     }
-  }, [getappointments]);
+  }, [appointments]);
 
   // Add proper return type for helper functions
   const getStatusColor = (status: FormattedAppointment['status']): string => {

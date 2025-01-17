@@ -1,35 +1,12 @@
 import React, { useState } from 'react';
 import { Activity, Heart, User, Calendar, Clipboard, Mail, Phone, MapPin, ChevronRight } from 'lucide-react';
 import { updatePatient } from '@/Redux/Slices/Patient/patientSlices';
-import { useDispatch } from 'react-redux';
 import { useAppDispatch } from '@/hooks';
-
-interface PatientData {
-  id?: string;
-  name?: string;
-  dob?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-}
-
-interface EditPatientProps {
-  patientdata: PatientData;
-  onClose: () => void;
-}
-
-interface FormData {
-  fullname: string;
-  dateOfBirth: string;
-  email: string;
-  phone: string;
-  address: string;
-}
-
+import { EditPatientProps, PatientFormData } from '@/types/patient';
 
 const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) => {
   const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<PatientFormData>({
     fullname: patientdata?.name || '',
     dateOfBirth: patientdata?.dob || '',
     email: patientdata?.email || '',

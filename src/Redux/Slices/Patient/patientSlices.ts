@@ -1,57 +1,33 @@
-import {createAsyncThunk,createSlice,PayloadAction} from "@reduxjs/toolkit"
-import { addPatientAppointmentAPI, CompletePatientAPI, deletePatientsAPI, getPatientAppointmentAPI, getPatientsAPI, PatientAPI, patientPrescAPI, updatePatientsAPI } from "../../../APIS/Patient/PatientAPI"
-import toast from "react-hot-toast"
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { 
+  addPatientAppointmentAPI, 
+  CompletePatientAPI, 
+  deletePatientsAPI, 
+  getPatientAppointmentAPI, 
+  getPatientsAPI, 
+  PatientAPI, 
+  patientPrescAPI, 
+  updatePatientsAPI 
+} from "../../../APIS/Patient/PatientAPI";
+import toast from "react-hot-toast";
+import { Patient, PatientState } from "@/types/patient";
+import { Appointment, AppointmentsState } from "@/types/appointment";
+import { PrescriptionResponse } from "@/types/prescription";
 
+const initialState: PatientState = {
+  loader: false,
+  error: null,
+  allpatients: [],
+  update: [],
+  complete: [],
+  deletepatient: [],
+  getappointments: {
+    appointments: null,
+    error: null
+  },
+  prescriptions: []
+};
 
-
-
-type AppointmentsState = {
-    appointments: Appointment[] | null;
-    error: string | null;
-  };
-
-// Define types for the Appointment and other states
-interface Appointment {
-  id: string;
-  patient_id: string;
-  doctor_id: string;
-  mode: string;
-  appointment_date: string;
-  patient?: {
-    name: string;
-    email?: string;
-    phone?: string;
-  };
-  doctor?: {
-    name: string;
-    specialization?: string;
-  };
-  status: 'confirmed' | 'pending' | 'cancelled';
-  type?: string;
-}
-
-interface Patient {
-  id: string;
-  name: string;
-  // Add any other properties you expect
-  created_at: string;
-  updated_at: string;
-  visit_count?: number;
-}
-
-// Define a more comprehensive state interface
-interface PatientState {
-  registerpatient: any[]; // Consider defining a specific type instead of any[]
-  allpatients: Patient[];
-  deletepatient: string[];
-  update: string[];
-  complete: any[]; // Consider defining a specific type
-  getappointments: AppointmentsState;
-  error: string | null;
-  loader: boolean;
-  appointment: Appointment[] | null;
-  prescriptions: any[] | null;
-}
 
 // Define the async thunks
 interface APIResponse {
@@ -185,27 +161,10 @@ export const completePatient = createAsyncThunk("completePatient", async (data: 
   }
 });
 
-// Initial state with proper typing
-const initialState: PatientState = {
-  registerpatient: [],
-  allpatients: [],
-  deletepatient: [],
-  update: [],
-  complete: [],
-  getappointments: {
-    appointments: null,
-    error: null
-  },
-  error: null,
-  loader: false,
-  appointment: null,
-  prescriptions: null,
-};
-
 // Create the slice
 export const PatientSlice = createSlice({
-  name: "Patientslice",
-  initialState: initialState,
+  name: "patient",
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder

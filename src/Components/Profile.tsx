@@ -2,42 +2,7 @@
 import React, { useState } from 'react';
 import { User, FileText, Activity, Clock, MoreVertical, Phone, MapPin, Shield } from 'lucide-react';
 import EditPatient from './Dashboard/EditPatient';
-
-
-type ProfileProps = {
-  id: string | number;
-  name: string;
-  age?: number;
-  gender?: string;
-  address?: string;
-  phone?: string;
-  addedBy?: string;
-  visits?: number;
-  entryTime: string;
-  waitingTime?: string;
-  updated_at: string;
-  created_at?: string;
-};
-
-
-
-
-const profiles: ProfileProps[] = [
-  {
-    id: 1,
-    name: 'MR Shounak Dey - VJNSPTH',
-    age: 41,
-    gender: 'Male',
-    address: 'Mahindra, flat no 4, Pimpri, PUNE',
-    phone: '+91 2323 323 3232',
-    addedBy: 'super admin by no doctor',
-    visits: 9,
-    entryTime: '1:00pm',
-    waitingTime: '2 mins',
-    updated_at: '2 mins',
-  },
-  // Add more profiles here...
-];
+import { ProfileProps } from '@/types/patient';
 
 const ProfileCard: React.FC<ProfileProps> = ({
   name,
@@ -49,18 +14,13 @@ const ProfileCard: React.FC<ProfileProps> = ({
   age,
   addedBy,
   visits
-},) => {
-  const [redirected,setredirected] = useState<boolean>(false)
-
-
- 
+}) => {
+  const [open, setOpen] = useState(false);
+  const [redirected, setredirected] = useState(false);
 
   let entryyear = entryTime.slice(0,4);
   let entrymonth:any = entryTime.slice(5,7)
   let entryday = entryTime.slice(8,10)
-
-  
-  
 
   if(entrymonth == 1){
     entrymonth = "Jan"
@@ -93,12 +53,6 @@ const ProfileCard: React.FC<ProfileProps> = ({
 
   const date = new Date(updated_at)
 
-
-  // console.log("time today",date)
-   
-
-
- 
   // Function to handle clicks on the overlay (background)
   const handleOverlayClick = () => {
     setredirected(false); // Close the modal by setting the state to false
@@ -112,17 +66,6 @@ const ProfileCard: React.FC<ProfileProps> = ({
   if(redirected){
     window.scrollTo(0,0)
   }
-
-
-
-  // const handleeditpatient = (e)=>{
-  //   window.scrollTo(0,0);
-  //   setIsEditing(true);
-  //   seteditpatient(e)
-  // }
-  
-
- 
 
   return (
     <>

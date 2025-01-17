@@ -6,21 +6,9 @@ import { getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
 import Link from 'next/link';
 import { completePatient } from '@/Redux/Slices/Patient/patientSlices';
 import { AppDispatch, RootState } from '@/Redux/App/store';
-export const useAppDispatch = () => useDispatch<AppDispatch>();
+import { WaitingRoomPatient } from '@/types/patient';
 
-interface Patient {
-  id: string;
-  appointment_id: string;
-  patient: {
-    name: string;
-    address: string;
-    phone: string;
-    visit_count: number;
-    gender: string;
-    dob: string;
-  };
-  updated_at: string;
-}
+export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 interface PatientCardProps {
   patient: string;
@@ -32,6 +20,7 @@ interface PatientCardProps {
   gender: string;
   dob: string;
   waitingid: string;
+  onComplete?: (completedId: string) => void;
 }
 
 const PatientCard: React.FC<PatientCardProps> = ({ 
@@ -43,7 +32,8 @@ const PatientCard: React.FC<PatientCardProps> = ({
   visit, 
   gender, 
   dob, 
-  waitingid 
+  waitingid,
+  onComplete
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
@@ -62,8 +52,16 @@ const PatientCard: React.FC<PatientCardProps> = ({
     tempdate = `${waiting_hours} hours, ${waiting_minutes} minutes, ${waiting_seconds}`;
   }
 
-  const handlecomplete = (): void => {
-    dispatch(completePatient(waitingid));
+  const handlecomplete = async (): Promise<void> => {
+    try {
+      await dispatch(completePatient(waitingid)).unwrap();
+      setOpen(false);
+      if (onComplete) {
+        onComplete(waitingid);
+      }
+    } catch (error) {
+      console.error('Error completing consultation:', error);
+    }
   };
 
   return (
@@ -184,63 +182,32 @@ const PatientCard: React.FC<PatientCardProps> = ({
 
 export default function WaitingRoom() {
   const dispatch = useAppDispatch();
-  const { waitingroom }: { waitingroom: Patient[][] } = useSelector((state: RootState) => state.Doctor);
-  console.log("waitingroom",waitingroom);
-  
+  const [localWaitingRoom, setLocalWaitingRoom] = useState<WaitingRoomPatient[]>([]);
+  const { waitingroom } = useSelector((state: RootState) => state.Doctor);
 
-  useEffect(()=>{
+  useEffect(() => {
+    if (waitingroom?.[0]) {
+      setLocalWaitingRoom(waitingroom[0]);
+    }
+  }, [waitingroom]);
+
+  useEffect(() => {
     dispatch(getWaitingroom());
-  },[dispatch]);
-  // const [patients, setPatients] = useState([
-  //   {
-  //     id: 1,
-  //     name: "John Doe",
-  //     address: "123 Main St, City",
-  //     phone: "9876543210",
-  //     date: "09",
-  //     month: "MARCH",
-  //     year: "2024",
-  //     arrivalTime: "2:30 PM",
-  //     estimatedWait: 15,
-  //     status: "waiting",
-  //     dates:""
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Jane Smith",
-  //     address: "456 Park Ave, Town",
-  //     phone: "9876543211",
-  //     date: "09",
-  //     month: "MARCH",
-  //     year: "2024",
-  //     arrivalTime: "2:45 PM",
-  //     estimatedWait: 20,
-  //     status: "waiting",
-  //     dates:""
-  //   }
-  // ]);
+  }, [dispatch]);
 
-  // const updateStatus = (id, newStatus) => {
-  //   setPatients(patients.map(patient => 
-  //     patient.id === id ? { ...patient, status: newStatus } : patient
-  //   ));
-  // };
-
-  // const removePatient = (id) => {
-  //   setPatients(patients.filter(patient => patient.id !== id));
-  // };
+  const handlePatientComplete = (completedId: string) => {
+    setLocalWaitingRoom(prev => prev.filter(patient => patient.id !== completedId));
+  };
 
   return (
-    <div className=" bg-gradient-to-br from-blue-50 to-cyan-50 py-6 px-4 rounded-md h-full">
+    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 py-6 px-4 rounded-md h-full">
       <div className="max-w-7xl mx-auto space-y-6">
         <h1 className="text-xl lg:text-3xl md:text-4xl font-bold text-blue-900 text-center mb-8">
           Patient Waiting Room
         </h1>
-        
 
-        {/* md:flex md:flex-wrap    you can put to following div */}
-        <div className="space-y-4 ">
-          {waitingroom?.[0]?.map((element: Patient) => (
+        <div className="space-y-4">
+          {localWaitingRoom?.map((element: WaitingRoomPatient) => (
             <PatientCard
               key={element.id}
               waitingid={element.id}
@@ -252,8 +219,7 @@ export default function WaitingRoom() {
               visit={element.patient.visit_count}
               gender={element.patient.gender}
               dob={element.patient.dob}
-              // onStatusChange={updateStatus}
-              // onRemove={removePatient}
+              onComplete={handlePatientComplete}
             />
           ))}
         </div>
