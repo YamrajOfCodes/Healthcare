@@ -381,7 +381,7 @@ const Allappointment: React.FC = () => {
                                     <td className="py-4 px-6">
                                         <span
                                             className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${
-                                                appointment.status === 'Confirmed'
+                                                appointment.status === 'completed'
                                                     ? 'bg-green-100 text-green-700'
                                                     : appointment.status === 'Pending'
                                                     ? 'bg-yellow-100 text-yellow-700'
