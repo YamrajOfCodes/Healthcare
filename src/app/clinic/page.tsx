@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import {Calendar,Users,FileText, Menu,X,  
   LayoutDashboard,
   UserPlus,
@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { getallPatients } from "@/Redux/Slices/Patient/patientSlices";
 import { getWaitingroom } from "@/Redux/Slices/Admin/adminSlice";
 import Header from "@/Components/Header";
+import Upcoming from "@/Components/Dashboard/Upcoming";
 
 
 interface NavItemProps {
@@ -192,11 +193,11 @@ const DashboardLayout: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold bg-clip-text text-transparent 
+                    <h2 className="text-2xl font-bold bg-clip-text text-transparent 
                       bg-gradient-to-r from-violet-600 to-blue-600">
-                     VedgarbhaAyurveda
+                      Healthcare
                     </h2>
-                    <p className="text-sm text-gray-500">Doctor Dashboard</p>
+                    <p className="text-sm text-gray-500">Admin Dashboard</p>
                   </div>
                   <X onClick={toggleSidebar} 
                     className="md:hidden ml-auto cursor-pointer hover:text-blue-500 transition-all" />
@@ -219,8 +220,8 @@ const DashboardLayout: React.FC = () => {
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white"></div>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-800">Dr. Pallavi Chindhe</h3>
-                      <p className="text-xs text-gray-500">Ayurveda Gynaecologist</p>
+                      <h3 className="font-medium text-gray-800">Dr. Sarah Wilson</h3>
+                      <p className="text-xs text-gray-500">Head Physician</p>
                     </div>
                   </div>
                 </div>
@@ -238,8 +239,8 @@ const DashboardLayout: React.FC = () => {
                     <NavItem 
                       icon={Users} 
                       label="Patients" 
-                      isActive={activeItem === 'Patients'}
-                      onClick={() =>{setIsSubNavOpen(!isSubNavOpen),setActiveItem("Patients")}}
+                      isActive={activeItem === 'allpatients'}
+                      onClick={() =>{setIsSubNavOpen(!isSubNavOpen),setActiveItem("allpatients")}}
                       hasSubNav
                       notification={true}
                       
@@ -257,13 +258,7 @@ const DashboardLayout: React.FC = () => {
                           label="Waiting Room" 
                           onClick={() => setActiveItem('waitingroom')}
                           highlight={true}
-                        />
-                        <SubNavItem 
-                          icon={UserPlus} 
-                          label="Patient Register" 
-                          onClick={() => setActiveItem('register')}
-                        />
-                      
+                        />                     
                       </div>
                     )}
                   </div>
@@ -273,7 +268,7 @@ const DashboardLayout: React.FC = () => {
                       icon={Users} 
                       label="Appointments" 
                       isActive={activeItem === 'appointments'}
-                      onClick={()=>{togglesubSidebar(),setActiveItem("Appointments")}}
+                      onClick={()=>{togglesubSidebar(),setActiveItem("upcoming")}}
                       hasSubNav
                       notification={true}
                     />
@@ -286,12 +281,7 @@ const DashboardLayout: React.FC = () => {
                           label="upcoming " 
                           onClick={() => setActiveItem('upcoming')}
                           highlight={true}
-                        />
-                        <SubNavItem 
-                          icon={CalendarPlus} 
-                          label="Schedule Appointment" 
-                          onClick={() => setActiveItem('Patients')}
-                        />
+                        />   
                     
                         <SubNavItem 
                           icon={UserPlus} 
@@ -361,7 +351,8 @@ const DashboardLayout: React.FC = () => {
                   activeItem === "waitingroom" ? <Waitingroom /> : 
                   activeItem === "register" ? <Register show={true} /> : 
                   activeItem === "allappointments" ? <Allappointment /> : 
-                  activeItem === "Transactions" ? <Transactions/> : null
+                  activeItem === "Transactions" ? <Transactions/> :
+                  activeItem === "upcoming"? <Upcoming/> :null
                 }
               </div>
             </div>

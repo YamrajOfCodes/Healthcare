@@ -55,6 +55,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
   const handlecomplete = async (): Promise<void> => {
     try {
       await dispatch(completePatient(waitingid)).unwrap();
+      dispatch(getWaitingroom())
       setOpen(false);
       if (onComplete) {
         onComplete(waitingid);
