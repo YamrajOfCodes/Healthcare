@@ -1,17 +1,55 @@
-'use client'
-import React, { useState } from 'react';
-import { Search, Phone, UserCircle, Settings } from 'lucide-react';
+"use client"
 
-const Header = () => {
+import React, { useEffect, useState } from 'react';
+import { Search, Settings, Phone, UserCircle, Calendar, UserPlus } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/Redux/App/store';
+import { useAppDispatch } from '@/hooks';
+import { getallPatients } from '@/Redux/Slices/Patient/patientSlices';
+
+const ModernNavbar = () => {
+
+  const { allpatients } = useSelector((state: RootState) => state.Patient);
+   console.log(allpatients);
+   const [search,setsearch] = useState(false);
+   const [patient,setpatient] = useState(allpatients);
+
+   const handlesearch = (data:any)=>{
+    // setsearch(data);
+
+    console.log(data);
+    
+
+    const filterdata = allpatients?.filter((patients)=>{
+      const sliceName = patients.name.slice(0,data.length).toLocaleLowerCase();
+      console.log(sliceName);
+      
+      if(data === sliceName){
+        return patients
+      }
+    })
+
+    setpatient(filterdata)
+    console.log(patient);
+    
+
+
+   }
+   
+  const dispatch = useAppDispatch();
+    
+    useEffect(() => {
+      dispatch(getallPatients());
+    }, []);
   
-    return (
-      <nav className="w-full z-20">
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-200/80 shadow-sm">
-        <div className="max-w-7xl mx-auto  ">
-          {/* Main Header */}
+
+  return (
+    <nav className="w-full z-20 top-0">
+      <div className="bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto">
           <div className="px-4 sm:px-6">
-            <div className="flex h-16 items-center justify-end sm:justify-between">
-              {/* Left Section */}
+            <div className="flex h-20 items-center justify-between">
+              {/* Left Section - Search */}
               <div className="flex items-center gap-6">
                 <div className="relative group">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 
@@ -19,45 +57,75 @@ const Header = () => {
                   <input
                     type="text"
                     placeholder="Search patients..."
-                    className="pl-10 pr-4 py-2 w-48 sm:w-72 rounded-lg border border-gray-200 
+                    className="pl-10 pr-4 py-2.5 w-48 sm:w-72 rounded-full border border-gray-200/80 
                              text-sm bg-white/50 
                              focus:outline-none focus:ring-2 focus:ring-blue-500/20 
                              focus:border-blue-500 transition-all duration-300
                              group-hover:shadow-lg group-hover:shadow-blue-500/5"
+                          onChange={(e)=>{handlesearch(e.target.value)}}
+                          onFocus={()=>{setsearch(true)}}
+                        
+                          onBlur={()=>{setsearch(false)}}
                   />
+                </div>
+                <div className={`results fixed bg-blue-400 h-44 w-1/4 bg-green-400 top-20 z-20  ${search? 'block' : 'hidden'} `}>
+                  <div className={`flex flex-col w-1/4 ml-5 `} key={"10"}>
+                    {
+                      search &&  patient?.map((element,index)=>{
+                        return(
+                          <>
+                          <p key={index}>{element?.name}</p>
+                        
+                          </>
+                        )
+                      })
+                    }
+                  </div>
                 </div>
               </div>
 
-              {/* Center Section - Desktop */}
-             
-
-              {/* Right Section - Desktop */}
-              <div className="hidden md:flex items-center gap-6">
-              
-              
-                {/* Settings */}
-                <button className="p-2 text-gray-500 hover:text-gray-700 
-                                 hover:bg-gray-100 rounded-lg transition-colors">
-                  <Settings className="h-5 w-5" />
+              {/* Center Section - Action Buttons */}
+              <div className="flex items-center gap-4">
+                <button className="px-4 py-2.5 flex items-center gap-2 bg-blue-600 text-white 
+                                 rounded-full text-sm font-medium shadow-lg shadow-blue-500/20
+                                 hover:bg-blue-700 hover:shadow-blue-500/30 transition-all duration-300">
+                  <UserPlus className="h-4 w-4" />
+                  Add Patient
                 </button>
+                <button className="px-4 py-2.5 flex items-center gap-2 bg-indigo-600 text-white 
+                                 rounded-full text-sm font-medium shadow-lg shadow-indigo-500/20
+                                 hover:bg-indigo-700 hover:shadow-indigo-500/30 transition-all duration-300">
+                  <Calendar className="h-4 w-4" />
+                  Schedule Appointment
+                </button>
+              </div>
 
-                {/* Divider */}
-                <div className="h-6 w-px bg-gray-200" />
+              {/* Right Section */}
+              <div className="flex items-center gap-6">
+                {/* Settings with notification dot */}
+                <div className="relative">
+                  <div className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></div>
+                  <button className="p-2.5 text-gray-500 hover:text-gray-700 
+                                   bg-gray-50 hover:bg-gray-100 rounded-xl transition-all duration-300">
+                    <Settings className="h-5 w-5" />
+                  </button>
+                </div>
 
                 {/* Contact */}
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Phone className="h-4 w-4" />
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-xl text-gray-600">
+                  <Phone className="h-4 w-4 text-gray-400" />
                   <span className="text-sm font-medium">+91 35637 38380</span>
                 </div>
 
                 {/* Profile */}
                 <div className="flex items-center gap-3 pl-6 border-l">
                   <div className="relative group">
-                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-green-400 to-green-600 
-                                  flex items-center justify-center text-white
-                                  group-hover:shadow-lg group-hover:shadow-blue-500/30 
+                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 
+                                  p-0.5 group-hover:shadow-lg group-hover:shadow-indigo-500/30 
                                   transition-all duration-300">
-                      <UserCircle className="h-6 w-6" />
+                      <div className="h-full w-full rounded-lg bg-white flex items-center justify-center">
+                        <UserCircle className="h-6 w-6 text-indigo-600" />
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-col">
@@ -66,63 +134,12 @@ const Header = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Mobile Menu Button */}
-              {/* <button 
-                className="md:hidden p-2 text-gray-700 hover:bg-gray-100 
-                         rounded-lg transition-colors"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button> */}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {/* {isMenuOpen && (
-        <div className="absolute top-16 inset-x-0 md:hidden bg-white/80 backdrop-blur-md z-10
-                      border-b border-gray-200/80 shadow-lg">
-          <div className="px-4 py-4 space-y-4">
-            <button className="w-full flex items-center justify-center px-4 py-2 
-                           bg-blue-600 text-white rounded-lg text-sm font-medium
-                           hover:bg-blue-700 transition-all duration-300">
-              + Add Patient
-            </button>
-            
-            <div className="flex items-center justify-between py-2 px-2">
-              <div className="flex items-center gap-2 text-gray-600">
-                <Phone className="h-4 w-4" />
-                <span className="text-sm">+91 35637 38380</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <button className="p-2 text-gray-500 hover:text-gray-700 
-                               hover:bg-gray-100 rounded-lg transition-colors">
-                  <Bell className="h-5 w-5" />
-                </button>
-                <button className="p-2 text-gray-500 hover:text-gray-700 
-                               hover:bg-gray-100 rounded-lg transition-colors">
-                  <Settings className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 py-2 px-2 border-t">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 
-                           flex items-center justify-center text-white">
-                <UserCircle className="h-6 w-6" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-semibold text-gray-900">Super Admin</span>
-                <span className="text-xs text-gray-500">Healthcare System</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )} */}
     </nav>
-    );
-  };
-  
-  export default Header;
+  );
+};
+
+export default ModernNavbar;

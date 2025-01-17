@@ -21,6 +21,7 @@ import { RootState } from '@/Redux/App/store';
 import { useSelector } from 'react-redux';
 import { getallPatients } from "@/Redux/Slices/Patient/patientSlices";
 import { getWaitingroom } from "@/Redux/Slices/Admin/adminSlice";
+import Header from "@/Components/Header";
 
 
 interface NavItemProps {
@@ -135,9 +136,9 @@ const DashboardLayout: React.FC = () => {
   },[])
 
 
-  useEffect(()=>{
-    dispatch(getWaitingroom())
-  },[waitingroom])
+  // useEffect(()=>{
+  //   dispatch(getWaitingroom())
+  // },[waitingroom])
 
 
   
@@ -155,6 +156,7 @@ const DashboardLayout: React.FC = () => {
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,...')] opacity-[0.15] bg-repeat bg-center"></div>
           <div className="absolute top-0 left-0 right-0 h-96 md:bg-gradient-to-b from-blue-50/50 to-transparent"></div>
         </div>
+       
 
         <div className="relative flex min-h-screen">
           {/* Sidebar Toggle Button */}
@@ -335,6 +337,7 @@ const DashboardLayout: React.FC = () => {
 
           {/* Main Content */}
           <main className="flex-1 min-h-screen overflow-y-auto">
+          {/* <Header/> */}
             <div className="container mx-auto p-4 contents ">
               {activeItem === 'Home' && (
                 <>

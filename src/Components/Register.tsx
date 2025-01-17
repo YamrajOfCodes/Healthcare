@@ -14,7 +14,8 @@ import { RegisterFormData, RegisterProps } from '@/types/auth';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
-export default function Register({ show }: RegisterProps) {
+
+export default function Register({ show, onPatientAdded }: RegisterProps) {
   const router = useRouter();
   const [order, setOrder] = useState(1); // Track the order of the sections
   const [isSliding, setIsSliding] = useState(false); // Track sliding animation state
@@ -63,6 +64,7 @@ export default function Register({ show }: RegisterProps) {
           if (res?.payload) {
             toast.success("Registration successful!");
             router.push("/clinic");
+            onPatientAdded?.();
           } else {
             toast.error("Registration failed");
             console.error("Registration failed: No payload returned.");

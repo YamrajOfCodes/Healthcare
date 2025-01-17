@@ -20,7 +20,7 @@ const Allappointment: React.FC = () => {
      const { getappointments }:{getappointments} = useSelector((state:RootState)=>state.Patient);
     //  console.log(getappointments?.appointments);
      
-     const [getallappointments,setallappointments] = useState(getappointments?.appointments);
+     const [getallappointments,setallappointments] = useState<any[]>([]);
      const [search,setsearch] = useState("");
      const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -187,6 +187,13 @@ const Allappointment: React.FC = () => {
         dispatch(getAppointments());
         dispatch(getDoctors());
     }, [dispatch]);
+
+    // Add new useEffect to update getallappointments when getappointments changes
+    useEffect(() => {
+        if (getappointments?.appointments) {
+            setallappointments(getappointments.appointments);
+        }
+    }, [getappointments]);
 
     return (
         <div className="w-full">

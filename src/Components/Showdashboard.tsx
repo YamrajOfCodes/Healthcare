@@ -22,10 +22,25 @@ const Showdashboard: React.FC = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+    if (!isSidebarOpen) {
+      setappointmentSidebar(false);
+    }
   };
 
   const toggleAppointment = () => {
     setappointmentSidebar(!appointmentSidebar);
+    if (!appointmentSidebar) {
+      setIsSidebarOpen(false);
+    }
+  };
+
+  const handleAppointmentAdded = () => {
+    setappointmentSidebar(false);
+  };
+
+  const handlePatientAdded = () => {
+    setIsSidebarOpen(false);
+    dispatch(getallPatients());
   };
 
   return (
@@ -58,23 +73,24 @@ const Showdashboard: React.FC = () => {
 
     
      <div
-  className={` hidden sm:block fixed top-0 right-0 h-full w-2/3 lg:w-1/3 bg-white shadow-xl transform transition-transform duration-300 ${
-    isSidebarOpen ? 'translate-x-0 ' : 'translate-x-full'
+  className={`hidden sm:block fixed top-0 right-0 h-full w-2/3 lg:w-1/3 bg-white shadow-xl transform transition-transform duration-300 overflow-hidden ${
+    isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
   }`}
 >
-  <div className="p-4">
-  <div className='flex justify-between'>
-    <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add Appointment</h2>
-    <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
-            aria-label="Close sidebar"
-          >
-            <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
-          </button>
-  </div>
-    
-   <Register show={false}/>
+  <div className="h-full flex flex-col">
+    <div className='flex justify-between p-4 border-b'>
+      <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer" onClick={toggleAppointment}>Add Appointment</h2>
+      <button
+        onClick={toggleSidebar}
+        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+        aria-label="Close sidebar"
+      >
+        <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
+      </button>
+    </div>
+    <div className="flex-1 overflow-y-auto p-4">
+      <Register show={false} onPatientAdded={handlePatientAdded}/>
+    </div>
   </div>
 </div> 
 
@@ -83,25 +99,24 @@ const Showdashboard: React.FC = () => {
 
 
 <div
-  className={`fixed sm:hidden top-0 right-0 h-full md:w-64 w-full bg-white shadow-xl transform transition-transform duration-300 ${
-    isSidebarOpen ? 'translate-y-0 ' : 'translate-y-full'
+  className={`fixed sm:hidden top-0 right-0 h-full md:w-64 w-full bg-white shadow-xl transform transition-transform duration-300 overflow-hidden ${
+    isSidebarOpen ? 'translate-y-0' : 'translate-y-full'
   }`}
 >
-  <div className="p-4">
-  <div className='flex justify-between'>
-    <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer mb-2" onClick={toggleAppointment}>Add Appointment</h2>
-    <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
-            aria-label="Close sidebar"
-          >
-            <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
-          </button>
-  </div>
-    {/* Add Patient Form */}
- <div >
- <Register show={false}/>
- </div>
+  <div className="h-full flex flex-col">
+    <div className='flex justify-between p-4 border-b'>
+      <h2 className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer" onClick={toggleAppointment}>Add Appointment</h2>
+      <button
+        onClick={toggleSidebar}
+        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group"
+        aria-label="Close sidebar"
+      >
+        <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
+      </button>
+    </div>
+    <div className="flex-1 overflow-y-auto p-4">
+      <Register show={false} onPatientAdded={handlePatientAdded}/>
+    </div>
   </div>
 </div>
 
@@ -130,7 +145,7 @@ const Showdashboard: React.FC = () => {
           </button>
   </div>
     {/* Add Patient Form */}
-   <Appointment show={false}/>
+   <Appointment show={false} onAppointmentAdded={handleAppointmentAdded}/>
   </div>
 </div>
 
@@ -152,7 +167,7 @@ const Showdashboard: React.FC = () => {
           </button>
   </div>
     {/* Add Patient Form */}
-    <Appointment show={false}/>
+    <Appointment show={false} onAppointmentAdded={handleAppointmentAdded}/>
   </div>
 </div>
 

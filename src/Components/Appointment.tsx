@@ -35,11 +35,12 @@ const MedicalIllustration = () => (
 
 // Add proper type for props
 interface AppointmentProps {
-  show?: boolean;
+  show: boolean;
+  onAppointmentAdded?: () => void;
 }
 
 
-const Appointment = ({ show }: AppointmentProps) => {
+const Appointment = ({ show, onAppointmentAdded }: AppointmentProps) => {
   const [time, setTime] = useState<string>("");
   const [aptDate, setAptDate] = useState<string>("");
   const [searchInput, setSearchInput] = useState<string>("");
@@ -145,6 +146,7 @@ const handleInputChange = (e:any) => {
         .unwrap()
         .then(() => {
           toast.success("Appointment created successfully");
+          onAppointmentAdded?.();
           // Consider resetting form here
         })
         .catch((error) => {
