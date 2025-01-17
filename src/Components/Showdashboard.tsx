@@ -33,11 +33,11 @@ const Showdashboard: React.FC = () => {
       <div className="h-full rounded-2xl bg-white/20 backdrop-blur-xl border border-white/20 shadow-xl">
         <div className="p-6">
           <div className="flex justify-between">
-            <p className="text-sm sm:text-lg border font-semibold text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300">
+            <p className="text-sm sm:text-lg border  text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300">
               Recently Added
             </p>
             <p
-              className="text-sm sm:text-lg border font-semibold text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300 cursor-pointer"
+              className="text-sm sm:text-lg border  text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300 cursor-pointer"
               onClick={toggleSidebar}
             >
               Add new Patient

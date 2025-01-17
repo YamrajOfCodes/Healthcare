@@ -1,15 +1,176 @@
 "use client"
-import { getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
-import React, { useEffect } from 'react'
+import { getDoctors, getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { Calendar, Phone, Mail, User, Clock, MapPin, Activity, Hash, Monitor } from 'lucide-react';
+import { Calendar, Phone, Mail, User, Clock, MapPin, Activity, Hash, Monitor, X, Filter } from 'lucide-react';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { AppointmentDetails } from '@/types/appointment';
+import { getAppointments } from '@/Redux/Slices/Patient/patientSlices';
 
 const Allappointment: React.FC = () => {
     const dispatch = useAppDispatch();
     const { waitingroom }: { waitingroom: AppointmentDetails[][] } = useSelector((state: RootState) => state.Doctor);
+     const {doctors} = useSelector((state:RootState)=>state.Doctor)
+
+     const [selectedDoctor, setSelectedDoctor] = useState("All");
+
+     
+     
+     const { getappointments }:{getappointments} = useSelector((state:RootState)=>state.Patient);
+    //  console.log(getappointments?.appointments);
+     
+     const [getallappointments,setallappointments] = useState(getappointments?.appointments);
+     const [search,setsearch] = useState("");
+     const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    const [selectedStatus, setSelectedStatus] = useState("All");
+     const [selectedDate, setSelectedDate] = useState("");
+
+    
+
+
+     const handledoctor = (data: any) => {
+      setSelectedDoctor(data);
+      setSelectedStatus("All");
+      setSelectedDate("");
+      setsearch("");
+      
+      // Reset the input fields
+      if (document.getElementById('patient-name')) {
+        (document.getElementById('patient-name') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('mobile-patient-name')) {
+        (document.getElementById('mobile-patient-name') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('status')) {
+        (document.getElementById('status') as HTMLSelectElement).value = 'All';
+      }
+      if (document.getElementById('mobile-status')) {
+        (document.getElementById('mobile-status') as HTMLSelectElement).value = 'All';
+      }
+      if (document.getElementById('appointment-date')) {
+        (document.getElementById('appointment-date') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('mobile-appointment-date')) {
+        (document.getElementById('mobile-appointment-date') as HTMLInputElement).value = '';
+      }
+    
+      if (data === "All") {
+        setallappointments(getappointments?.appointments);
+        return;
+      }
+      
+      const filteredData = getappointments?.appointments?.filter((element: any) => {
+        return element?.doctor?.name === data;
+      });
+      
+      setallappointments(filteredData);
+    };
+
+
+
+    
+    const handleStatus = (data:any) => {
+      setSelectedStatus(data);
+      setSelectedDoctor("All");
+      setSelectedDate("");
+      setsearch("");
+      
+      // Reset the input fields
+      if (document.getElementById('patient-name')) {
+        (document.getElementById('patient-name') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('mobile-patient-name')) {
+        (document.getElementById('mobile-patient-name') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('doctor')) {
+        (document.getElementById('doctor') as HTMLSelectElement).value = 'All';
+      }
+      if (document.getElementById('mobile-doctor')) {
+        (document.getElementById('mobile-doctor') as HTMLSelectElement).value = 'All';
+      }
+      if (document.getElementById('appointment-date')) {
+        (document.getElementById('appointment-date') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('mobile-appointment-date')) {
+        (document.getElementById('mobile-appointment-date') as HTMLInputElement).value = '';
+      }
+    
+      if (data === "All") {
+        setallappointments(getappointments?.appointments);
+        return;
+      }
+    
+      const filteredData = getappointments?.appointments?.filter((element: any) => {
+        return element?.status === data;
+      });
+      
+      setallappointments(filteredData);
+    };
+    
+
+    const handledate = (date:any) => {
+      setSelectedDate(date);
+      setSelectedDoctor("All");
+      setSelectedStatus("All");
+      setsearch("");
+      
+      // Reset the input fields
+      if (document.getElementById('patient-name')) {
+        (document.getElementById('patient-name') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('mobile-patient-name')) {
+        (document.getElementById('mobile-patient-name') as HTMLInputElement).value = '';
+      }
+      if (document.getElementById('doctor')) {
+        (document.getElementById('doctor') as HTMLSelectElement).value = 'All';
+      }
+      if (document.getElementById('mobile-doctor')) {
+        (document.getElementById('mobile-doctor') as HTMLSelectElement).value = 'All';
+      }
+      if (document.getElementById('status')) {
+        (document.getElementById('status') as HTMLSelectElement).value = 'All';
+      }
+      if (document.getElementById('mobile-status')) {
+        (document.getElementById('mobile-status') as HTMLSelectElement).value = 'All';
+      }
+    
+      if (date === "") {
+        setallappointments(getappointments?.appointments);
+        return;
+      }
+    
+      const filteredData = getappointments?.appointments?.filter((element: any) => {
+        const spliceDate = element?.appointment_date.slice(0,10);
+        if(spliceDate === date){
+          return element;
+        }
+      });
+      
+      setallappointments(filteredData);
+    };
+   
+
+    const handleSearch = (patientName: string) => {
+      setsearch(patientName); // Update the search state with the input value
+    
+      // Check if the search input is empty
+      if (!patientName.trim()) {
+        // If the search input is empty, reset the appointments to the original list
+        setallappointments(getappointments?.appointments);
+        return;
+      }
+    
+      // Perform case-insensitive filtering based on the patient's name
+      const filteredData = getallappointments?.filter((element: any) =>
+        element?.patient?.name.toLowerCase().startsWith(patientName.toLowerCase())
+      );
+    
+      setallappointments(filteredData); // Update the filtered appointments
+    };
+    
+    
     
     const getStatusColor = (status: string): string => {
         switch (status.toLowerCase()) {
@@ -23,13 +184,154 @@ const Allappointment: React.FC = () => {
     };
 
     useEffect(() => {
-        dispatch(getWaitingroom());
+        dispatch(getAppointments());
+        dispatch(getDoctors());
     }, [dispatch]);
 
     return (
         <div className="w-full">
             <div className="w-full px-4 py-8">
                 <h1 className="text-2xl font-bold mb-6 text-gray-800">Appointments</h1>
+                     <div className="w-full">
+      {/* Filters Section */}
+      <div className="lg:hidden w-full flex justify-between items-center bg-white p-4 rounded-lg shadow-sm mb-4">
+        <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
+        <button
+          onClick={() => setIsFilterOpen(!isFilterOpen)}
+          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+        >
+          {isFilterOpen ? <X size={20} /> : <Filter size={20} />}
+          {isFilterOpen ? 'Close' : 'Filters'}
+        </button>
+      </div>
+
+      {/* Mobile Filters - Shown when filter button is clicked */}
+      <div className={`lg:hidden ${isFilterOpen ? 'block' : 'hidden'} mb-6 bg-white p-4 rounded-lg shadow-md`}>
+        <form className="space-y-4">
+          <div>
+            <label htmlFor="mobile-patient-name" className="block text-sm font-medium text-gray-700 mb-1">
+              Patient Name
+            </label>
+            <input
+              type="text"
+              id="mobile-patient-name"
+              placeholder="Enter patient name"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="mobile-doctor" className="block text-sm font-medium text-gray-700 mb-1">
+              Doctor
+            </label>
+            <select
+              id="mobile-doctor"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handledoctor(e.target.value)}
+            >
+              <option value="All">All</option>
+              {doctors?.[0]?.map((doctor, index) => (
+                <option key={index} value={doctor.name}>
+                  {doctor.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="mobile-status" className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              id="mobile-status"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handleStatus(e.target.value)}
+            >
+              <option value="All">All</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="mobile-appointment-date" className="block text-sm font-medium text-gray-700 mb-1">
+              Appointment Date
+            </label>
+            <input
+              type="date"
+              id="mobile-appointment-date"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handledate(e.target.value)}
+            />
+          </div>
+        </form>
+      </div>
+
+      {/* Desktop Filters - Hidden on mobile, shown on large screens */}
+      <div className="hidden lg:block mb-6 bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Filters</h2>
+        <form className="grid grid-cols-4 gap-4">
+          <div>
+            <label htmlFor="patient-name" className="block text-sm font-medium text-gray-700 mb-1">
+              Patient Name
+            </label>
+            <input
+              type="text"
+              id="patient-name"
+              placeholder="Enter patient name"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="doctor" className="block text-sm font-medium text-gray-700 mb-1">
+              Doctor
+            </label>
+            <select
+              id="doctor"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handledoctor(e.target.value)}
+            >
+              <option value="All">All</option>
+              {doctors?.[0]?.map((doctor, index) => (
+                <option key={index} value={doctor.name}>
+                  {doctor.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              id="status"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handleStatus(e.target.value)}
+            >
+              <option value="All">All</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="appointment-date" className="block text-sm font-medium text-gray-700 mb-1">
+              Appointment Date
+            </label>
+            <input
+              type="date"
+              id="appointment-date"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none transition-shadow"
+              onChange={(e) => handledate(e.target.value)}
+            />
+          </div>
+        </form>
+      </div>
+    </div>
 
                 {/* Table for larger screens */}
                 <div className="hidden sm:block overflow-x-auto shadow-lg rounded-lg">
@@ -43,7 +345,7 @@ const Allappointment: React.FC = () => {
                                 <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Phone</th>
                                 <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Doctor</th>
                                 <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Mode</th>
-                                <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Specialization</th>
+                                {/* <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Specialization</th> */}
                                 <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Date</th>
                                 <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Type</th>
                                 <th className="py-4 px-6 text-left font-medium uppercase tracking-wide">Visit</th>
@@ -52,22 +354,22 @@ const Allappointment: React.FC = () => {
                         </thead>
                         {/* Table Body */}
                         <tbody className="divide-y divide-gray-200">
-                            {waitingroom[0]?.map((appointment, index) => (
+                            {getallappointments?.map((appointment, index) => (
                                 <tr
                                     key={appointment.id}
                                     className={`${
                                         index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
                                     } hover:bg-indigo-50 transition duration-200`}
                                 >
-                                    <td className="py-4 px-6 text-gray-800">{appointment?.appointment?.id}</td>
+                                    <td className="py-4 px-6 text-gray-800">{appointment?.id}</td>
                                     <td className="py-4 px-6 text-gray-800">{appointment?.patient?.name}</td>
                                     <td className="py-4 px-6 text-gray-600">{appointment?.patient?.email}</td>
                                     <td className="py-4 px-6 text-gray-600">{appointment?.patient?.phone}</td>
                                     <td className="py-4 px-6 text-gray-800">{appointment?.doctor?.name}</td>
-                                    <td className="py-4 px-6 text-gray-800">{appointment?.appointment?.mode}</td>
-                                    <td className="py-4 px-6 text-gray-600">{appointment?.doctor?.specialization}</td>
-                                    <td className="py-4 px-6 text-gray-800">{appointment?.appointment?.appointment_date}</td>
-                                    <td className="py-4 px-6 text-gray-800">{appointment?.appointment?.type}</td>
+                                    <td className="py-4 px-6 text-gray-800">{appointment?.mode}</td>
+                                    {/* <td className="py-4 px-6 text-gray-600">{appointment?.doctor?.specialization}</td> */}
+                                    <td className="py-4 px-6 text-gray-800">{appointment?.appointment_date.slice(0,10)}</td>
+                                    <td className="py-4 px-6 text-gray-800">{appointment?.type}</td>
                                     <td className="py-4 px-6 text-gray-600">{appointment?.patient?.visit_count}</td>
                                     <td className="py-4 px-6">
                                         <span
@@ -90,7 +392,7 @@ const Allappointment: React.FC = () => {
 
                 {/* Cards for smaller screens */}
                 <div className="sm:hidden space-y-6">
-                    {waitingroom[0]?.map((appointment) => (
+                    {getallappointments?.map((appointment) => (
                         <div
                             key={appointment.id}
                             className="relative overflow-hidden bg-white rounded-2xl shadow-lg border border-gray-100 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
@@ -107,7 +409,7 @@ const Allappointment: React.FC = () => {
                                 <div className="flex items-center space-x-2">
                                     <Hash className="w-5 h-5" />
                                     <h2 className="text-lg font-bold">
-                                        {appointment?.appointment?.id}
+                                        {appointment?.id}
                                     </h2>
                                 </div>
                             </div>
@@ -145,7 +447,7 @@ const Allappointment: React.FC = () => {
                                         <Calendar className="w-4 h-4 text-gray-500" />
                                         <div>
                                             <p className="text-sm font-medium text-gray-600">Date</p>
-                                            <p className="text-sm text-gray-900">{appointment?.appointment?.appointment_date}</p>
+                                            <p className="text-sm text-gray-900">{appointment?.appointment_date}</p>
                                         </div>
                                     </div>
 
@@ -153,7 +455,7 @@ const Allappointment: React.FC = () => {
                                         <Clock className="w-4 h-4 text-gray-500" />
                                         <div>
                                             <p className="text-sm font-medium text-gray-600">Type</p>
-                                            <p className="text-sm text-gray-900">{appointment?.appointment?.type}</p>
+                                            <p className="text-sm text-gray-900">{appointment?.type}</p>
                                         </div>
                                     </div>
 
@@ -161,7 +463,7 @@ const Allappointment: React.FC = () => {
                                         <Monitor className="w-4 h-4 text-gray-500" />
                                         <div>
                                             <p className="text-sm font-medium text-gray-600">Mode</p>
-                                            <p className="text-sm text-gray-900">{appointment?.appointment?.mode}</p>
+                                            <p className="text-sm text-gray-900">{appointment?.mode}</p>
                                         </div>
                                     </div>
 

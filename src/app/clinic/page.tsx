@@ -99,7 +99,7 @@ const DashboardLayout: React.FC = () => {
   const [activeItem, setActiveItem] = useState<string>('Home')
   const [isSubNavOpen, setIsSubNavOpen] = useState<boolean>(true);
   const {allpatients} = useSelector((state:RootState)=>state.Patient)
-  console.log("data",allpatients)
+  // console.log("data",allpatients)
 
   const dispatch = useAppDispatch();
 
@@ -115,12 +115,12 @@ const DashboardLayout: React.FC = () => {
     }
 })
 
-   console.log("newpatients",newpatients);
+  //  console.log("newpatients",newpatients);
    
    const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
    const { complete } = useSelector((state:RootState)=>state.Patient)
-  //  console.log(waitingroom[0].length);
-  console.log("com",complete);
+  //  console.log(waitingroom[0]);
+  // console.log("com",complete);
   
    
     let waitingpatients_data =  waitingroom?.[0]?.length || "0"
@@ -133,6 +133,11 @@ const DashboardLayout: React.FC = () => {
     dispatch(getallPatients())
     dispatch(getWaitingroom())
   },[])
+
+
+  useEffect(()=>{
+    dispatch(getWaitingroom())
+  },[waitingroom])
 
 
   
@@ -232,9 +237,10 @@ const DashboardLayout: React.FC = () => {
                       icon={Users} 
                       label="Patients" 
                       isActive={activeItem === 'Patients'}
-                      onClick={() => setIsSubNavOpen(!isSubNavOpen)}
+                      onClick={() =>{setIsSubNavOpen(!isSubNavOpen),setActiveItem("Patients")}}
                       hasSubNav
                       notification={true}
+                      
                     />
                     
                     {isSubNavOpen && (
@@ -265,7 +271,7 @@ const DashboardLayout: React.FC = () => {
                       icon={Users} 
                       label="Appointments" 
                       isActive={activeItem === 'appointments'}
-                      onClick={togglesubSidebar}
+                      onClick={()=>{togglesubSidebar(),setActiveItem("Appointments")}}
                       hasSubNav
                       notification={true}
                     />
@@ -329,7 +335,7 @@ const DashboardLayout: React.FC = () => {
 
           {/* Main Content */}
           <main className="flex-1 min-h-screen overflow-y-auto">
-            <div className="container mx-auto p-4">
+            <div className="container mx-auto p-4 contents ">
               {activeItem === 'Home' && (
                 <>
                   <div className="cards bg-white/20 flex justify-center gap-5 sm:flex-row flex-wrap rounded-md shadow-lg p-4">

@@ -130,7 +130,7 @@ export default function Register({ show }: RegisterProps) {
           <div className="w-full max-w-md space-y-8">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-bold text-gray-900 capitalize">{isSliding? "Login" : "Patient Registration"}</h2>
-              <p className="text-gray-500">Please enter your details to continue</p>
+              <p className="text-gray-500">Please enter patient details to continue</p>
             </div>
 
             {
@@ -266,7 +266,7 @@ export default function Register({ show }: RegisterProps) {
         type="submit"
         className="w-full py-4 bg-gradient-to-r from-green-600 to-green-600 text-white font-medium rounded-xl hover:from-blue-700 hover:to-purple-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200 transform hover:-translate-y-0.5"
       >
-        Register
+       Add Patient
       </button>
     </form>
             }

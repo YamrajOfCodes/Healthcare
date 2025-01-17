@@ -97,7 +97,7 @@ const Transactions: React.FC = () => {
         <>
       
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6 h-full -ml-5 sm:-ml-0  ">
-          <div className=" mx-auto hidden lg:block">
+          <div className=" mx-auto hidden lg:block ">
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-white rounded-lg shadow-lg p-6">
@@ -222,7 +222,7 @@ const Transactions: React.FC = () => {
           <div className="min-h-screen w-[100vw] bg-gray-50 lg:hidden">
 {/* Header Stats Scroll Container */}
 <div className="bg-white shadow-sm overflow-x-auto ">
-  <div className="flex px-2 gap-2 space-x-4 min-w-max flex-col sm:flex-row ">
+  <div className="flex px-2 gap-2 space-x-4 min-w-max flex-col sm:flex-row -ml-4 ">
     <div className="w-full ml-4 sm:w-40 bg-blue-50 rounded-lg p-4">
       <p className="text-sm text-gray-600">Today's Income</p>
       <p className="text-lg font-bold text-green-600">$1,250.00</p>

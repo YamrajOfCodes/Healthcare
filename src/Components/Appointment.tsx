@@ -38,6 +38,7 @@ interface AppointmentProps {
   show?: boolean;
 }
 
+
 const Appointment = ({ show }: AppointmentProps) => {
   const [time, setTime] = useState<string>("");
   const [aptDate, setAptDate] = useState<string>("");
