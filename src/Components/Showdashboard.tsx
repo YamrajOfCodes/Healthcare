@@ -7,6 +7,7 @@ import Register from './Register';
 import { X, XCircle, XCircleIcon } from "lucide-react";
 import Appointment from './Appointment';
 import { Patient } from '@/types/patient';
+import { getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -36,6 +37,8 @@ const Showdashboard: React.FC = () => {
 
   const handleAppointmentAdded = () => {
     setappointmentSidebar(false);
+    dispatch(getallPatients());
+    dispatch(getWaitingroom());
   };
 
   const handlePatientAdded = () => {
