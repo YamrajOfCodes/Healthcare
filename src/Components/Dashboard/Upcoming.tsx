@@ -1,69 +1,146 @@
 import React from 'react'
-import { Calendar, Clock, Construction } from 'lucide-react';
+import { Calendar, Clock, User, MapPin, Phone } from 'lucide-react';
 
 const Upcoming = () => {
+
+  const appointments = [
+    {
+      id: 1,
+      patientName: "Sarah Johnson",
+      date: "January 19, 2025",
+      time: "10:30 AM",
+      doctor: "Dr. Michael Chen",
+      department: "Cardiology",
+      location: "Building A, Room 204",
+      status: "Confirmed",
+      phone: "(555) 123-4567"
+    },
+    {
+      id: 2,
+      patientName: "Robert Williams",
+      date: "January 20, 2025",
+      time: "2:15 PM",
+      doctor: "Dr. Emily Martinez",
+      department: "Orthopedics",
+      location: "Building B, Room 105",
+      status: "Pending",
+      phone: "(555) 987-6543"
+    },
+    {
+      id: 3,
+      patientName: "David Brown",
+      date: "January 21, 2025",
+      time: "11:00 AM",
+      doctor: "Dr. Sarah Wilson",
+      department: "Neurology",
+      location: "Building A, Room 310",
+      status: "Confirmed",
+      phone: "(555) 456-7890"
+    }
+  ];
   return (
     <div>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-      <div className="max-w-3xl mx-auto mt-10 bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="p-8 text-center">
-          {/* Top Section with Animated Icons */}
-          <div className="relative h-48 mb-6">
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="relative">
-                <Calendar className="h-24 w-24 text-blue-500 animate-pulse" />
-                <Clock className="h-16 w-16 text-indigo-400 absolute -right-8 -bottom-4 animate-bounce" />
-                <Construction className="h-16 w-16 text-purple-400 absolute -left-8 -bottom-4 animate-bounce delay-100" />
+       <div className="p-6 max-w-7xl mx-auto bg-gray-50">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">Upcoming Appointments</h2>
+        <p className="text-gray-600">Manage your scheduled appointments and consultations</p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {appointments.map((appointment) => (
+          <div 
+            key={appointment.id} 
+            className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+          >
+            {/* Header */}
+            <div className={`px-6 py-4 border-b ${
+              appointment.status === 'Confirmed' ? 'bg-emerald-50' : 'bg-amber-50'
+            }`}>
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {appointment.department}
+                </h3>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  appointment.status === 'Confirmed' 
+                    ? 'bg-emerald-100 text-emerald-800' 
+                    : 'bg-amber-100 text-amber-800'
+                }`}>
+                  {appointment.status}
+                </span>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-4">
+              {/* Patient Info */}
+              <div className="flex items-start gap-3">
+                <div className="mt-1">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Patient</p>
+                  <p className="font-medium text-gray-900">{appointment.patientName}</p>
+                </div>
+              </div>
+
+              {/* Date & Time Group */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <Calendar className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Date</p>
+                    <p className="font-medium text-gray-900">{appointment.date}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="mt-1">
+                    <Clock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Time</p>
+                    <p className="font-medium text-gray-900">{appointment.time}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Doctor Info */}
+              <div className="flex items-start gap-3">
+                <div className="mt-1">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Doctor</p>
+                  <p className="font-medium text-gray-900">{appointment.doctor}</p>
+                </div>
+              </div>
+
+              {/* Location */}
+              <div className="flex items-start gap-3">
+                <div className="mt-1">
+                  <MapPin className="h-5 w-5 text-gray-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Location</p>
+                  <p className="font-medium text-gray-900">{appointment.location}</p>
+                </div>
+              </div>
+
+              {/* Contact */}
+              <div className="flex items-start gap-3">
+                <div className="mt-1">
+                  <Phone className="h-5 w-5 text-gray-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Contact</p>
+                  <p className="font-medium text-gray-900">{appointment.phone}</p>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Main Content */}
-          <div className="space-y-6">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-              Coming Soon!
-            </h2>
-            
-            <p className="text-xl text-gray-600 max-w-lg mx-auto">
-              We're working hard to bring you an amazing appointment scheduling experience.
-            </p>
-
-            {/* Feature Preview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-              <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                <div className="h-10 w-10 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Easy Scheduling</h3>
-                <p className="text-sm text-gray-600 mt-2">Book appointments with just a few clicks</p>
-              </div>
-
-              <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                <div className="h-10 w-10 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Instant Confirmations</h3>
-                <p className="text-sm text-gray-600 mt-2">Get immediate booking confirmations</p>
-              </div>
-
-              <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                <div className="h-10 w-10 mx-auto mb-3 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <Construction className="h-6 w-6 text-indigo-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Smart Reminders</h3>
-                <p className="text-sm text-gray-600 mt-2">Never miss an appointment again</p>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="max-w-md mx-auto mt-12">
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-3/4 animate-pulse"></div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">75% Complete</p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
     </div>

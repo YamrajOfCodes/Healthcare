@@ -193,11 +193,11 @@ const DashboardLayout: React.FC = () => {
                     </div>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold bg-clip-text text-transparent 
+                    <h2 className="text-xl font-bold bg-clip-text text-transparent 
                       bg-gradient-to-r from-violet-600 to-blue-600">
-                      Healthcare
+                      VedgarbhaAyurveda
                     </h2>
-                    <p className="text-sm text-gray-500">Admin Dashboard</p>
+                    <p className="text-sm text-gray-500">Doctor Dashboard</p>
                   </div>
                   <X onClick={toggleSidebar} 
                     className="md:hidden ml-auto cursor-pointer hover:text-blue-500 transition-all" />
@@ -220,8 +220,8 @@ const DashboardLayout: React.FC = () => {
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white"></div>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-800">Dr. Sarah Wilson</h3>
-                      <p className="text-xs text-gray-500">Head Physician</p>
+                      <h3 className="font-medium text-gray-800">Dr. Pallavi Chindhe</h3>
+                      <p className="text-xs text-gray-500">Ayurveda Gynaecologist</p>
                     </div>
                   </div>
                 </div>
