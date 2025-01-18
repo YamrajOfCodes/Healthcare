@@ -19,7 +19,7 @@ import Appointment from "./Appointment";
 
 const ModernNavbar = () => {
   const { allpatients } = useSelector((state: RootState) => state.Patient);
-  console.log(allpatients);
+  // console.log(allpatients);
   const [search, setsearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [patient, setpatient] = useState(allpatients);
@@ -62,55 +62,54 @@ const ModernNavbar = () => {
 
   return (
     <>
-      <nav className="w-full z-[100] top-0 ">
-        <div className="bg-white/70 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-          <div className="max-w-7xl mx-auto">
-            <div className="px-4 sm:px-6">
-              <div className="flex h-20 items-center justify-between">
-                {/* Left Section - Search */}
-                <div className="flex items-center gap-6">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search patients..."
-                      value={searchTerm}
-                      className="pl-10 pr-4 py-2.5 w-[200px] sm:w-[320px] rounded-xl border border-gray-100 
-                               text-[15px] bg-white focus:outline-none focus:ring-1 
-                               focus:ring-gray-200 focus:border-gray-200"
-                      onChange={(e) => handlesearch(e.target.value)}
-                      onFocus={() => setsearch(true)}
-                      onBlur={() => setTimeout(() => setsearch(false), 200)}
-                    />
+     <div className="relative flex justify-between px-4 py-3 bg-white/50">
+  <input
+    type="text"
+    placeholder="Search patients..."
+    value={searchTerm}
+    className="pl-10 pr-4 py-2.5 w-[200px] sm:w-[320px] rounded-xl border border-gray-100 
+             text-[15px] bg-white focus:outline-none focus:ring-1 
+             focus:ring-gray-200 focus:border-gray-200"
+    onChange={(e) => handlesearch(e.target.value)}
+    onFocus={() => setsearch(true)}
+    onBlur={() => setTimeout(() => setsearch(false), 200)}
+    aria-label="Search patients"
+    aria-expanded={search ? "true" : "false"}
+    aria-haspopup="listbox"
+  />
 
-                    {/* Search Results Dropdown */}
-                    {/* {search && patient && (
-                      <div className="absolute mt-1 w-full bg-white rounded-xl border border-gray-100 shadow-lg z-[9999]">
-                        <div className="max-h-[280px] overflow-y-auto py-2">
-                          {patient.length > 0 ? (
-                            patient.map((element, index) => (
-                              <div
-                                key={index}
-                                className="px-4 py-2.5 hover:bg-gray-50/50 cursor-pointer transition-colors"
-                              >
-                                <p className="text-[15px] text-gray-600">
-                                  {element.name}
-                                </p>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="px-4 py-2.5 text-gray-500">
-                              No patients found
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )} */}
-                  </div>
-                </div>
+  {/* Search Results Dropdown */}
+  {search && patient && (
+    <div
+      className="absolute left-2 mt-2 w-1/4 top-14  bg-white rounded-xl border border-gray-100 shadow-lg z-50"
+      role="listbox"
+      aria-live="polite"
+    >
+      <div className="max-h-[280px] overflow-y-auto py-2">
+        {patient.length > 0 ? (
+          patient.map((element, index) => (
+            <div
+              key={index}
+              className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors"
+              role="option"
+              tabIndex={0}
+            >
+              <p className="text-[15px] text-gray-600">{element.name}</p>
+            </div>
+          ))
+        ) : (
+          <div className="px-4 py-2.5 text-gray-500" role="option">
+            No patients found
+          </div>
+        )}
+      </div>
 
-                {/* Center Section - Action Buttons */}
-                <div className="flex items-center gap-2 sm:gap-4">
+      
+    </div>
+  )}
+
+
+<div className="flex items-center gap-2 sm:gap-4">
                   <button
                     onClick={handleAddPatient}
                     className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-blue-600 text-white 
@@ -175,11 +174,8 @@ const ModernNavbar = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+   </div>
+
 
       {/* Patient Registration Sidebar */}
       <div

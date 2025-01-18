@@ -17,6 +17,9 @@ const Showdashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [appointmentSidebar, setappointmentSidebar] = useState(false);
 
+  console.log(allpatients);
+  
+
   useEffect(() => {
     dispatch(getallPatients());
   }, [dispatch]);
@@ -62,7 +65,7 @@ const Showdashboard: React.FC = () => {
                 key={profile.id}
                 className="groupshadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105 cursor-pointer flex justify-center sm:justify-start w-full"
               >
-                <ProfileCard {...profile} entryTime={profile.created_at ?? new Date().toISOString()} updated_at={profile.updated_at ?? new Date().toISOString()} />
+                <ProfileCard {...profile} id={profile.id} entryTime={profile.created_at ?? new Date().toISOString()} updated_at={profile.updated_at ?? new Date().toISOString()} />
               </div>
             ))}
           </div>

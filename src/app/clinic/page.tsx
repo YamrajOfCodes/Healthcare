@@ -23,6 +23,7 @@ import { getallPatients } from "@/Redux/Slices/Patient/patientSlices";
 import { getWaitingroom } from "@/Redux/Slices/Admin/adminSlice";
 import Header from "@/Components/Header";
 import Upcoming from "@/Components/Dashboard/Upcoming";
+import ProfileCard from "@/Components/Profile";
 
 
 interface NavItemProps {
@@ -123,8 +124,10 @@ const DashboardLayout: React.FC = () => {
    const { complete } = useSelector((state:RootState)=>state.Patient)
   //  console.log(waitingroom[0]);
   // console.log("com",complete);
-  
-   
+
+  const [healthchart,sethealthchart] = useState(false)
+
+ 
     let waitingpatients_data =  waitingroom?.[0]?.length || "0"
     let newPatients_data = newpatients?.length || 0 
     let oldpatients_data = oldpatient?.length || 0
@@ -337,7 +340,7 @@ const DashboardLayout: React.FC = () => {
                     <StatusCard status="Follow-up" number={oldpatients_data} />
                     <StatusCard status="Out" number={outpatient_data} />
                   </div>
-                  <div className="dash w-full">
+                  <div className="dash w-full ">
                     <Showdashboard />
                   </div>
                 </>
@@ -358,10 +361,12 @@ const DashboardLayout: React.FC = () => {
             </div>
           </main>
 
+  
+
           {/* Mobile Overlay */}
           {isOpen && (
             <div
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+              className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden `}
               onClick={toggleSidebar}
             />
           )}

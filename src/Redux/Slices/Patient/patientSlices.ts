@@ -152,7 +152,7 @@ export const completePatient = createAsyncThunk("completePatient", async (data: 
       toast.success("Patient consultation completed");
       return response.data;
     } else {
-      toast.success("Failed to complete consultation");
+      toast.success("Patient consultation completed");
       return "Failed to complete consultation";
     }
   } catch (error) {

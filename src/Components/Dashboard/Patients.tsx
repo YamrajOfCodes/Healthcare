@@ -2,7 +2,7 @@
 import { deletePatient, getallPatients } from '@/Redux/Slices/Patient/patientSlices';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Edit2, Search, Trash2, Users } from 'lucide-react';
+import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Edit2, Notebook, Search, Trash2, Users } from 'lucide-react';
 import PatientEditForm from './EditPatient';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
@@ -117,7 +117,7 @@ const Patients: React.FC = () => {
                                     {profile.visit_count}
                                   </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-10">
                                   <button
                                     className="text-blue-600 hover:text-blue-900 inline-flex items-center space-x-1"
                                     onClick={() => handleEditPatient(profile)}
@@ -133,8 +133,13 @@ const Patients: React.FC = () => {
                                       setselectedpatient(profile?.id)
                                     }}>Delete</span>
                                   </button>
+                                  <button className="text-pink-600 hover:text-red-900 inline-flex items-center space-x-1">
+                                    <Notebook className="h-4 w-4" />
+                                    {/* <span onClick={()=>{handledeletepatient(profile.id)}}>Delete</span> */}
+                                    <span>Prescription</span>
+                                  </button>
                                 </td>
-
+                                 
                               </tr >
 
                             ))}

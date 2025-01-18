@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { User, FileText, Activity, Clock, MoreVertical, Phone, MapPin, Shield } from 'lucide-react';
 import EditPatient from './Dashboard/EditPatient';
 import { ProfileProps } from '@/types/patient';
+import Link from 'next/link';
 
 const ProfileCard: React.FC<ProfileProps> = ({
   name,
@@ -13,10 +14,14 @@ const ProfileCard: React.FC<ProfileProps> = ({
   gender,
   age,
   addedBy,
-  visits
+  visits,
+  id,
 }) => {
   const [open, setOpen] = useState(false);
   const [redirected, setredirected] = useState(false);
+  const [fullcard,setfullcard] = useState(false)
+
+  
 
   let entryyear = entryTime.slice(0,4);
   let entrymonth:any = entryTime.slice(5,7)
@@ -73,6 +78,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
 
 {/* For big screens */}
 
+
 <div 
       className="w-full max-w-4xl bg-gradient-to-br from-pink-100 to-pink-50 border border-gray-400 rounded-2xl shadow-lg p-8 hidden xl:block
                  backdrop-blur-xl border border-white/20 transition-all duration-500 
@@ -91,9 +97,11 @@ const ProfileCard: React.FC<ProfileProps> = ({
           {/* Patient Details */}
           <div className="min-w-0 flex-1 space-y-2">
             <div className="flex items-center gap-2">
+            <Link href={`/profile/${id}`}>
               <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 truncate">
                {name}
               </h2>
+              </Link>
               <Shield className="h-4 w-4 text-blue-500 shrink-0" />
             </div>
             <div className="space-y-1">
@@ -132,8 +140,8 @@ const ProfileCard: React.FC<ProfileProps> = ({
             
             <button className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl 
                            shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 
-                           transition-all duration-300 hover:-translate-y-0.5">
-              <div className="flex items-center gap-2">
+                           transition-all duration-300 hover:-translate-y-0.5" > 
+              <div className="flex items-center gap-2" >
                 <Activity className="h-4 w-4" />
                 <span>Health Chart</span>
               </div>
@@ -142,6 +150,11 @@ const ProfileCard: React.FC<ProfileProps> = ({
         </div>
       </div>
     </div>
+
+    {/* <div className={`h-full fixed right-0 w- bg-blue-200 ${fullcard? 'translate-x-0' : 'translate-x-full'} transition-transform duration-200`} onClick={()=>{setfullcard(false)}}>
+
+    </div> */}
+
 
 {/* For sma screens */}
     <div 
