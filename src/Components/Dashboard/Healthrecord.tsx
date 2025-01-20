@@ -86,7 +86,7 @@ const HealthChartForm = () => {
     const letestdata = {
       sliceId,
       formData,
-      date:dates
+  
     };
   
     console.log(letestdata);
