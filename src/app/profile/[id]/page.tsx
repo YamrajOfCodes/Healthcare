@@ -40,6 +40,10 @@ const page = () => {
         // Set the filtered data to patients state
         setPatient(data);
         console.log("Filtered Data:", data);
+
+        const letestdata = data?.filter((element)=>{
+           
+        })
       }
     };
 
@@ -84,20 +88,54 @@ const page = () => {
         //  console.log("Upcoming Appointments:", upcominappointments); // Log the filtered results
          setdata(upcominappointments); // Update the state
 
-         
-         console.log(data);
-         
-            const individual = data?.filter((element)=>{
-                console.log(element);
-                
-                if(element.id == id){
-                    return element
-                }
-            })
-            console.log("individual",individual);
             
-         
        };
+
+      
+       console.log(data);
+
+       const datass =[];
+       let currentdata =[];
+       const [origionaldata,setorigionaldata] = useState([]);
+
+      const handleData = ()=>{
+       
+          const letestdata = data?.filter((elements)=>{
+            
+            let newdata =   patients?.filter((element)=>{
+                if(elements.id == element.id){
+                  console.log(elements.id,element.id);
+                  
+                  datass.push(element)
+                }
+              })
+            //  console.log(newdata);
+             
+              return newdata
+              
+            })
+
+            console.log();
+            
+
+            currentdata = datass?.filter((element)=>{
+              console.log(element.patient_id,id);
+              
+               if(element.patient_id == Number(id)){
+                return element
+               }
+            })
+
+            console.log(currentdata);
+            setorigionaldata(currentdata)
+            
+        
+        
+      }
+
+      
+             
+       
        
        
 
@@ -113,12 +151,14 @@ const page = () => {
         filterpatient();
         setLoading(false); // Set loading to false once the appointments are fetched and filtered
         handleupcoming();
+        
       }
     }, [getappointments]);
     
     // Effect to log patients whenever the state updates
     useEffect(() => {
       console.log("Updated Patients:", patients);
+      handleData();
     }, [patients]);
     
     
@@ -263,15 +303,15 @@ const page = () => {
                 </div>
                 <div className="space-y-4">
                  {
-                    data?.length>0? <> {data?.map((appointment, index) => (
+                    origionaldata?.length>0? <> {origionaldata?.map((appointment, index) => (
                         <div key={index} className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                           <div className="h-10 w-10 rounded-xl bg-green-100 flex items-center justify-center">
                             <Clock className="h-5 w-5 text-green-600" />
                           </div>
                           <div>
-                          <p className="font-semibold text-gray-800">{appointment?.doctor}</p>
-                            <p className="text-sm text-gray-500">{appointment?.time}</p>
-                            <p className="text-sm text-gray-400">{appointment.date}</p>
+                          <p className="font-semibold text-gray-800">{appointment?.doctor?.name}</p>
+                            <p className="text-sm text-gray-500">{appointment?.appointment_date.slice(10,16)}</p>
+                            <p className="text-sm text-gray-400">{appointment.appointment_date.slice(0,10)}</p>
                           </div>
                         </div>
                       ))}</> : "No upcoming Appointments"

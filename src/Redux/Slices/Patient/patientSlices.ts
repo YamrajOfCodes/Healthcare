@@ -5,8 +5,10 @@ import {
   deletePatientsAPI, 
   getPatientAppointmentAPI, 
   getPatientsAPI, 
+  HealthrecordsAPI, 
   PatientAPI, 
   patientPrescAPI, 
+  transactionsAPI, 
   updatePatientsAPI 
 } from "../../../APIS/Patient/PatientAPI";
 import toast from "react-hot-toast";
@@ -21,11 +23,13 @@ const initialState: PatientState = {
   update: [],
   complete: [],
   deletepatient: [],
+  healthrecord:[],
   getappointments: {
     appointments: null,
     error: null
   },
-  prescriptions: []
+  prescriptions: [],
+  transactions:[]
 };
 
 
@@ -161,6 +165,44 @@ export const completePatient = createAsyncThunk("completePatient", async (data: 
   }
 });
 
+export const Healthrecord = createAsyncThunk("HealthrecordsAPI",async(data:any)=>{
+  console.log(data);
+  
+  try {
+    const response = await HealthrecordsAPI(data);
+    console.log(response);
+    
+    if(response.status==200){
+      toast.success("health record is created");
+      return response.data
+    }else{
+      toast.error("error while adding record",response);
+      return response.data
+    }
+  } catch (error) {
+    console.log("error while adding record",error);
+    
+  }
+})
+
+
+
+export const Transactionn = createAsyncThunk("Transactions",async()=>{
+  
+  try {
+    const response = await transactionsAPI();
+    
+    if(response.status==200){
+      return response.data
+    }else{
+      return response.data
+    }
+  } catch (error) {
+    console.log("error while fetching transactions",error);
+    
+  }
+})
+
 // Create the slice
 export const PatientSlice = createSlice({
   name: "patient",
@@ -268,6 +310,33 @@ export const PatientSlice = createSlice({
         state.complete = [action.payload];
       })
       .addCase(completePatient.rejected, (state, action) => {
+        state.loader = false;
+        state.error = action.error.message || null;
+      })
+
+      // HealthRecord
+
+      .addCase(Healthrecord.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(Healthrecord.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loader = false;
+        state.healthrecord = [action.payload];
+      })
+      .addCase(Healthrecord.rejected, (state, action) => {
+        state.loader = false;
+        state.error = action.error.message || null;
+      })
+      // Transactions
+
+      .addCase(Transactionn.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(Transactionn.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loader = false;
+        state.transactions = [action.payload];
+      })
+      .addCase(Transactionn.rejected, (state, action) => {
         state.loader = false;
         state.error = action.error.message || null;
       });

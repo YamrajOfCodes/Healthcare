@@ -34,3 +34,11 @@ export const patientPrescAPI = async(data,header)=>{
 export const CompletePatientAPI = async(data,header)=>{
     return await commonrequest("PATCH",`${BASE_URL}/api/waiting-rooms/${data}/complete`,data,header,"");
 }
+
+export const HealthrecordsAPI = async(data,header)=>{
+    return await commonrequest("POST",`${BASE_URL}/api/patients/${data.sliceId}/health-records`,data.formData,header,"");
+}
+
+export const transactionsAPI = async(data,header)=>{
+    return await commonrequest("GET",`${BASE_URL}/api/transactions`,"",header,"");
+}

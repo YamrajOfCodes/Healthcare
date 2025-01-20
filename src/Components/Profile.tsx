@@ -16,6 +16,8 @@ const ProfileCard: React.FC<ProfileProps> = ({
   addedBy,
   visits,
   id,
+  onOPDClick,
+  onHealthClick
 }) => {
   const [open, setOpen] = useState(false);
   const [redirected, setredirected] = useState(false);
@@ -129,7 +131,9 @@ const ProfileCard: React.FC<ProfileProps> = ({
           
           {/* OPD Buttons */}
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl 
+            <button 
+              onClick={onOPDClick}
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl 
                            shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 
                            transition-all duration-300 hover:-translate-y-0.5">
               <div className="flex items-center gap-2">
@@ -141,7 +145,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
             <button className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl 
                            shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 
                            transition-all duration-300 hover:-translate-y-0.5" > 
-              <div className="flex items-center gap-2" >
+              <div className="flex items-center gap-2"onClick={onHealthClick} >
                 <Activity className="h-4 w-4" />
                 <span>Health Chart</span>
               </div>
@@ -218,7 +222,9 @@ const ProfileCard: React.FC<ProfileProps> = ({
       {/* Actions Section */}
       <div className="mt-4 space-y-2">
         <div className="grid grid-cols-2 gap-2">
-          <button className="px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl 
+          <button 
+            onClick={onOPDClick}
+            className="px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl 
                          shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 
                          transition-all duration-300 hover:-translate-y-0.5">
             <div className="flex items-center justify-center gap-1.5">

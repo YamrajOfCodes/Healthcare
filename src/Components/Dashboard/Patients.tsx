@@ -2,7 +2,7 @@
 import { deletePatient, getallPatients } from '@/Redux/Slices/Patient/patientSlices';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Edit2, Notebook, Search, Trash2, Users } from 'lucide-react';
+import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Edit2, FileText, Notebook, Printer, Search, Trash2, Users, X } from 'lucide-react';
 import PatientEditForm from './EditPatient';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
@@ -18,12 +18,53 @@ const Patients: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [popup, setpopup] = useState(false);
   const [selectedpatient, setselectedpatient] = useState("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [patientsPerPage] = useState<number>(5);
 
   const handleEditPatient = (patient: Patient): void => {
     window.scrollTo(0, 0);
     setIsEditing(true);
     setEditPatient(patient);
   };
+
+  // otdSidebar variables
+  const [showOPDSidebar,setShowOPDSidebar] = useState(false);
+  const [selectedPatient,SetselectedPatient] = useState(null);
+
+
+  
+  const handleOPDSidebar = (patient)=>{
+    SetselectedPatient(patient);
+    setShowOPDSidebar(true)
+  }
+
+// healthchart variables
+
+const [healthPatient,sethealthpatient] = useState<null>(null);
+const [healthsidebar,sethealthsidebar] = useState(false)
+
+const handleHealthsidebar = (patient)=>{
+  sethealthsidebar(true);
+  sethealthpatient(patient)
+}
+
+
+// prescription sidebar variables
+
+const [prescriptionSidebar,setPrescriptionSidebar] = useState(false);
+const [selectedPrescription,setSelectedPrescription] = useState(null);
+
+const handleprescriptionSidebar = (patient)=>{
+  setPrescriptionSidebar(true);
+  setSelectedPrescription(patient);
+  console.log("selectedPrescription",selectedPrescription);
+  
+}
+
+const handlePrint = ()=>{
+  window.print()
+}
+
 
   const handleSearch = (e: string): void => {
     setSearch(e);
@@ -63,6 +104,19 @@ const Patients: React.FC = () => {
       setPatients(allpatients as unknown as Patient[]);
     }
   }, [allpatients]);
+
+  const indexOfLastPatient = currentPage * patientsPerPage;
+  const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+  const currentPatients = patients.slice(indexOfFirstPatient, indexOfLastPatient);
+  const totalPages = Math.ceil(patients.length / patientsPerPage);
+
+  const handlePageChange = (pageNumber: number): void => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   return (
     <div>
@@ -133,11 +187,30 @@ const Patients: React.FC = () => {
                                       setselectedpatient(profile?.id)
                                     }}>Delete</span>
                                   </button>
-                                  <button className="text-pink-600 hover:text-red-900 inline-flex items-center space-x-1">
+                                  <button className="text-pink-600 hover:text-red-900 inline-flex items-center space-x-1" onClick={()=>{handleprescriptionSidebar(profile)}}>
                                     <Notebook className="h-4 w-4" />
                                     {/* <span onClick={()=>{handledeletepatient(profile.id)}}>Delete</span> */}
                                     <span>Prescription</span>
                                   </button>
+                                  <button 
+                              onClick={()=>{handleOPDSidebar(profile)}}
+                             className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl 
+                           shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 
+                           transition-all duration-300 hover:-translate-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            <span>OPD Bill</span>
+                                  </div>
+              
+                                 </button>
+                                 <button className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl 
+                                                            shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 
+                                                            transition-all duration-300 hover:-translate-y-0.5" onClick={()=>{handleHealthsidebar(profile)}} > 
+                                               <div className="flex items-center gap-2" >
+                                                 <Activity className="h-4 w-4" />
+                                                 <span>Health Chart</span>
+                                               </div>
+                                             </button>
                                 </td>
                                  
                               </tr >
@@ -205,8 +278,8 @@ const Patients: React.FC = () => {
                   </div >
 
                   {/* Mobile View - Cards */}
-                  < div className="space-y-4 px-3 py-4 max-w-sm lg:hidden w-full overflow-hidden" >
-                    {patients?.map((profile: Patient) => (
+                  <div className="space-y-4 px-3 py-4 max-w-sm lg:hidden w-full overflow-hidden">
+                    {currentPatients?.map((profile: Patient) => (
                       <div
                         key={profile.id}
                         className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100"
@@ -307,7 +380,24 @@ const Patients: React.FC = () => {
                         </div>
                       </div>
                     ))}
-                  </div >
+                    
+                    {/* Pagination controls for mobile */}
+                    <div className="flex justify-center gap-2 mt-6">
+                      {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                          key={index + 1}
+                          onClick={() => handlePageChange(index + 1)}
+                          className={`px-3 py-1 rounded-md ${
+                            currentPage === index + 1
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          }`}
+                        >
+                          {index + 1}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </>
               ) : (
                 <div className="text-center py-4 text-gray-500">
@@ -320,6 +410,283 @@ const Patients: React.FC = () => {
           "No Patients Data"
         )}
       </div>
+
+
+
+
+      <div 
+        className={`fixed top-0 right-0 h-full w-[450px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+                    ${showOPDSidebar ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {/* Header */}
+        <div className="border-b border-gray-200">
+          <div className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">OPD Bill</h2>
+                <p className="text-sm text-gray-500 mt-1">Generate patient bill</p>
+              </div>
+              <button 
+                onClick={() => setShowOPDSidebar(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+              >
+                <X className="h-6 w-6 text-gray-500" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        {selectedPatient && (
+          <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-100px)]">
+            {/* Patient Info Section */}
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+              <h3 className="text-sm font-medium text-blue-800 mb-3">Patient Information</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-gray-500">Patient Name</p>
+                  <p className="text-sm font-medium text-gray-900">{selectedPatient.name}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Patient ID</p>
+                  <p className="text-sm font-medium text-gray-900">{selectedPatient.id}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Phone</p>
+                  <p className="text-sm font-medium text-gray-900">{selectedPatient.phone}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Age</p>
+                  <p className="text-sm font-medium text-gray-900">{selectedPatient.age} years</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bill Details Section */}
+            <div className="bg-white rounded-xl p-4 border border-gray-200">
+              <h3 className="text-sm font-medium text-gray-800 mb-3">Bill Details</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-600">Consultation Fee</span>
+                  <span className="text-sm font-medium text-gray-900">₹500</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-600">Medicine Charges</span>
+                  <span className="text-sm font-medium text-gray-900">₹0</span>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-sm font-medium text-gray-800">Total Amount</span>
+                  <span className="text-sm font-bold text-gray-900">₹500</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
+              <button className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-xl hover:bg-blue-700 transition-colors duration-200 font-medium">
+                Generate Bill
+              </button>
+              <button className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-xl hover:bg-gray-200 transition-colors duration-200 font-medium">
+                Print Preview
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div 
+              className={`fixed top-0 right-0 h-full w-[450px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+                          ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
+            >
+              {/* Header */}
+              <div className="border-b border-gray-200">
+                <div className="p-6">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-800">Healthchart</h2>
+                      <p className="text-sm text-gray-500 mt-1">Generate Healthchart</p>
+                    </div>
+                    <button 
+                      onClick={() => sethealthsidebar(false)}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    >
+                      <X className="h-6 w-6 text-gray-500" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+      
+              {/* Content */}
+              {healthPatient && (
+                <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-100px)]">
+                  {/* Patient Info Section */}
+                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                    <h3 className="text-sm font-medium text-blue-800 mb-3">Patient Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-gray-500">Patient Name</p>
+                        <p className="text-sm font-medium text-gray-900">{healthPatient.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Patient ID</p>
+                        <p className="text-sm font-medium text-gray-900">{healthPatient.id}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Phone</p>
+                        <p className="text-sm font-medium text-gray-900">{healthPatient.phone}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">Age</p>
+                        <p className="text-sm font-medium text-gray-900">{healthPatient.age} years</p>
+                      </div>
+                    </div>
+                  </div>
+      
+                  {/* Bill Details Section */}
+                  <div className="bg-white rounded-xl p-4 border border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-800 mb-3">Bill Details</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span className="text-sm text-gray-600">Consultation Fee</span>
+                        <span className="text-sm font-medium text-gray-900">₹500</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span className="text-sm text-gray-600">Medicine Charges</span>
+                        <span className="text-sm font-medium text-gray-900">₹0</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2">
+                        <span className="text-sm font-medium text-gray-800">Total Amount</span>
+                        <span className="text-sm font-bold text-gray-900">₹500</span>
+                      </div>
+                    </div>
+                  </div>
+      
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-4">
+                    <button className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-xl hover:bg-blue-700 transition-colors duration-200 font-medium">
+                      Generate Bill
+                    </button>
+                    <button className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-xl hover:bg-gray-200 transition-colors duration-200 font-medium"onClick={()=>{window.print()}}>
+                      Print Preview
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+
+
+
+            <div 
+        className={`fixed top-0 right-0 h-full w-full bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+                    ${prescriptionSidebar ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        {/* Header */}
+        <div className="border-b border-gray-200">
+          <div className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+              </div>
+              <button 
+                onClick={() => setPrescriptionSidebar(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+              >
+                <X className="h-6 w-6 text-gray-500" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        {selectedPrescription && (
+           <div className="max-w-[800px] mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+           <div className="relative bg-emerald-100 p-8">
+             <h1 className="text-xl font-bold text-gray-800">
+               Digitech <span className="text-emerald-500">CHOICE</span> CLINIC
+             </h1>
+             <h2 className="text-lg font-semibold text-gray-800">
+               {/* Dr. {appointmentData?.["Doctor Name"] || ""} */}
+             </h2>
+           </div>
+           <div className="p-8 pt-5">
+             <div className="space-y-4 mb-8">
+               <div className="flex flex-wrap gap-4">
+                 <div className="flex-1">
+                   <label className="block text-sm font-medium text-gray-500">
+                     NAME OF PATIENT
+                   </label>
+                   <div className="mt-1 p-2 bg-emerald-50 rounded">
+                    {selectedPrescription?.name}
+                   </div>
+                 </div>
+                 <div className="flex-1">
+                   <label className="block text-sm font-medium text-gray-500">
+                     Appointment ID
+                   </label>
+                   <div className="mt-1 p-2 bg-emerald-50 rounded">
+                   {selectedPrescription?.id}
+                   </div>
+                 </div>
+                 <div className="flex-1">
+                   <label className="block text-sm font-medium text-gray-500">
+                     AGE
+                   </label>
+                   <div className="mt-1 p-2 bg-emerald-50 rounded">
+                     {new Date().getFullYear() - selectedPrescription?.dob.slice(0,4)}
+                   </div>
+                 </div>
+               </div>
+               <div>
+                 <label className="block text-sm font-medium text-gray-500">
+                   ADDRESS
+                 </label>
+                 <div className="mt-1 p-2 bg-emerald-50 rounded">
+                 {selectedPrescription?.address}
+                 </div>
+               </div>
+               <div className="h-80">
+   
+               </div>
+               <div>
+                 <p>signature</p>
+                 <div className="w-1/3 border-b border-gray-700 mt-5"></div>
+               </div>
+             </div>
+             <div className="mt-5 pt-8 text-center">
+               <button
+                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                 onClick={handlePrint}
+               >
+                 <Printer className="inline-block w-5 h-5 mr-2" />
+                 Print
+               </button>
+             </div>
+           </div>
+         </div>
+        )}
+      </div>
+
+      {showOPDSidebar && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
+          onClick={() => setShowOPDSidebar(false)}
+        />
+      )}
+
+{prescriptionSidebar && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
+          onClick={() => setPrescriptionSidebar(false)}
+        />
+      )}
+
+{healthsidebar && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
+          onClick={() => sethealthsidebar(false)}
+        />
+      )}
+
     </div>
   )
 }

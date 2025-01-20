@@ -13,6 +13,8 @@ export interface ProfileProps {
   waitingTime?: string;
   updated_at: string;
   created_at?: string;
+  onOPDClick: () => void;
+  onHealthClick : ()=> void
 }
 export interface Patient {
   id: string;
@@ -24,6 +26,7 @@ export interface Patient {
   address?: string;
   created_at?: string;
   updated_at?: string;
+  age?: number;
 }
 export interface PatientData {
   id?: string;
@@ -69,8 +72,10 @@ export interface PatientState {
   registerpatient?: any[];
   appointment?: any[];
   prescriptions?: any[]; // Add this line
+  healthrecord:any[];
   getappointments: {
     appointments: BaseAppointment[] | null;
     error: string | null;
   };
+  transactions:any[]
 }

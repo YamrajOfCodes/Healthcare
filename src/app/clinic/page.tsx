@@ -6,7 +6,9 @@ import {Calendar,Users,FileText, Menu,X,
   Clock,
   CalendarPlus,
   ChevronRight,
-  CircleUserRound} from "lucide-react"
+  CircleUserRound,
+  Heart,
+  DollarSignIcon} from "lucide-react"
 import Showdashboard from "@/Components/Showdashboard";
 import DashCalender from "@/Components/Dashboard/DashCalender";
 import Patients from "@/Components/Dashboard/Patients";
@@ -23,7 +25,9 @@ import { getallPatients } from "@/Redux/Slices/Patient/patientSlices";
 import { getWaitingroom } from "@/Redux/Slices/Admin/adminSlice";
 import Header from "@/Components/Header";
 import Upcoming from "@/Components/Dashboard/Upcoming";
-import ProfileCard from "@/Components/Profile";
+import clinic_logo from "@/Assets/clinic_logo.jpg"
+import Image from "next/image";
+import Healthrecord from "@/Components/Dashboard/Healthrecord";
 
 
 interface NavItemProps {
@@ -125,7 +129,6 @@ const DashboardLayout: React.FC = () => {
   //  console.log(waitingroom[0]);
   // console.log("com",complete);
 
-  const [healthchart,sethealthchart] = useState(false)
 
  
     let waitingpatients_data =  waitingroom?.[0]?.length || "0"
@@ -190,9 +193,9 @@ const DashboardLayout: React.FC = () => {
                     <div className="absolute -inset-1.5 bg-gradient-to-r from-violet-600 to-blue-600 
                       rounded-2xl blur opacity-70 group-hover:opacity-100 transition duration-300">
                     </div>
-                    <div className="relative h-14 w-14 bg-gradient-to-br from-green-600 to-green-400 
+                    <div className="relative h-full w-14 bg-gradient-to-br from-green-600 to-green-400 
                       rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-all">
-                      <span className="text-white font-bold text-2xl">H</span>
+                      <Image src={clinic_logo} width={1000} height={1200} alt="clinic_logo"></Image>
                     </div>
                   </div>
                   <div>
@@ -303,10 +306,17 @@ const DashboardLayout: React.FC = () => {
                   />
 
                   <NavItem 
-                    icon={FileText} 
+                    icon={DollarSignIcon} 
                     label="Transactions" 
                     isActive={activeItem === 'Transactions'}
                     onClick={() => setActiveItem('Transactions')}
+                  />
+
+                  <NavItem 
+                    icon={Heart} 
+                    label="Health" 
+                    isActive={activeItem === 'health'}
+                    onClick={() => setActiveItem('health')}
                   />
                 </nav>
 
@@ -355,7 +365,8 @@ const DashboardLayout: React.FC = () => {
                   activeItem === "register" ? <Register show={true} /> : 
                   activeItem === "allappointments" ? <Allappointment /> : 
                   activeItem === "Transactions" ? <Transactions/> :
-                  activeItem === "upcoming"? <Upcoming/> :null
+                  activeItem === "upcoming"? <Upcoming/> :
+                  activeItem === "health"? <Healthrecord/>:null
                 }
               </div>
             </div>

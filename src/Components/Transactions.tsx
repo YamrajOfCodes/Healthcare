@@ -7,8 +7,12 @@ import {   Stethoscope,
     Calendar,
     FileText,
     Users } from 'lucide-react';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Transaction } from '@/types/transaction';
+import { useAppDispatch } from '@/hooks';
+import { RootState } from '@/Redux/App/store';
+import { Transactionn } from '@/Redux/Slices/Patient/patientSlices';
+import { useSelector } from 'react-redux';
 
 const Transactions: React.FC = () => {
    
@@ -91,6 +95,16 @@ const Transactions: React.FC = () => {
       const filteredTransactions = activeFilter === 'all' 
       ? transactions 
       : transactions.filter((t: Transaction) => t.type === activeFilter);
+
+      const dispatch = useAppDispatch();
+      // const { transactions } = useSelector((state:RootState))
+
+      
+      useEffect(()=>{
+       dispatch(Transactionn())
+      },[])
+
+
     
       return (
 
