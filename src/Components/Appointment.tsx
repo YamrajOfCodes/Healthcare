@@ -91,36 +91,35 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
   };
 
 
-const handleInputChange = (e:any) => {
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   setSearchInput(e.target.value);
 };
 
-  const handleDateChange = (e:any) => {
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
     setAptDate(newDate);
     setAppointment((prev) => ({
       ...prev,
-      appointment_date: `${newDate} ${time}`, // Concatenate updated date and existing time
+      appointment_date: `${newDate} ${time}`,
     }));
   };
 
 
-  const handleTimeChange = (e:any) => {
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = e.target.value;
     setTime(newTime);
     setAppointment((prev) => ({
       ...prev,
-      appointment_date: `${aptDate} ${newTime}`, // Concatenate existing date and updated time
+      appointment_date: `${aptDate} ${newTime}`,
     }));
   };
 
-  const handleappointment = (e:any)=>{
-    setAppointment((prevappointments)=>({
+  const handleappointment = (mode: 'online' | 'offline') => {
+    setAppointment((prevappointments) => ({
       ...prevappointments,
-      mode:e
-    }))
-    
-  }
+      mode: mode
+    }));
+  };
 
 
 
@@ -229,7 +228,7 @@ const handleInputChange = (e:any) => {
         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
         <option value="">Select doctor</option>
-        {doctors[0]?.map((doctor: Doctor) => (
+        {doctors?.map((doctor: Doctor) => (
           <option key={doctor.id} value={doctor.id}>
             {doctor.name}
           </option>

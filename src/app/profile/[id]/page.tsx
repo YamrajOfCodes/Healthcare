@@ -1,5 +1,5 @@
 "use client"
-import { getAppointments } from '@/Redux/Slices/Patient/patientSlices';
+import { getallPatients, getAppointments } from '@/Redux/Slices/Patient/patientSlices';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { 
@@ -16,6 +16,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
+import { BaseAppointment } from '@/types/shared';
 
 
 const page = () => {
@@ -25,6 +26,19 @@ const page = () => {
     const { id } = useParams(); // Extract the patient ID from URL params
     const dispatch = useAppDispatch();
     const { getappointments } = useSelector((state: RootState) => state.Patient); // Access appointments from the store
+    const { allpatients } = useSelector((state:RootState)=>state.Patient)
+    // console.log("allpatients",allpatients);
+
+
+    const filteindividual = allpatients?.filter((element)=>{
+      if(element.id == id){
+        return element;
+      }
+    })
+
+    // console.log(filteindividual);
+    
+    
     
     const [patients, setPatient] = useState<any>(null); // Initialize patients state
     const [loading, setLoading] = useState<boolean>(true); // Loading state to handle fetching data
@@ -32,7 +46,6 @@ const page = () => {
     // Function to filter patient based on patient ID
     const filterpatient = () => {
       if (getappointments?.appointments) {
-        // Filter the appointments based on patient_id
         const data = getappointments.appointments.filter(
           (element: any) => element.patient_id == id
         );
@@ -40,10 +53,6 @@ const page = () => {
         // Set the filtered data to patients state
         setPatient(data);
         console.log("Filtered Data:", data);
-
-        const letestdata = data?.filter((element)=>{
-           
-        })
       }
     };
 
@@ -51,7 +60,7 @@ const page = () => {
 
 
 
-     const [data,setdata] = useState([])
+     const [data, setdata] = useState<BaseAppointment[]>([]);
        // console.log(getappointments.appointments);
      
        
@@ -59,79 +68,30 @@ const page = () => {
      
      
        const handleupcoming = () => {
-         const upcominappointments = getappointments?.appointments?.filter((element: any) => {
-           const sliceDate = element?.appointment_date; // Ensure this is in "YYYY-MM-DD HH:mm:ss" format
-           if (sliceDate) {
-             const appointmentDate = new Date(sliceDate); // Parse the string into a Date object
-             const now = new Date(); // Current date and time
-            //  console.log("Appointment Date:", appointmentDate);
-            //  console.log("Current Date:", now);
+         const upcominappointments = getappointments?.appointments?.filter((element: BaseAppointment) => {
+           const appointmentDate = new Date(element.appointment_date);
+           const now = new Date();
+           return appointmentDate > now;
+         }) || []; // Add default empty array to avoid undefined
        
-             // Check if the appointment date is in the future
-             return appointmentDate > now;
-           }
-           return false; // Exclude if sliceDate is invalid
-         }).map((element: any) => {
-           // Transform the filtered data into the required format
-           return {
-             id: element?.id,
-             patientName:element?.patient?.name,
-             date: element?.appointment_date.slice(0,10),
-             time:element?.appointment_date.slice(10,16),
-             doctor: element?.doctor?.name,
-             status: element?.status,
-             phone: element?.patient.phone,
-             mode:element?.mode
-           };
-         });
-       
-        //  console.log("Upcoming Appointments:", upcominappointments); // Log the filtered results
-         setdata(upcominappointments); // Update the state
-
-            
+         setdata(upcominappointments);
        };
 
       
-       console.log(data);
+      //  console.log(data);
 
-       const datass =[];
-       let currentdata =[];
-       const [origionaldata,setorigionaldata] = useState([]);
+       const [origionaldata, setorigionaldata] = useState<BaseAppointment[]>([]);
 
-      const handleData = ()=>{
-       
-          const letestdata = data?.filter((elements)=>{
-            
-            let newdata =   patients?.filter((element)=>{
-                if(elements.id == element.id){
-                  console.log(elements.id,element.id);
-                  
-                  datass.push(element)
-                }
-              })
-            //  console.log(newdata);
-             
-              return newdata
-              
-            })
-
-            console.log();
-            
-
-            currentdata = datass?.filter((element)=>{
-              console.log(element.patient_id,id);
-              
-               if(element.patient_id == Number(id)){
-                return element
-               }
-            })
-
-            console.log(currentdata);
-            setorigionaldata(currentdata)
-            
+      const handleData = () => {
+        const filteredData = data?.filter(upcomingAppt => {
+          return patients?.some((patientAppt: BaseAppointment) => 
+            upcomingAppt.id === patientAppt.id && 
+            patientAppt.patient_id === String(id)
+          );
+        });
         
-        
-      }
+        setorigionaldata(filteredData || []);
+      };
 
       
              
@@ -143,6 +103,7 @@ const page = () => {
     // Effect to dispatch the action when the component mounts
     useEffect(() => {
       dispatch(getAppointments());
+      dispatch(getallPatients())
     }, [dispatch]);
     
     // Effect to filter patient when appointments are updated
@@ -196,7 +157,7 @@ const page = () => {
                   <User className="h-12 w-12 text-white" />
                 </div>
                 <div className="text-center md:text-left">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-1">{patients?.[0]?.patient?.name}</h1>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-1">{filteindividual?.[0]?.name}</h1>
                   <p className="text-gray-500 bg-gray-100 px-4 py-1 rounded-full inline-block">ID: #${id}</p>
                 </div>
               </div>
@@ -212,7 +173,7 @@ const page = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Phone</p>
-                    <p className="font-semibold text-gray-800">{patients?.[0]?.patient?.phone}</p>
+                    <p className="font-semibold text-gray-800">{filteindividual?.[0]?.phone}</p>
                   </div>
                 </div>
               </div>
@@ -225,7 +186,7 @@ const page = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Email</p>
-                    <p className="font-semibold text-gray-800">{patients?.[0]?.patient?.email}</p>
+                    <p className="font-semibold text-gray-800">{filteindividual?.[0]?.email}</p>
                   </div>
                 </div>
               </div>
@@ -238,7 +199,7 @@ const page = () => {
                   </div>
                   <div className="overflow-hidden">
                     <p className="text-sm text-gray-500 mb-1">Address</p>
-                    <p className="font-semibold text-gray-800 truncate">{patients?.[0]?.patient?.address}</p>
+                    <p className="font-semibold text-gray-800 truncate">{filteindividual?.[0]?.address}</p>
                   </div>
                 </div>
               </div>
@@ -251,7 +212,7 @@ const page = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Total Visits</p>
-                    <p className="font-semibold text-gray-800">{patients?.[0]?.patient?.visit_count}</p>
+                    <p className="font-semibold text-gray-800">{filteindividual?.[0]?.visit_count}</p>
                   </div>
                 </div>
               </div>
@@ -273,7 +234,7 @@ const page = () => {
                   </button>
                 </div>
                 <div className="space-y-4">
-                  {patients?.slice(0,3).map((appointment, index) => (
+                  {patients?.length>0? patients?.slice(0,3).map((appointment: BaseAppointment, index: number) => (
                     <div key={index} className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                       <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center">
                         <FileText className="h-5 w-5 text-blue-600" />
@@ -284,7 +245,7 @@ const page = () => {
                         <p className="text-sm text-gray-400">{appointment.appointment_date.slice(0,10)}</p>
                       </div>
                     </div>
-                  ))}
+                  )) : "No history"}
                 </div>
               </div>
     

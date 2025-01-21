@@ -1,8 +1,14 @@
 "use client"
 import React, { useState } from 'react'
+import { WaitingRoomPatient } from '../../types/WaitingRoom';
+import { Patient } from '@/types/patient';
 
-const Healthchart = ({patient}) => {
+const Healthchart: React.FC<{ patient: WaitingRoomPatient | null }> = ({ patient }) => {
     const [isOpen, setIsOpen] = useState(true); // State to toggle sidebar
+
+    if (!patient) {
+        return null; 
+    }
 
     return (
       <div
@@ -25,8 +31,8 @@ const Healthchart = ({patient}) => {
         <div className="p-4 space-y-4">
           {/* Patient Info */}
           <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="text-xl font-semibold">{patient.name}</h3>
-            <p className="text-sm text-gray-600">{patient.description}</p>
+            <h3 className="text-xl font-semibold">{patient.patient.name}</h3>
+            <p className="text-sm text-gray-600">{patient.patient.address}</p>
           </div>
   
           {/* Medication Info */}

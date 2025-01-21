@@ -7,6 +7,7 @@ import PatientEditForm from './EditPatient';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { Patient } from '@/types/patient';
+import Link from 'next/link';
 
 const Patients: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -161,8 +162,8 @@ const handlePrint = ()=>{
                           <tbody className="divide-y">
                             {patients?.map((profile) => (
                               <tr key={profile.id} className="hover:bg-gray-50 transition-colors duration-300">
-                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">#{profile.id}</td>
-                                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{profile.name}</td>
+                                <Link href={`profile/${profile.id}`}><td className="px-6 py-4 whitespace-nowrap text-gray-900">#{profile.id}</td>
+                                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{profile.name}</td></Link>
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-500">
                                   {new Date().getFullYear() - parseInt(profile.dob.slice(0, 4))}
                                 </td>
@@ -291,12 +292,12 @@ const handlePrint = ()=>{
                               <div className="bg-blue-100 rounded-full p-2 ring-2 ring-blue-50">
                                 <span className="text-xs font-bold text-blue-700">#{profile.id}</span>
                               </div>
-                              <div>
+                             <Link href={`/profile/${profile?.id}`}> <div>
                                 <h3 className="text-base font-semibold text-gray-900">
                                   Mr.{profile.name}
                                 </h3>
                                 <p className="text-xs text-gray-500">Patient Profile</p>
-                              </div>
+                              </div></Link>
                             </div>
                             <div className="bg-white p-1.5 rounded-full shadow-sm">
                               <ChevronRight className="h-4 w-4 text-blue-500" />
@@ -612,7 +613,7 @@ const handlePrint = ()=>{
              <div className="space-y-4 mb-8">
                <div className="flex flex-wrap gap-4">
                  <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-500">
+                   <label className="block text-sm font-medium text-gray-900">
                      NAME OF PATIENT
                    </label>
                    <div className="mt-1 p-2 bg-emerald-50 rounded">
@@ -620,7 +621,7 @@ const handlePrint = ()=>{
                    </div>
                  </div>
                  <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-500">
+                   <label className="block text-sm font-medium text-gray-900">
                      Appointment ID
                    </label>
                    <div className="mt-1 p-2 bg-emerald-50 rounded">
@@ -628,7 +629,7 @@ const handlePrint = ()=>{
                    </div>
                  </div>
                  <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-500">
+                   <label className="block text-sm font-medium text-gray-900">
                      AGE
                    </label>
                    <div className="mt-1 p-2 bg-emerald-50 rounded">
@@ -637,7 +638,7 @@ const handlePrint = ()=>{
                  </div>
                </div>
                <div>
-                 <label className="block text-sm font-medium text-gray-500">
+                 <label className="block text-sm font-medium text-gray-900">
                    ADDRESS
                  </label>
                  <div className="mt-1 p-2 bg-emerald-50 rounded">

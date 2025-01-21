@@ -6,15 +6,25 @@ import { RootState } from '@/Redux/App/store';
 import { getAppointments } from '@/Redux/Slices/Patient/patientSlices';
 import { useAppDispatch } from '@/hooks';
 
-const Upcoming = () => {
+interface UpcomingAppointment {
+  id: string;
+  patientName: string;
+  date: string;
+  time: string;
+  doctor: string;
+  status: string;
+  phone: string;
+  mode: string;
+}
 
-  
+const Upcoming: React.FC = () => {
+
   const { getappointments } = useSelector((state:RootState)=>state.Patient);
   const dispatch = useAppDispatch();
-     const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
 
   // console.log(getappointments?.appointments)
-  const [data,setdata] = useState([])
+  const [data,setdata] = useState<UpcomingAppointment[]>([]);
   // console.log(getappointments.appointments);
 
   
@@ -34,19 +44,16 @@ const Upcoming = () => {
         return appointmentDate > now;
       }
       return false; // Exclude if sliceDate is invalid
-    }).map((element: any) => {
-      // Transform the filtered data into the required format
-      return {
-        id: element?.id,
-        patientName:element?.patient?.name,
-        date: element?.appointment_date.slice(0,10),
-        time:element?.appointment_date.slice(10,16),
-        doctor: element?.doctor?.name,
-        status: element?.status,
-        phone: element?.patient.phone,
-        mode:element?.mode
-      };
-    });
+    }).map((element: any): UpcomingAppointment => ({
+      id: element?.id,
+      patientName: element?.patient?.name,
+      date: element?.appointment_date.slice(0,10),
+      time: element?.appointment_date.slice(10,16),
+      doctor: element?.doctor?.name,
+      status: element?.status,
+      phone: element?.patient.phone,
+      mode: element?.mode
+    })) || [];
   
     console.log("Upcoming Appointments:", upcominappointments); // Log the filtered results
     setdata(upcominappointments); // Update the state

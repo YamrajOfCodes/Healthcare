@@ -6,6 +6,8 @@ import { EditPatientProps, PatientFormData } from '@/types/patient';
 
 const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) => {
   const dispatch = useAppDispatch();
+  console.log(patientdata);
+  
   const [formData, setFormData] = useState<PatientFormData>({
     fullname: patientdata?.name || '',
     dateOfBirth: patientdata?.dob || '',
@@ -140,8 +142,8 @@ const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) =
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500"
-                      placeholder={patientdata?.email}
+                      className="block w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 text-black focus:ring-blue-100 focus:border-blue-500"
+                      placeholder={patientdata?.['email']}
                     />
                   </div>
                 </div>

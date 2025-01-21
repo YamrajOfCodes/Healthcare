@@ -6,7 +6,7 @@ import { getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
 import Link from 'next/link';
 import { completePatient } from '@/Redux/Slices/Patient/patientSlices';
 import { AppDispatch, RootState } from '@/Redux/App/store';
-import { WaitingRoomPatient } from '@/types/patient';
+import { Patient, WaitingRoomPatient } from '@/types/patient';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -60,7 +60,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
 
   const handlecomplete = async (): Promise<void> => {
     try {
-      await dispatch(completePatient(waitingid)).unwrap();
+      await dispatch(completePatient({ id: parseInt(waitingid) })).unwrap();
       dispatch(getWaitingroom())
       setOpen(false);
       if (onComplete) {
@@ -139,7 +139,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
                 <div
                   className="h-full bg-gradient-to-r from-orange-500 to-red-500 rounded-full transition-all duration-500"
                   style={{
-                    width: tempdate && parseInt(tempdate.slice(0,2)) > 12 ? '100%' : '40%'
+                    width: tempdate && parseInt(tempdate.slice(0,2)) == 1 ? '20%' : parseInt(tempdate.slice(0,2)) == 2?  '40%': parseInt(tempdate.slice(0,2)) == 3? '60%' :parseInt(tempdate.slice(0,2)) == 4? '80%' : '100%' 
                   }}
                 ></div>
               </div>
@@ -189,13 +189,13 @@ export default function WaitingRoom() {
   const dispatch = useAppDispatch();
   const [localWaitingRoom, setLocalWaitingRoom] = useState<WaitingRoomPatient[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [patientsPerPage] = useState(5); 
+  const [patientsPerPage] = useState(3); 
   const { waitingroom } = useSelector((state: RootState) => state.Doctor);
-  const [selectedpatient,setselectedpatient] = useState<null>(null)
+  const [selectedpatient, setselectedpatient] = useState<WaitingRoomPatient | null>(null);
   const [OTDsidebar,Setotdsidebar] = useState<boolean>(false);
 
 
-  const handleOTDSidebar = (patient)=>{
+  const handleOTDSidebar = (patient: WaitingRoomPatient) => {
     setselectedpatient(patient);
     Setotdsidebar(true);
   }
@@ -203,21 +203,21 @@ export default function WaitingRoom() {
   
   // healthchart variables
   
-  const [healthPatient,sethealthpatient] = useState<null>(null);
+  const [healthPatient, sethealthpatient] = useState<WaitingRoomPatient | null>(null);
   const [healthsidebar,sethealthsidebar] = useState(false)
   
-  const handleHealthsidebar = (patient)=>{
+  const handleHealthsidebar = (patient: WaitingRoomPatient) => {
     sethealthsidebar(true);
-    sethealthpatient(patient)
+    sethealthpatient(patient);
   }
   
   
   // prescription sidebar variables
   
   const [prescriptionSidebar,setPrescriptionSidebar] = useState(false);
-  const [selectedPrescription,setSelectedPrescription] = useState(null);
+  const [selectedPrescription,setSelectedPrescription] = useState<WaitingRoomPatient | null>(null);
   
-  const handleprescriptionSidebar = (patient)=>{
+  const handleprescriptionSidebar = (patient: WaitingRoomPatient) => {
     setPrescriptionSidebar(true);
     setSelectedPrescription(patient);
     console.log("selectedPrescription",selectedPrescription);
@@ -259,7 +259,7 @@ export default function WaitingRoom() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 py-6 px-4 rounded-md h-full">
+    <div className="bg-gradient-to-br h-[120vh] from-blue-50 to-cyan-50 py-6 px-4 rounded-md h-full">
       <div className="max-w-7xl mx-auto space-y-6">
         <h1 className="text-xl lg:text-3xl md:text-4xl font-bold text-blue-900 text-center mb-8">
           Patient Waiting Room
@@ -419,7 +419,7 @@ export default function WaitingRoom() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-xs text-gray-500">Patient Name</p>
-                        <p className="text-sm font-medium text-gray-900">{healthPatient.name}</p>
+                        <p className="text-sm font-medium text-gray-900">{healthPatient.patient.name}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Patient ID</p>
@@ -427,11 +427,13 @@ export default function WaitingRoom() {
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Phone</p>
-                        <p className="text-sm font-medium text-gray-900">{healthPatient.phone}</p>
+                        <p className="text-sm font-medium text-gray-900">{healthPatient.patient.phone}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Age</p>
-                        <p className="text-sm font-medium text-gray-900">{healthPatient.age} years</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {new Date().getFullYear() - parseInt(healthPatient.patient.dob.slice(0,4))} years
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -506,7 +508,7 @@ export default function WaitingRoom() {
              <div className="space-y-4 mb-8">
                <div className="flex flex-wrap gap-4">
                  <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-500">
+                   <label className="block text-sm font-medium text-gray-900">
                      NAME OF PATIENT
                    </label>
                    <div className="mt-1 p-2 bg-emerald-50 rounded">
@@ -514,7 +516,7 @@ export default function WaitingRoom() {
                    </div>
                  </div>
                  <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-500">
+                   <label className="block text-sm font-medium text-gray-900">
                      Appointment ID
                    </label>
                    <div className="mt-1 p-2 bg-emerald-50 rounded">
@@ -522,16 +524,16 @@ export default function WaitingRoom() {
                    </div>
                  </div>
                  <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-500">
+                   <label className="block text-sm font-medium text-gray-900">
                      AGE
                    </label>
                    <div className="mt-1 p-2 bg-emerald-50 rounded">
-                     {new Date().getFullYear() - selectedPrescription?.patient?.dob.slice(0,4)}
+                     {new Date().getFullYear() - parseInt(selectedPrescription?.patient?.dob?.slice(0,4) || '0')}
                    </div>
                  </div>
                </div>
                <div>
-                 <label className="block text-sm font-medium text-gray-500">
+                 <label className="block text-sm font-medium text-gray-900">
                    ADDRESS
                  </label>
                  <div className="mt-1 p-2 bg-emerald-50 rounded">

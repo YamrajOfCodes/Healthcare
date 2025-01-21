@@ -15,6 +15,26 @@ import { Transactionn } from '@/Redux/Slices/Patient/patientSlices';
 import { useSelector } from 'react-redux';
 
 const Transactions: React.FC = () => {
+
+  const dispatch = useAppDispatch();
+  const { transactionss  } = useSelector((state:RootState)=>state.Patient)
+  console.log(transactionss);
+  let amount = 0;
+
+
+    // const transactions = transactionss?.[0].map((element)=>{
+    //   amount = element?.amount.slice(0,3) + amount;
+    //   return {
+    //     id:element?.id,
+    //     description: "",
+    //     patientName:element?.patient,
+    //     date:element?.date,
+    //     amount:element?.amount
+    //   }
+    // })
+
+    // console.log(amount);
+    
    
     // Type the transactions array
     const transactions: Transaction[] = [
@@ -96,8 +116,8 @@ const Transactions: React.FC = () => {
       ? transactions 
       : transactions.filter((t: Transaction) => t.type === activeFilter);
 
-      const dispatch = useAppDispatch();
-      // const { transactions } = useSelector((state:RootState))
+     
+      
 
       
       useEffect(()=>{

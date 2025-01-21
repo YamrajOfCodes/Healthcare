@@ -348,7 +348,6 @@ const DashboardLayout: React.FC = () => {
                     <StatusCard status="Waiting" number={waitingpatients_data} />
                     <StatusCard status="New" number={newPatients_data} />
                     <StatusCard status="Follow-up" number={oldpatients_data} />
-                    <StatusCard status="Out" number={outpatient_data} />
                   </div>
                   <div className="dash w-full ">
                     <Showdashboard />

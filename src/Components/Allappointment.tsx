@@ -7,70 +7,39 @@ import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { AppointmentDetails } from '@/types/appointment';
 import { getAppointments } from '@/Redux/Slices/Patient/patientSlices';
+import { BaseAppointment } from '@/types/shared';
 
 const Allappointment: React.FC = () => {
     const dispatch = useAppDispatch();
     const { waitingroom }: { waitingroom: AppointmentDetails[][] } = useSelector((state: RootState) => state.Doctor);
-     const {doctors} = useSelector((state:RootState)=>state.Doctor)
-
-     const [selectedDoctor, setSelectedDoctor] = useState("All");
-
-     
-     
-     const { getappointments }:{getappointments} = useSelector((state:RootState)=>state.Patient);
-    //  console.log(getappointments?.appointments);
-     
-     const [getallappointments,setallappointments] = useState<any[]>([]);
-     const [search,setsearch] = useState("");
-     const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-    const [selectedStatus, setSelectedStatus] = useState("All");
-     const [selectedDate, setSelectedDate] = useState("");
-
+    const { doctors } = useSelector((state: RootState) => state.Doctor);
+    const { getappointments } = useSelector((state: RootState) => state.Patient);
     
+    const [getallappointments, setallappointments] = useState<BaseAppointment[]>([]);
+    const [search, setsearch] = useState<string>("");
+    const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+    const [selectedStatus, setSelectedStatus] = useState<string>("All");
+    const [selectedDoctor, setSelectedDoctor] = useState<string>("All");
+    const [selectedDate, setSelectedDate] = useState<string>("");
 
-
-     const handledoctor = (data: any) => {
+    const handledoctor = (data: string) => {
       setSelectedDoctor(data);
       setSelectedStatus("All");
       setSelectedDate("");
       setsearch("");
       
-      // Reset the input fields
-      if (document.getElementById('patient-name')) {
-        (document.getElementById('patient-name') as HTMLInputElement).value = '';
-      }
-      if (document.getElementById('mobile-patient-name')) {
-        (document.getElementById('mobile-patient-name') as HTMLInputElement).value = '';
-      }
-      if (document.getElementById('status')) {
-        (document.getElementById('status') as HTMLSelectElement).value = 'All';
-      }
-      if (document.getElementById('mobile-status')) {
-        (document.getElementById('mobile-status') as HTMLSelectElement).value = 'All';
-      }
-      if (document.getElementById('appointment-date')) {
-        (document.getElementById('appointment-date') as HTMLInputElement).value = '';
-      }
-      if (document.getElementById('mobile-appointment-date')) {
-        (document.getElementById('mobile-appointment-date') as HTMLInputElement).value = '';
-      }
-    
       if (data === "All") {
-        setallappointments(getappointments?.appointments);
+        setallappointments(getappointments?.appointments || []);
         return;
       }
       
-      const filteredData = getappointments?.appointments?.filter((element: any) => {
-        return element?.doctor?.name === data;
-      });
+      const filteredData = getappointments?.appointments?.filter((element: BaseAppointment) => {
+        return element?.patient?.name === data;
+      }) || [];
       
       setallappointments(filteredData);
     };
 
-
-
-    
     const handleStatus = (data:any) => {
       setSelectedStatus(data);
       setSelectedDoctor("All");
@@ -98,7 +67,7 @@ const Allappointment: React.FC = () => {
       }
     
       if (data === "All") {
-        setallappointments(getappointments?.appointments);
+        setallappointments(getappointments?.appointments || []);
         return;
       }
     
@@ -106,7 +75,7 @@ const Allappointment: React.FC = () => {
         return element?.status === data;
       });
       
-      setallappointments(filteredData);
+      setallappointments(filteredData || []);
     };
     
 
@@ -137,7 +106,7 @@ const Allappointment: React.FC = () => {
       }
     
       if (date === "") {
-        setallappointments(getappointments?.appointments);
+        setallappointments(getappointments?.appointments || []);
         return;
       }
     
@@ -148,7 +117,7 @@ const Allappointment: React.FC = () => {
         }
       });
       
-      setallappointments(filteredData);
+      setallappointments(filteredData || []);
     };
    
 
@@ -158,7 +127,7 @@ const Allappointment: React.FC = () => {
       // Check if the search input is empty
       if (!patientName.trim()) {
         // If the search input is empty, reset the appointments to the original list
-        setallappointments(getappointments?.appointments);
+        setallappointments(getappointments?.appointments || []);
         return;
       }
     
@@ -167,7 +136,7 @@ const Allappointment: React.FC = () => {
         element?.patient?.name.toLowerCase().startsWith(patientName.toLowerCase())
       );
     
-      setallappointments(filteredData); // Update the filtered appointments
+      setallappointments(filteredData || []); // Update the filtered appointments
     };
     
     
@@ -238,7 +207,7 @@ const Allappointment: React.FC = () => {
               onChange={(e) => handledoctor(e.target.value)}
             >
               <option value="All">All</option>
-              {doctors?.[0]?.map((doctor, index) => (
+              {(doctors?.[0] as any[])?.map((doctor, index) => (
                 <option key={index} value={doctor.name}>
                   {doctor.name}
                 </option>
@@ -302,7 +271,7 @@ const Allappointment: React.FC = () => {
               onChange={(e) => handledoctor(e.target.value)}
             >
               <option value="All">All</option>
-              {doctors?.[0]?.map((doctor, index) => (
+              {(doctors?.[0] as any[])?.map((doctor, index) => (
                 <option key={index} value={doctor.name}>
                   {doctor.name}
                 </option>
@@ -381,9 +350,9 @@ const Allappointment: React.FC = () => {
                                     <td className="py-4 px-6">
                                         <span
                                             className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${
-                                                appointment.status === 'completed'
+                                                appointment.status === 'confirmed'
                                                     ? 'bg-green-100 text-green-700'
-                                                    : appointment.status === 'Pending'
+                                                    : appointment.status === 'pending'
                                                     ? 'bg-yellow-100 text-yellow-700'
                                                     : 'bg-red-100 text-red-700'
                                             }`}

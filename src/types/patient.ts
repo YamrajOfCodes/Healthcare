@@ -1,3 +1,5 @@
+import { Appointment } from "./appointment";
+import { PrescriptionResponse } from "./prescription";
 import { BaseAppointment } from "./shared";
 
 export interface ProfileProps {
@@ -14,8 +16,9 @@ export interface ProfileProps {
   updated_at: string;
   created_at?: string;
   onOPDClick: () => void;
-  onHealthClick : ()=> void
+  onHealthClick: () => void;
 }
+
 export interface Patient {
   id: string;
   name: string;
@@ -28,6 +31,7 @@ export interface Patient {
   updated_at?: string;
   age?: number;
 }
+
 export interface PatientData {
   id?: string;
   name?: string;
@@ -49,6 +53,7 @@ export interface PatientFormData {
   phone: string;
   address: string;
 }
+
 export interface WaitingRoomPatient {
   id: string;
   appointment_id: string;
@@ -60,22 +65,40 @@ export interface WaitingRoomPatient {
     gender: string;
     dob: string;
   };
+  doctor: {
+    name: string;
+    specialization: string;
+  };
+  appointment: {
+    id: string;
+    mode: string;
+    appointment_date: string;
+    type: string;
+  };
+  medications: Array<{
+    name: string;
+    dosage: string;
+    frequency: string;
+  }>;
+  status: string;
+  lastUpdated: string;
   updated_at: string;
 }
+
 export interface PatientState {
   loader: boolean;
   error: string | null;
   allpatients: Patient[];
-  update: any[];
-  complete: any[];
-  deletepatient: any[];
-  registerpatient?: any[];
-  appointment?: any[];
-  prescriptions?: any[]; // Add this line
-  healthrecord:any[];
+  update: string[];
+  complete: unknown[];
+  deletepatient: string[];
+  registerpatient?: unknown[];
+  appointment?: Appointment[];
+  prescriptions?: PrescriptionResponse[];
+  healthrecord: unknown[];
   getappointments: {
     appointments: BaseAppointment[] | null;
     error: string | null;
   };
-  transactions:any[]
+  transactions: unknown[];
 }

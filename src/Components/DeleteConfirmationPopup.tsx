@@ -3,7 +3,14 @@
 import React from 'react';
 import { Trash2, AlertCircle } from 'lucide-react';
 
-const DeleteConfirmationPopup = ({ isOpen, onClose, onConfirm, itemName = "patient" }) => {
+interface DeleteConfirmationPopupProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  itemName?: string;
+}
+
+const DeleteConfirmationPopup: React.FC<DeleteConfirmationPopupProps> = ({ isOpen, onClose, onConfirm, itemName = "patient" }) => {
   if (!isOpen) return null;
 
   return (

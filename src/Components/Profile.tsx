@@ -178,12 +178,12 @@ const ProfileCard: React.FC<ProfileProps> = ({
         </div>
         
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2">
+          <Link  href={`profile/${id}`}><div className="flex items-center justify-center gap-2">
             <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500">
               {name}
             </h2>
             <Shield className="h-4 w-4 text-blue-500" />
-          </div>
+          </div></Link>
           <div className="space-y-1">
             <div className="flex items-center justify-center gap-2 text-gray-600">
               <MapPin className="h-4 w-4" />

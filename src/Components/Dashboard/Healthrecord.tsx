@@ -4,13 +4,29 @@ import { getallPatients, Healthrecord } from '@/Redux/Slices/Patient/patientSlic
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { useSelector } from 'react-redux';
+import { Patient } from '@/types/patient';
+
+interface FormData {
+  healthMetrics: Array<{ name: string; value: string }>;
+  description: string;
+  date: string;
+  medications: Array<{ name: string; dosage: string; frequency: string }>;
+  attachments: { file: File; path: string } | null;
+}
+
+interface MappedPatient {
+  id: number;
+  name: string;
+  age: string;
+  patientId: string;
+}
 
 const HealthChartForm = () => {
-  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const dispatch = useAppDispatch();
   const [patientid,setpatientid] = useState<any>(null);
-  const [dates,setdates] = useState(null);
+  const [dates, setdates] = useState<string>('');
 
 
    const {allpatients } = useSelector((state:RootState)=>state.Patient);
@@ -19,7 +35,7 @@ const HealthChartForm = () => {
 
    const samplePatients = allpatients?.map((element)=>{
      return {
-      id:element?.id,
+      id: Number(element?.id),
       name:element.name,
       age: element?.dob.slice(0,4),
       patientId : `P00${element?.id}`
@@ -28,7 +44,7 @@ const HealthChartForm = () => {
    
 
  
-  const initialFormState = {
+  const initialFormState: FormData = {
     healthMetrics: [
       { name: 'Exercise', value: '' },
       { name: 'Diet', value: '' },
@@ -36,26 +52,26 @@ const HealthChartForm = () => {
       { name: 'Stress', value: '' },
       { name: 'Hydration', value: '' },
     ],
-    description:"desc",
-    date:"2025-01-20",
+    description: "",
+    date: new Date().toISOString().split('T')[0],
     medications: [{ name: '', dosage: '', frequency: '' }],
-    attachments: [],
+    attachments: null,
   };
 
   const [formData, setFormData] = useState(initialFormState);
 
-  const handlePatientSelect = (patient) => {
+  const handlePatientSelect = (patient: Patient) => {
     setSelectedPatient(patient);
     setSearchQuery('');
   };
 
-  const handleMetricChange = (index, value) => {
+  const handleMetricChange = (index: number, value: string) => {
     const newMetrics = [...formData.healthMetrics];
     newMetrics[index].value = value;
     setFormData({ ...formData, healthMetrics: newMetrics });
   };
 
-  const handleMedicationChange = (index, field, value) => {
+  const handleMedicationChange = (index: number, field: 'name' | 'dosage' | 'frequency', value: string) => {
     const newMedications = [...formData.medications];
     newMedications[index][field] = value;
     setFormData({ ...formData, medications: newMedications });
@@ -68,30 +84,67 @@ const HealthChartForm = () => {
     });
   };
 
-  const removeMedication = (index) => {
+  const removeMedication = (index: number) => {
     const newMedications = formData.medications.filter((_, i) => i !== index);
     setFormData({ ...formData, medications: newMedications });
   };
-  const handleSubmit = (e) => {
-    console.log(dates);
-    
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          attachments: {
+            file: file,
+            path: reader.result as string
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFormData({
+        ...formData,
+        attachments: null
+      });
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', {
-      patient: selectedPatient,
-      ...formData, // This includes date now
-    });
-  
-    let sliceId = Number(patientid.slice(3, 5));
-  
-    const letestdata = {
-      sliceId,
-      formData,
-  
+    
+    if (!selectedPatient) return;
+
+    const formattedMedications = formData.medications.map(med => ({
+      name: med.name || '',
+      dosage: med.dosage || '',
+      frequency: med.frequency || ''
+    }));
+
+    const submissionData = {
+      patient_id: parseInt(selectedPatient.id),
+      description: formData.description,
+      date: formData.date,
+      medications: JSON.stringify(formattedMedications),
+      healthMetrics: JSON.stringify(formData.healthMetrics),
+      attachment_path: formData.attachments?.path || ''
     };
-  
-    console.log(letestdata);
-  
-    dispatch(Healthrecord(letestdata));
+    
+    console.log('Submitting data:', submissionData); 
+    dispatch(Healthrecord({
+      patient_id: parseInt(selectedPatient.id),
+      description: formData.description,
+      date: formData.date,
+      medications: JSON.stringify(formattedMedications),
+      healthMetrics: JSON.stringify(formData.healthMetrics),
+      attachment_path: formData.attachments?.path || ''
+    }));
+
+    setFormData(initialFormState);
+    setSelectedPatient(null);
+    setSearchQuery('');
+    setdates('');
   };
   
 
@@ -128,7 +181,7 @@ const HealthChartForm = () => {
                   <div
                     key={patient.id}
                     className="p-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => handlePatientSelect(patient)}
+                    onClick={() => handlePatientSelect(patient as unknown as Patient)}
                   >
                     <div className="font-medium">{patient.name}</div>
                     <div className="text-sm text-gray-500">
@@ -143,7 +196,7 @@ const HealthChartForm = () => {
           {selectedPatient && (
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
               <div className="font-medium">Selected Patient:</div>
-              <div>{selectedPatient.name} (ID: {selectedPatient.patientId})</div>
+              <div>{selectedPatient.name} (ID: {selectedPatient.id})</div>
             </div>
           )}
         </div>
@@ -224,18 +277,18 @@ const HealthChartForm = () => {
   onChange={(e) => {
     const newDate = e.target.value;
     setdates(newDate); 
-    setFormData({ ...formData, date: newDate }); // Update formData.date
+    setFormData(prev => ({ ...prev, date: newDate })); 
   }} 
-  value={dates} 
+  value={formData.date} 
 />
 
             {/* File Attachments */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Attachments</h2>
+              <h2 className="text-xl font-semibold mb-4">Attachment</h2>
               <div className="space-y-4">
                 <input
                   type="file"
-                  multiple
+                  accept="image/*"
                   className="block w-full text-sm text-gray-500
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-lg file:border-0
@@ -243,25 +296,37 @@ const HealthChartForm = () => {
                     file:bg-blue-50 file:text-blue-700
                     hover:file:bg-blue-100
                     cursor-pointer"
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    attachments: Array.from(e.target.files)
-                  })}
+                  onChange={handleFileChange}
                 />
-                {formData.attachments.map((file, index) => (
-                  <div key={index} className="text-sm text-gray-600">
-                    {file.name}
+                {formData.attachments && (
+                  <div className="text-sm text-gray-600">
+                    {formData.attachments.file.name}
                   </div>
-                ))}
+                )}
               </div>
+            </div>
+
+            {/* Description Field */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4">Description</h2>
+              <textarea
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Enter health record description..."
+                required
+              />
             </div>
 
             {/* Submit Button */}
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"onClick={()=>{handleSubmit
-                  setpatientid(selectedPatient.patientId)}}
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+                onClick={() => {
+                  setpatientid(selectedPatient.id)
+                }}
               >
                 Save Health Chart
               </button>
