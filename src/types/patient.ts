@@ -96,9 +96,11 @@ export interface PatientState {
   appointment?: Appointment[];
   prescriptions?: PrescriptionResponse[];
   healthrecord: unknown[];
+  gethealthrecords:unknown[],
   getappointments: {
     appointments: BaseAppointment[] | null;
     error: string | null;
   };
   transactions: unknown[];
+  getbillings:unknown[];
 }

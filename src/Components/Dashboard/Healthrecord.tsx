@@ -1,49 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { Search, Plus, X } from 'lucide-react';
-import { getallPatients, Healthrecord } from '@/Redux/Slices/Patient/patientSlices';
-import { useAppDispatch } from '@/hooks';
-import { RootState } from '@/Redux/App/store';
-import { useSelector } from 'react-redux';
-import { Patient } from '@/types/patient';
+import React, { useEffect, useState } from "react";
+import { Search, Plus, X } from "lucide-react";
+import { getallPatients, Healthrecord } from "@/Redux/Slices/Patient/patientSlices";
+import { useAppDispatch } from "@/hooks";
+import { RootState } from "@/Redux/App/store";
+import { useSelector } from "react-redux";
+import { Patient } from "@/types/patient";
 
 interface FormData {
   healthMetrics: Array<{ name: string; value: string }>;
   description: string;
   date: string;
-  medications: Array<{ name: string; dosage: string; frequency: string }>;
+  medications: Array<{ name: string; dosage: string; frequency: string }>; // Array of objects
   attachments: { file: File; path: string } | null;
 }
 
-interface MappedPatient {
-  id: number;
-  name: string;
-  age: string;
-  patientId: string;
-}
 
 const HealthChartForm = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const dispatch = useAppDispatch();
-  const [patientid,setpatientid] = useState<any>(null);
-  const [dates, setdates] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dates, setDates] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [formData, setFormData] = useState<FormData>({
+    healthMetrics: [
+      { name: "Exercise", value: "" },
+      { name: "Diet", value: "" },
+      { name: "Sleep", value: "" },
+      { name: "Stress", value: "" },
+      { name: "Hydration", value: "" },
+    ],
+    description: "",
+    date: dates,
+    medications: [{ name: "", dosage: "", frequency: "" }],
+    attachments: null,
+  });
 
-
-   const {allpatients } = useSelector((state:RootState)=>state.Patient);
-
-  //  console.log(allpatients);
-
-   const samplePatients = allpatients?.map((element)=>{
-     return {
-      id: Number(element?.id),
-      name:element.name,
-      age: element?.dob.slice(0,4),
-      patientId : `P00${element?.id}`
-     }
-   })
-   
-
- 
   const initialFormState: FormData = {
     healthMetrics: [
       { name: 'Exercise', value: '' },
@@ -52,17 +42,29 @@ const HealthChartForm = () => {
       { name: 'Stress', value: '' },
       { name: 'Hydration', value: '' },
     ],
-    description: "",
+    description: '',
     date: new Date().toISOString().split('T')[0],
-    medications: [{ name: '', dosage: '', frequency: '' }],
+    medications: [{ name: '', dosage: '', frequency: '' }], // Default one empty medication
     attachments: null,
   };
 
-  const [formData, setFormData] = useState(initialFormState);
+  const dispatch = useAppDispatch();
+  const { allpatients } = useSelector((state: RootState) => state.Patient);
+
+  const samplePatients = allpatients?.map((element) => ({
+    id: Number(element?.id),
+    name: element.name,
+    age: element?.dob.slice(0, 4),
+    patientId: `P00${element?.id}`,
+  }));
+
+  useEffect(() => {
+    dispatch(getallPatients());
+  }, [dispatch]);
 
   const handlePatientSelect = (patient: Patient) => {
     setSelectedPatient(patient);
-    setSearchQuery('');
+    setSearchQuery("");
   };
 
   const handleMetricChange = (index: number, value: string) => {
@@ -71,22 +73,26 @@ const HealthChartForm = () => {
     setFormData({ ...formData, healthMetrics: newMetrics });
   };
 
-  const handleMedicationChange = (index: number, field: 'name' | 'dosage' | 'frequency', value: string) => {
-    const newMedications = [...formData.medications];
-    newMedications[index][field] = value;
-    setFormData({ ...formData, medications: newMedications });
+  const handleMedicationChange = (
+    index: number,
+    field: 'name' | 'dosage' | 'frequency',
+    value: string
+  ) => {
+    const updatedMedications = [...formData.medications];
+    updatedMedications[index][field] = value; // Update specific field
+    setFormData({ ...formData, medications: updatedMedications });
   };
-
+  
   const addMedication = () => {
     setFormData({
       ...formData,
       medications: [...formData.medications, { name: '', dosage: '', frequency: '' }],
     });
   };
-
+  
   const removeMedication = (index: number) => {
-    const newMedications = formData.medications.filter((_, i) => i !== index);
-    setFormData({ ...formData, medications: newMedications });
+    const updatedMedications = formData.medications.filter((_, i) => i !== index);
+    setFormData({ ...formData, medications: updatedMedications });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,65 +102,46 @@ const HealthChartForm = () => {
       reader.onloadend = () => {
         setFormData({
           ...formData,
-          attachments: {
-            file: file,
-            path: reader.result as string
-          }
+          attachments: { file, path: reader.result as string },
         });
+        setImagePreview(reader.result as string); // Set image preview
       };
       reader.readAsDataURL(file);
     } else {
       setFormData({
         ...formData,
-        attachments: null
+        attachments: null,
       });
+      setImagePreview(null); // Clear image preview
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedPatient) return;
+ const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-    const formattedMedications = formData.medications.map(med => ({
-      name: med.name || '',
-      dosage: med.dosage || '',
-      frequency: med.frequency || ''
-    }));
+  if (!selectedPatient) return;
 
-    const submissionData = {
-      patient_id: parseInt(selectedPatient.id),
-      description: formData.description,
-      date: formData.date,
-      medications: JSON.stringify(formattedMedications),
-      healthMetrics: JSON.stringify(formData.healthMetrics),
-      attachment_path: formData.attachments?.path || ''
-    };
-    
-    console.log('Submitting data:', submissionData); 
-    dispatch(Healthrecord({
-      patient_id: parseInt(selectedPatient.id),
-      description: formData.description,
-      date: formData.date,
-      medications: JSON.stringify(formattedMedications),
-      healthMetrics: JSON.stringify(formData.healthMetrics),
-      attachment_path: formData.attachments?.path || ''
-    }));
-
-    setFormData(initialFormState);
-    setSelectedPatient(null);
-    setSearchQuery('');
-    setdates('');
+  const submissionData = {
+    patient_id: parseInt(selectedPatient.id),
+    description: formData.description,
+    date: formData.date,
+    medications: formData.medications, // Array of medication objects
+    healthMetrics: formData.healthMetrics,
+    attachment_path: formData.attachments?.path || '',
   };
-  
 
+  console.log('Submitting data:', submissionData);
 
-   useEffect(() => {
-      dispatch(getallPatients());
-    }, [dispatch]);
+  dispatch(Healthrecord(submissionData));
+
+  // Reset form
+  setFormData(initialFormState);
+  setSelectedPatient(null);
+};
+
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Patient Search */}
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -169,34 +156,34 @@ const HealthChartForm = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          
           {searchQuery && (
             <div className="mt-2 border border-gray-200 rounded-lg divide-y divide-gray-200">
               {samplePatients
-                .filter(patient => 
-                  patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  patient.patientId.toLowerCase().includes(searchQuery.toLowerCase())
+                ?.filter(
+                  (patient) =>
+                    patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    patient.patientId.toLowerCase().includes(searchQuery.toLowerCase())
                 )
-                .map(patient => (
+                .map((patient) => (
                   <div
                     key={patient.id}
                     className="p-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => handlePatientSelect(patient as unknown as Patient)}
+                    onClick={() => handlePatientSelect(patient as Patient)}
                   >
                     <div className="font-medium">{patient.name}</div>
                     <div className="text-sm text-gray-500">
-                      ID: {patient.patientId} | Dob: {patient.age}
+                      ID: {patient.patientId} | DOB: {patient.age}
                     </div>
                   </div>
-                ))
-              }
+                ))}
             </div>
           )}
-
           {selectedPatient && (
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
               <div className="font-medium">Selected Patient:</div>
-              <div>{selectedPatient.name} (ID: {selectedPatient.id})</div>
+              <div>
+                {selectedPatient.name} (ID: {selectedPatient.id})
+              </div>
             </div>
           )}
         </div>
@@ -225,112 +212,91 @@ const HealthChartForm = () => {
 
             {/* Medications */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Medications</h2>
-              <div className="space-y-4">
-                {formData.medications.map((medication, index) => (
-                  <div key={index} className="flex gap-4 items-start">
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Medication Name"
-                        className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                        value={medication.name}
-                        onChange={(e) => handleMedicationChange(index, 'name', e.target.value)}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Dosage"
-                        className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                        value={medication.dosage}
-                        onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Frequency"
-                        className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                        value={medication.frequency}
-                        onChange={(e) => handleMedicationChange(index, 'frequency', e.target.value)}
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeMedication(index)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addMedication}
-                  className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Medication
-                </button>
-              </div>
+  <h2 className="text-xl font-semibold mb-4">Medications</h2>
+  <div className="space-y-4">
+    {formData.medications.map((medication, index) => (
+      <div key={index} className="flex gap-4 items-start">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input
+            type="text"
+            placeholder="Medication Name"
+            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            value={medication.name}
+            onChange={(e) => handleMedicationChange(index, 'name', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Dosage"
+            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            value={medication.dosage}
+            onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Frequency"
+            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            value={medication.frequency}
+            onChange={(e) => handleMedicationChange(index, 'frequency', e.target.value)}
+          />
+        </div>
+        <button
+          type="button"
+          onClick={() => removeMedication(index)}
+          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+        >
+          Remove
+        </button>
+      </div>
+    ))}
+    <button
+      type="button"
+      onClick={addMedication}
+      className="flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors"
+    >
+      Add Medication
+    </button>
+  </div>
+         </div>
+
+
+            {/* Attachments */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4">Attachments</h2>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="block w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+              {imagePreview && (
+                <div className="mt-4">
+                  <img
+                    src={imagePreview}
+                    alt="Attachment preview"
+                    className="max-w-full h-auto rounded-lg shadow-md"
+                  />
+                </div>
+              )}
             </div>
 
-            <input 
-  type="date" 
-  onChange={(e) => {
-    const newDate = e.target.value;
-    setdates(newDate); 
-    setFormData(prev => ({ ...prev, date: newDate })); 
-  }} 
-  value={formData.date} 
-/>
-
-            {/* File Attachments */}
+            {/* Description */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Attachment</h2>
-              <div className="space-y-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="block w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-lg file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-50 file:text-blue-700
-                    hover:file:bg-blue-100
-                    cursor-pointer"
-                  onChange={handleFileChange}
-                />
-                {formData.attachments && (
-                  <div className="text-sm text-gray-600">
-                    {formData.attachments.file.name}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Description Field */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-4">Description</h2>
+              <h2 className="text-xl font-semibold mb-4">Additional Notes</h2>
               <textarea
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                rows={4}
+                className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                rows={5}
+                placeholder="Add any additional notes here..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Enter health record description..."
-                required
               />
             </div>
 
-            {/* Submit Button */}
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
-                onClick={() => {
-                  setpatientid(selectedPatient.id)
-                }}
-              >
-                Save Health Chart
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors"
+            >
+              Submit Health Chart
+            </button>
           </>
         )}
       </form>

@@ -131,27 +131,69 @@ const ModernNavbar = () => {
 
 
 <div className="flex items-center gap-2 sm:gap-4">
-                  <button
-                    onClick={handleAddPatient}
-                    className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-blue-600 text-white 
-                             rounded-full text-sm font-medium shadow-lg shadow-blue-500/20
-                             hover:bg-blue-700 hover:shadow-blue-500/30 transition-all duration-300"
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    <span className="hidden sm:inline">Add Patient</span>
-                  </button>
-                  <button
-                    onClick={handleScheduleAppointment}
-                    className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-indigo-600 text-white 
-                             rounded-full text-sm font-medium shadow-lg shadow-indigo-500/20
-                             hover:bg-indigo-700 hover:shadow-indigo-500/30 transition-all duration-300"
-                  >
-                    <Calendar className="h-4 w-4" />
-                    <span className="hidden sm:inline">
-                      Schedule Appointment
-                    </span>
-                  </button>
-                </div>
+  {/* Mobile Profile Icon - Only visible on small screens */}
+  <div className="md:hidden relative">
+    <div 
+      className="flex items-center gap-2 cursor-pointer"
+      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+    >
+      <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 
+                    p-0.5 hover:shadow-lg hover:shadow-indigo-500/30 
+                    transition-all duration-300">
+        <div className="h-full w-full rounded-lg bg-white flex items-center justify-center">
+          <UserCircle className="h-5 w-5 text-indigo-600" />
+        </div>
+      </div>
+    </div>
+
+    {/* Mobile Dropdown Menu */}
+    {isProfileDropdownOpen && (
+      <div className="absolute right-0 top-full mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+        <div className="py-1" role="menu" aria-orientation="vertical">
+          <div className="px-4 py-2 border-b">
+            <p className="text-sm font-semibold text-gray-900">Super Admin</p>
+            <p className="text-xs text-gray-500">Healthcare System</p>
+          </div>
+          <button
+            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            role="menuitem"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </button>
+          <button
+            className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+            role="menuitem"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <button
+    onClick={handleAddPatient}
+    className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-blue-600 text-white 
+             rounded-full text-sm font-medium shadow-lg shadow-blue-500/20
+             hover:bg-blue-700 hover:shadow-blue-500/30 transition-all duration-300"
+  >
+    <UserPlus className="h-4 w-4" />
+    <span className="hidden sm:inline">Add Patient</span>
+  </button>
+  <button
+    onClick={handleScheduleAppointment}
+    className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-indigo-600 text-white 
+             rounded-full text-sm font-medium shadow-lg shadow-indigo-500/20
+             hover:bg-indigo-700 hover:shadow-indigo-500/30 transition-all duration-300"
+  >
+    <Calendar className="h-4 w-4" />
+    <span className="hidden sm:inline">
+      Schedule Appointment
+    </span>
+  </button>
+</div>
 
                 {/* Right Section - Only visible on larger screens */}
                 <div className="hidden md:flex items-center gap-6">

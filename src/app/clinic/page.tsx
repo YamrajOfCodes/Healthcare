@@ -8,7 +8,8 @@ import {Calendar,Users,FileText, Menu,X,
   ChevronRight,
   CircleUserRound,
   Heart,
-  DollarSignIcon} from "lucide-react"
+  DollarSignIcon,
+  BadgeDollarSign} from "lucide-react"
 import Showdashboard from "@/Components/Showdashboard";
 import DashCalender from "@/Components/Dashboard/DashCalender";
 import Patients from "@/Components/Dashboard/Patients";
@@ -28,6 +29,7 @@ import Upcoming from "@/Components/Dashboard/Upcoming";
 import clinic_logo from "@/Assets/clinic_logo.jpg"
 import Image from "next/image";
 import Healthrecord from "@/Components/Dashboard/Healthrecord";
+import OTD_Billing from "@/Components/Dashboard/OTD_Billing";
 
 
 interface NavItemProps {
@@ -318,6 +320,13 @@ const DashboardLayout: React.FC = () => {
                     isActive={activeItem === 'health'}
                     onClick={() => setActiveItem('health')}
                   />
+
+                    <NavItem 
+                    icon={BadgeDollarSign} 
+                    label="Billing" 
+                    isActive={activeItem === 'billing'}
+                    onClick={() => setActiveItem('billing')}
+                  />
                 </nav>
 
                 {/* Bottom Section - Pro Badge */}
@@ -365,7 +374,8 @@ const DashboardLayout: React.FC = () => {
                   activeItem === "allappointments" ? <Allappointment /> : 
                   activeItem === "Transactions" ? <Transactions/> :
                   activeItem === "upcoming"? <Upcoming/> :
-                  activeItem === "health"? <Healthrecord/>:null
+                  activeItem === "health"? <Healthrecord/>:
+                  activeItem === "billing"? <OTD_Billing/>: null
                 }
               </div>
             </div>

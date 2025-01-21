@@ -1,317 +1,328 @@
-'use client'
 import React, { useState } from 'react'
-import { Calendar, Clock, Phone, MapPin } from 'lucide-react';
+import { Search, Plus, X, Save } from 'lucide-react';
 
-interface ProfileInfoProps {
-  icon: React.ElementType;
-  children: React.ReactNode;
-}
+const OTD_Billing = () => { 
+  
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Sample patient data
+  const samplePatients = [
+    { id: 1, name: 'John Doe', age: 45, patientId: 'P001' },
+    { id: 2, name: 'Jane Smith', age: 32, patientId: 'P002' },
+  ];
 
-const OTD_Billing: React.FC = () => {
+  // Form state
+  const [billing, setBilling] = useState({
+    services: [{ name: '', cost: '' }],
+    items: [{ medicine: '', quantity: '', price: '', total: '' }],
+    totalAmount: 0,
+    paidAmount: '',
+    remainingBalance: 0,
+    status: 'unpaid'
+  });
 
-    const [activePayMode, setActivePayMode] = useState<string>('cash');
+  // Calculate totals
+  const calculateTotals = (services, items) => {
+    const servicesTotal = services.reduce((sum, service) => 
+      sum + (parseFloat(service.cost) || 0), 0
+    );
+    
+    const itemsTotal = items.reduce((sum, item) => 
+      sum + (parseFloat(item.total) || 0), 0
+    );
 
-    const ProfileInfo: React.FC<ProfileInfoProps> = ({ icon: Icon, children }) => (
-        <div className="flex items-center gap-2 text-gray-600">
-          <Icon className="w-4 h-4" />
-          <span>{children}</span>
-        </div>
-      );
+    const total = servicesTotal + itemsTotal;
+    const remaining = total - (parseFloat(billing.paidAmount) || 0);
 
-    const handlePayModeChange = (mode: string): void => {
-        setActivePayMode(mode.toLowerCase());
-    };
+    setBilling(prev => ({
+      ...prev,
+      totalAmount: total,
+      remainingBalance: remaining,
+      status: remaining <= 0 ? 'paid' : 'unpaid'
+    }));
+  };
+
+  // Handle services changes
+  const handleServiceChange = (index, field, value) => {
+    const newServices = [...billing.services];
+    newServices[index] = { ...newServices[index], [field]: value };
+    setBilling(prev => ({ ...prev, services: newServices }));
+    calculateTotals(newServices, billing.items);
+  };
+
+  // Handle items changes
+  const handleItemChange = (index, field, value) => {
+    const newItems = [...billing.items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    
+    // Calculate item total
+    if (field === 'quantity' || field === 'price') {
+      newItems[index].total = (
+        (parseFloat(newItems[index].quantity) || 0) * 
+        (parseFloat(newItems[index].price) || 0)
+      ).toString();
+    }
+    
+    setBilling(prev => ({ ...prev, items: newItems }));
+    calculateTotals(billing.services, newItems);
+  };
+
+  // Add/Remove functions
+  const addService = () => {
+    setBilling(prev => ({
+      ...prev,
+      services: [...prev.services, { name: '', cost: '' }]
+    }));
+  };
+
+  const removeService = (index) => {
+    const newServices = billing.services.filter((_, i) => i !== index);
+    setBilling(prev => ({ ...prev, services: newServices }));
+    calculateTotals(newServices, billing.items);
+  };
+
+  const addItem = () => {
+    setBilling(prev => ({
+      ...prev,
+      items: [...prev.items, { medicine: '', quantity: '', price: '', total: '' }]
+    }));
+  };
+
+  const removeItem = (index) => {
+    const newItems = billing.items.filter((_, i) => i !== index);
+    setBilling(prev => ({ ...prev, items: newItems }));
+    calculateTotals(billing.services, newItems);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Submitting billing:', { patient: selectedPatient, ...billing });
+  };
 
   return (
-    <div className='otd_billing w-full'>
-        <div className="header py-4 px-6 flex flex-col md:flex-row md:items-center justify-between bg-gray-50 border-b">
-  {/* Header Actions */}
-  <div className="cta flex gap-3 flex-wrap">
-    <button className="px-4 py-2 border rounded-md bg-blue-500 text-white hover:bg-blue-600">
-      Save Bill
-    </button>
-    <button className="px-4 py-2 border rounded-md bg-gray-200 hover:bg-gray-300">
-      Print
-    </button>
-    <button className="px-4 py-2 border rounded-md bg-gray-200 hover:bg-gray-300">
-      Billing Dashboard
-    </button>
-    <button className="px-4 py-2 border rounded-md bg-gray-200 hover:bg-gray-300">
-      Action
-    </button>
-  </div>
-  
-  {/* Title */}
-  <h2 className="text-xl font-bold mt-4 md:mt-0">OTD Billing</h2>
-       </div>
-
-       <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
-      <div className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          {/* Profile Section */}
-          <div className="flex gap-4 items-start">
-            {/* Avatar */}
-            <div className="relative flex-shrink-0">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-medium text-lg">
-                JD
-              </div>
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-            </div>
-
-            {/* Profile Details */}
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-lg font-semibold text-gray-900">Mr. Jane Doe</h3>
-                <span className="px-2 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
-                  MH193784
-                </span>
-              </div>
-
-              <div className="mt-3 space-y-2">
-                <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                  <ProfileInfo icon={Calendar}>
-                    48 years old male
-                  </ProfileInfo>
-                  <ProfileInfo icon={MapPin}>
-                    Shri Hari Nagar, Pune
-                  </ProfileInfo>
-                  <ProfileInfo icon={Phone}>
-                    +91 3456 7688
-                  </ProfileInfo>
-                </div>
-              </div>
-            </div>
+    <div className="max-w-6xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-8">OPD Billing</h1>
+      
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Patient Search */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h2 className="text-lg font-semibold mb-4">Patient Information</h2>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              placeholder="Search patient by name or ID"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-
-          {/* Registration Info */}
-          <div className="flex-shrink-0 flex items-center gap-2 text-sm px-4 py-2 bg-gray-50 rounded-lg">
-            <Calendar className="w-4 h-4 text-gray-500" />
-            <span className="text-gray-600">Registered on:</span>
-            <span className="font-medium text-gray-900">22/01/2025</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-<div className="billing-content min-h-screen bg-gray-50 p-4 lg:p-6">
-      <div className="max-w-7xl mx-auto grid md:grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* OPD Details Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-xl font-semibold mb-6 text-gray-800 flex items-center gap-2">
-            OPD Details
-          </h2>
-
-          <div className="space-y-6">
-            {/* Receipt Number */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Receipt No
-              </label>
-              <input
-                type="text"
-                disabled
-                className="w-full rounded-lg border-gray-200 bg-gray-50/50 px-4 py-2.5 text-gray-500 border"
-                placeholder="Auto-generated"
-              />
-            </div>
-
-            {/* Date & Time */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date & Time
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm">03/Dec/2019</span>
-                </button>
-                <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm">3:57 PM</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Doctor Selection */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Doctor
-              </label>
-              <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
-                <option value="Deepali">Dr. Deepali</option>
-                <option value="Yamini">Dr. Yamini</option>
-                <option value="Kritika">Dr. Kritika</option>
-                <option value="Kundan">Dr. Kundan</option>
-              </select>
-            </div>
-
-            {/* OPD Type */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                OPD Type
-              </label>
-              <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
-                <option>General OPD</option>
-                <option>Pediatrics</option>
-                <option>Orthopedics</option>
-                <option>Consultation</option>
-                <option>Gynecology</option>
-                <option>Neurology</option>
-              </select>
-            </div>
-
-            {/* Subtype */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Subtype
-              </label>
-              <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
-                <option>N/S</option>
-                <option>N/A</option>
-              </select>
-            </div>
-
-            {/* Diagnosis */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Diagnosis
-              </label>
-              <input
-                type="text"
-                className="w-full rounded-lg border-gray-200 px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border"
-                placeholder="Enter diagnosis"
-              />
-            </div>
-
-            {/* Remarks */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Remarks
-              </label>
-              <input
-                type="text"
-                className="w-full rounded-lg border-gray-200 px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border"
-                placeholder="Additional remarks"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Billing Details Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-xl font-semibold mb-6 text-gray-800">
-            Billing Details
-          </h2>
-
-          <div className="space-y-6">
-            {/* Total Amount */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Total Amount
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  className="flex-1 rounded-lg border-gray-200 px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border"
-                  placeholder="Enter amount"
-                />
-                <span className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 min-w-[60px]">
-                  INR
-                </span>
-              </div>
-            </div>
-
-            {/* Discount */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Discount
-              </label>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <div className="flex-1 flex gap-2">
-                  <input
-                    type="text"
-                    className="flex-1 rounded-lg border-gray-200 px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border"
-                    placeholder="0.0"
-                  />
-                  <span className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 min-w-[60px]">
-                    %
-                  </span>
-                </div>
-                <div className="flex-1 flex gap-2">
-                  <input
-                    type="text"
-                    className="flex-1 rounded-lg border-gray-200 px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border"
-                    placeholder="00"
-                  />
-                  <span className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 min-w-[60px]">
-                    INR
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Pay Mode */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Pay Mode
-              </label>
-              <div className="flex gap-2">
-                {['Cash', 'Bank', 'Card'].map((mode) => (
-                  <button
-                    key={mode}
-                    onClick={() => handlePayModeChange(mode.toLowerCase())}
-                    className={`flex-1 px-4 py-2.5 rounded-lg border transition-all text-sm ${
-                      activePayMode === mode.toLowerCase()
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'border-gray-200 hover:bg-gray-50'
-                    }`}
+          
+          {searchQuery && (
+            <div className="mt-2 border border-gray-200 rounded-lg divide-y divide-gray-200">
+              {samplePatients
+                .filter(patient => 
+                  patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  patient.patientId.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map(patient => (
+                  <div
+                    key={patient.id}
+                    className="p-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                    onClick={() => {
+                      setSelectedPatient(patient);
+                      setSearchQuery('');
+                    }}
                   >
-                    {mode}
-                  </button>
+                    <div className="font-medium">{patient.name}</div>
+                    <div className="text-sm text-gray-500">
+                      ID: {patient.patientId} | Age: {patient.age}
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          )}
+
+          {selectedPatient && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <div className="font-medium">Selected Patient:</div>
+              <div>{selectedPatient.name} (ID: {selectedPatient.patientId})</div>
+            </div>
+          )}
+        </div>
+
+        {selectedPatient && (
+          <>
+            {/* Services */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Services</h2>
+                <button
+                  type="button"
+                  onClick={addService}
+                  className="text-blue-500 hover:text-blue-600 flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Service
+                </button>
+              </div>
+              <div className="space-y-4">
+                {billing.services.map((service, index) => (
+                  <div key={index} className="flex gap-4 items-start">
+                    <input
+                      type="text"
+                      placeholder="Service name"
+                      className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      value={service.name}
+                      onChange={(e) => handleServiceChange(index, 'name', e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Cost"
+                      className="w-32 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      value={service.cost}
+                      onChange={(e) => handleServiceChange(index, 'cost', e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeService(index)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Payable Amount */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Payable Amount
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  disabled
-                  className="flex-1 rounded-lg border-gray-200 bg-gray-50/50 px-4 py-2.5 text-gray-500 border"
-                  placeholder="Auto-calculated"
-                />
-                <span className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 min-w-[60px]">
-                  INR
-                </span>
+            {/* Items/Medicines */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">Medicines</h2>
+                <button
+                  type="button"
+                  onClick={addItem}
+                  className="text-blue-500 hover:text-blue-600 flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Medicine
+                </button>
+              </div>
+              <div className="space-y-4">
+                {billing.items.map((item, index) => (
+                  <div key={index} className="grid grid-cols-5 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Medicine name"
+                      className="col-span-2 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      value={item.medicine}
+                      onChange={(e) => handleItemChange(index, 'medicine', e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Qty"
+                      className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      value={item.quantity}
+                      onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Price"
+                      className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      value={item.price}
+                      onChange={(e) => handleItemChange(index, 'price', e.target.value)}
+                    />
+                    <div className="flex items-center gap-2">
+                      <span className="flex-1 p-2 bg-gray-50 rounded-lg">
+                        ₹{item.total || '0'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeItem(index)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Received Amount */}
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Received Amount
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  disabled
-                  className="flex-1 rounded-lg border-gray-200 bg-gray-50/50 px-4 py-2.5 text-gray-500 border"
-                  placeholder="Auto-calculated"
-                />
-                <span className="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 px-4 min-w-[60px]">
-                  INR
-                </span>
+            {/* Payment Details */}
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h2 className="text-lg font-semibold mb-4">Payment Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Total Amount
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full p-2 bg-gray-50 rounded-lg"
+                      value={`₹${billing.totalAmount}`}
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Paid Amount
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      value={billing.paidAmount}
+                      onChange={(e) => {
+                        setBilling(prev => ({ ...prev, paidAmount: e.target.value }));
+                        calculateTotals(billing.services, billing.items);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Remaining Balance
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full p-2 bg-gray-50 rounded-lg"
+                      value={`₹${billing.remainingBalance}`}
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Status
+                    </label>
+                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                      billing.status === 'paid' 
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {billing.status.charAt(0).toUpperCase() + billing.status.slice(1)}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-      
+
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="flex items-center gap-2 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+              >
+                <Save className="w-4 h-4" />
+                Save Bill
+              </button>
+            </div>
+          </>
+        )}
+      </form>
     </div>
   )
 }

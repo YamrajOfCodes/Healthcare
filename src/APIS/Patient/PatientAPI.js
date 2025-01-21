@@ -16,8 +16,8 @@ export const deletePatientsAPI = async(data,header)=>{
     return await commonrequest("DELETE",`${BASE_URL}/api/patients/${data}`,"",header,"")
 }
 
-export const updatePatientsAPI = async(data,header)=>{
-    return await commonrequest("PUT",`${BASE_URL}/api/patients/${data}`,"",header,"")
+export const updatePatientsAPI = async(id, data, header)=>{
+    return await commonrequest("PUT",`${BASE_URL}/api/patients/${id}`, data, header,"")
 }
 
 export const addPatientAppointmentAPI = async(data,header)=>{
@@ -47,4 +47,22 @@ export const HealthrecordsAPI = async(data, header) => {
 
 export const transactionsAPI = async(data,header)=>{
     return await commonrequest("GET",`${BASE_URL}/api/transactions`,"",header,"");
+}
+
+export const getHealthrecordsAPI = async(data, header) => {
+    return await commonrequest(
+        "GET",
+        `${BASE_URL}/api/patients/${33}/health-records`,
+        data,
+        header,
+        ""
+    );
+}
+
+export const postBillingAPI = async(data,header)=>{
+    return await commonrequest("POST",`${BASE_URL}/api/billings`,"",header,"");
+}
+
+export const getBillingsDetailsAPI = async(data,header)=>{
+    return await commonrequest("GET",`${BASE_URL}/api/billings`,"",header,"");
 }

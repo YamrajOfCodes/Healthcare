@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Activity, Heart, User, Calendar, Clipboard, Mail, Phone, MapPin, ChevronRight } from 'lucide-react';
-import { updatePatient } from '@/Redux/Slices/Patient/patientSlices';
+import { updatePatient, getallPatients } from '@/Redux/Slices/Patient/patientSlices';
 import { useAppDispatch } from '@/hooks';
 import { EditPatientProps, PatientFormData } from '@/types/patient';
 
@@ -24,11 +24,23 @@ const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) =
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    dispatch(updatePatient(formData));
-    onClose();
+    const updatedData = {
+      id: patientdata?.id,
+      name: formData.fullname,
+      dob: formData.dateOfBirth,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address
+    };
+    
+    try {
+      await dispatch(updatePatient(updatedData)).unwrap();
+      onClose();
+    } catch (error) {
+      console.error('Failed to update patient:', error);
+    }
   };
 
   return (

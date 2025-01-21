@@ -3,6 +3,8 @@ import {
   addPatientAppointmentAPI, 
   CompletePatientAPI, 
   deletePatientsAPI, 
+  getBillingsDetailsAPI, 
+  getHealthrecordsAPI, 
   getPatientAppointmentAPI, 
   getPatientsAPI, 
   HealthrecordsAPI, 
@@ -152,18 +154,24 @@ export const deletePatient = createAsyncThunk(
 
 export const updatePatient = createAsyncThunk(
   "updatepatient", 
-  async (data: Partial<Patient>, { rejectWithValue }) => {
+  async (data: { id: number; name: string }, { rejectWithValue, dispatch }) => {
     try {
-      const response = await updatePatientsAPI(data) as APIResponse;
+      const response = await updatePatientsAPI(
+        data.id,
+        { name: data.name },
+      ) as APIResponse;
+      
       if (response.status === 200) {
-        toast.success("Patient updated");
-        return "Patient updated";
+        toast.success("Patient updated successfully");
+        dispatch(getallPatients()); // Refresh the patients list
+        return response.data;
       } else {
-        toast.success("patient updation successfully");
-        return "Failed to update patient";
+        toast.error("Failed to update patient");
+        return rejectWithValue("Failed to update patient");
       }
     } catch (error) {
       console.log(error);
+      toast.error("Error updating patient");
       return rejectWithValue(error);
     }
   }
@@ -237,6 +245,40 @@ export const Transactionn = createAsyncThunk(
     }
   }
 );
+
+
+
+export const getHealthRecord = createAsyncThunk("gethealthRecord",async()=>{
+  try {
+    const response = await getHealthrecordsAPI();
+    if(response.status == 200){
+      return response.data;
+    }else{
+      return response.data
+    }
+  } catch (error) {
+    console.log("error while fetching healthrecord",error);
+    
+  }
+})
+
+
+export const Getbillings = createAsyncThunk("getBillingsDetails",async()=>{
+  try {
+    const response = await getBillingsDetailsAPI();
+    if(response.status == 200){
+      return response.data
+    }else{
+      return response.data
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+})
+
+
+
 
 // Create the slice
 export const PatientSlice = createSlice({
@@ -371,6 +413,33 @@ export const PatientSlice = createSlice({
         state.transactions = [action.payload];
       })
       .addCase(Transactionn.rejected, (state, action) => {
+        state.loader = false;
+        state.error = action.error.message || null;
+      })
+      
+      //  getrecords
+      .addCase(getHealthRecord.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(getHealthRecord.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loader = false;
+        state.gethealthrecords = [action.payload];
+      })
+      .addCase(getHealthRecord.rejected, (state, action) => {
+        state.loader = false;
+        state.error = action.error.message || null;
+      })
+
+
+      // getbillings
+      .addCase(Getbillings.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(Getbillings.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loader = false;
+        state.getbillings = [action.payload];
+      })
+      .addCase(Getbillings.rejected, (state, action) => {
         state.loader = false;
         state.error = action.error.message || null;
       });

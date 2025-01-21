@@ -61,7 +61,6 @@ const PatientCard: React.FC<PatientCardProps> = ({
   const handlecomplete = async (): Promise<void> => {
     try {
       await dispatch(completePatient({ id: parseInt(waitingid) })).unwrap();
-      dispatch(getWaitingroom())
       setOpen(false);
       if (onComplete) {
         onComplete(waitingid);
@@ -242,6 +241,12 @@ export default function WaitingRoom() {
 
   const handlePatientComplete = (completedId: string) => {
     setLocalWaitingRoom(prev => prev.filter(patient => patient.id !== completedId));
+    
+    const remainingPatients = localWaitingRoom.length - 1;
+    const newTotalPages = Math.ceil((remainingPatients) / patientsPerPage);
+    if (currentPage > newTotalPages && currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
   };
 
   // Calculate pagination values
