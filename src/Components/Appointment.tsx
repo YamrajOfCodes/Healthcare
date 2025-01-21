@@ -60,8 +60,6 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
   const { allpatients } = useSelector((state:RootState) => state.Patient);
   const {doctors} = useSelector((state:RootState)=>state.Doctor)
 
-  console.log(doctors);
-  
   // handledoctor
 
   const handledoctors = (doctorId: string) => {

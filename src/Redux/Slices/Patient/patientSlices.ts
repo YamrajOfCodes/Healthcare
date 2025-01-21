@@ -12,12 +12,14 @@ import {
   patientPrescAPI, 
   postBillingAPI, 
   transactionsAPI, 
-  updatePatientsAPI 
+  updatePatientsAPI,
+  
 } from "../../../APIS/Patient/PatientAPI";
 import toast from "react-hot-toast";
 import { Patient, PatientState } from "@/types/patient";
 import { Appointment, AppointmentsState } from "@/types/appointment";
 import { PrescriptionResponse } from "@/types/prescription";
+import { getWaitingroom } from "../Admin/adminSlice";
 
 interface APIResponse {
   status: number;
@@ -38,8 +40,7 @@ const initialState: PatientState = {
     error: null
   },
   prescriptions: [],
-  transactions:[],
-  billings:[]
+  transactions:[]
 };
 
 
@@ -55,6 +56,32 @@ interface HealthRecordData {
   medications: string;
   healthMetrics: string;
   attachment_path: string;
+}
+
+interface BillingData {
+  appointment_id: number;
+  total_amount: string;
+  paid_amount: string;
+  remaining_balance: string;
+  status: string;
+  services: Array<{
+    name: string;
+    price: string;
+  }>;
+  items: Array<{
+    name: string;
+    quantity: number;
+    price: string;
+  }>;
+}
+
+interface UpdatePatientData {
+  id: number;
+  name: string;
+  dob: string;
+  email: string;
+  phone: string;
+  address: string;
 }
 
 export const RegisterPatient = createAsyncThunk(
@@ -93,10 +120,14 @@ export const getallPatients = createAsyncThunk(
 
 export const Addappointment = createAsyncThunk(
   "appointment/addAppointment",
-  async (appointment: Appointment, { rejectWithValue }) => {
+  async (appointment: Appointment, { rejectWithValue, dispatch }) => {
     try {
       const response = await addPatientAppointmentAPI(appointment) as APIResponse;
-      return response.data;
+      if (response.status === 200) {
+        dispatch(getWaitingroom());
+        return response.data;
+      }
+      return rejectWithValue(response.data);
     } catch (error) {
       return rejectWithValue((error as any).response.data);
     }
@@ -156,11 +187,17 @@ export const deletePatient = createAsyncThunk(
 
 export const updatePatient = createAsyncThunk(
   "updatepatient", 
-  async (data: { id: number; name: string }, { rejectWithValue, dispatch }) => {
+  async (data: UpdatePatientData, { rejectWithValue, dispatch }) => {
     try {
       const response = await updatePatientsAPI(
         data.id,
-        { name: data.name },
+        {
+          name: data.name,
+          dob: data.dob,
+          email: data.email,
+          phone: data.phone,
+          address: data.address
+        },
       ) as APIResponse;
       
       if (response.status === 200) {
@@ -183,17 +220,20 @@ export const completePatient = createAsyncThunk(
   "completePatient", 
   async (data: { id: number }, { rejectWithValue }) => {
     try {
-      const response = await CompletePatientAPI(data) as APIResponse;
+      const response = await CompletePatientAPI({ id: data.id }) as APIResponse;
+      
       if (response.status === 200) {
         toast.success("Patient consultation completed");
         return response.data;
       } else {
-        toast.success("Patient consultation completed");
-        return "Failed to complete consultation";
+        return rejectWithValue(response.message || "Failed to complete consultation");
       }
-    } catch (error) {
-      console.log(error);
-      return rejectWithValue(error);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          "Failed to complete consultation";
+      toast.error(errorMessage);
+      return rejectWithValue(errorMessage);
     }
   }
 );
@@ -248,7 +288,20 @@ export const Transactionn = createAsyncThunk(
   }
 );
 
-
+export const createBilling = createAsyncThunk(
+  "billing/create",
+  async (data: BillingData, { rejectWithValue }) => {
+    try {
+      const response = await postBillingAPI(data) as APIResponse;
+      if (response.status === 200) {
+        return response.data;
+      }
+      return rejectWithValue(response.data);
+    } catch (error) {
+      return rejectWithValue("Failed to create billing");
+    }
+  }
+);
 
 export const getHealthRecord = createAsyncThunk("gethealthRecord",async()=>{
   try {
@@ -264,43 +317,20 @@ export const getHealthRecord = createAsyncThunk("gethealthRecord",async()=>{
   }
 })
 
-
-export const Getbillings = createAsyncThunk("getBillingsDetails",async()=>{
-  try {
-    const response = await getBillingsDetailsAPI();
-    if(response.status == 200){
-      return response.data
-    }else{
-      return response.data
+export const getBillings = createAsyncThunk(
+  "billing/getBillings",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await getBillingsDetailsAPI() as APIResponse;
+      if (response.status === 200) {
+        return response.data;
+      }
+      return rejectWithValue(response.data);
+    } catch (error) {
+      return rejectWithValue("Failed to fetch billings");
     }
-  } catch (error) {
-    console.log(error);
-    
   }
-})
-
-
-export const Postbillings = createAsyncThunk("postBillingsDetails",async(data)=>{
-  try {
-    const response = await postBillingAPI(data);
-    console.log(response);
-    
-    if(response.status == 200){
-      toast.success("billing is generated successfully")
-      return response.data
-    }else{
-      toast.error("billing is not generated")
-      return response.data
-    }
-  } catch (error) {
-    console.log(error);
-    
-  }
-})
-
-
-
-
+);
 
 // Create the slice
 export const PatientSlice = createSlice({
@@ -406,11 +436,11 @@ export const PatientSlice = createSlice({
       })
       .addCase(completePatient.fulfilled, (state, action: PayloadAction<any>) => {
         state.loader = false;
-        state.complete = [action.payload];
+        state.complete = state.complete ? [...state.complete, action.payload] : [action.payload];
       })
       .addCase(completePatient.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = action.payload as string || action.error.message;
       })
 
       // HealthRecord
@@ -451,35 +481,50 @@ export const PatientSlice = createSlice({
         state.loader = false;
         state.error = action.error.message || null;
       })
-      
-
-        //  postbillingrecord
-        .addCase(Postbillings.pending, (state) => {
-          state.loader = true;
-        })
-        .addCase(Postbillings.fulfilled, (state, action: PayloadAction<any>) => {
-          state.loader = false;
-          state.billings = [action.payload];
-        })
-        .addCase(Postbillings.rejected, (state, action) => {
-          state.loader = false;
-          state.error = action.error.message || null;
-        })
-
 
       // getbillings
-      .addCase(Getbillings.pending, (state) => {
+      .addCase(getBillings.pending, (state) => {
         state.loader = true;
       })
-      .addCase(Getbillings.fulfilled, (state, action: PayloadAction<any>) => {
+      .addCase(getBillings.fulfilled, (state, action: PayloadAction<any>) => {
         state.loader = false;
         state.getbillings = [action.payload];
       })
-      .addCase(Getbillings.rejected, (state, action) => {
+      .addCase(getBillings.rejected, (state, action) => {
+        state.loader = false;
+        state.error = action.error.message || null;
+      })
+
+      // Add createBilling reducers
+      .addCase(createBilling.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(createBilling.fulfilled, (state, action: PayloadAction<any>) => {
+        state.loader = false;
+        state.createBilling = action.payload;
+      })
+      .addCase(createBilling.rejected, (state, action) => {
         state.loader = false;
         state.error = action.error.message || null;
       });
   },
 });
+export const Postbillings = createAsyncThunk("postBillingsDetails",async(data)=>{
+  try {
+    const response = await postBillingAPI(data);
+    console.log(response);
+    
+    if(response.status == 200){
+      toast.success("billing is generated successfully")
+      return response.data
+    }else{
+      toast.error("billing is not generated")
+      return response.data
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+})
 
 export default PatientSlice.reducer;

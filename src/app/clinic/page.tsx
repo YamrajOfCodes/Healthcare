@@ -1,5 +1,5 @@
 "use client"
-import { act, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {Calendar,Users,FileText, Menu,X,  
   LayoutDashboard,
   UserPlus,
@@ -107,52 +107,56 @@ const DashboardLayout: React.FC = () => {
   const [issubOpen, setsubIsOpen] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<string>('Home')
   const [isSubNavOpen, setIsSubNavOpen] = useState<boolean>(true);
-  const {allpatients} = useSelector((state:RootState)=>state.Patient)
-  // console.log("data",allpatients)
+  const { allpatients } = useSelector((state:RootState)=>state.Patient);
 
   const dispatch = useAppDispatch();
 
-   let newpatients = allpatients?.filter((element:any)=>{
-       if(element.visit_count == 0){
-        return element
-       }
-   })
+  const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
+  const { complete } = useSelector((state:RootState)=>state.Patient);
 
-   let oldpatient = allpatients?.filter((element:any)=>{
-    if(element.visit_count > 0){
-     return element
+  const waitingpatients_data = React.useMemo(() => {
+    if (!waitingroom?.[0] || !complete) return 0;
+    return waitingroom[0].filter(patient => !complete.includes(patient.id)).length;
+  }, [waitingroom, complete]);
+
+  let newpatients = allpatients?.filter((element:any)=>{
+    return element.visit_count === 0;
+  });
+
+  let oldpatient = allpatients?.filter((element:any)=>{
+    return element.visit_count > 0;
+  });
+
+  const newPatients_data = newpatients?.length || 0;
+  const oldpatients_data = oldpatient?.length || 0;
+  const outpatient_data = complete?.length || 0;
+
+  useEffect(() => {
+    const initializeData = async () => {
+      try {
+        await Promise.all([
+          dispatch(getallPatients()),
+          dispatch(getWaitingroom())
+        ]);
+      } catch (error) {
+        console.error('Error initializing data:', error);
+      }
+    };
+    initializeData();
+  }, [dispatch]);
+  useEffect(() => {
+    const refreshWaitingRoom = async () => {
+      try {
+        await dispatch(getWaitingroom());
+      } catch (error) {
+        console.error('Error refreshing waiting room:', error);
+      }
+    };
+    
+    if (complete?.length > 0) {
+      refreshWaitingRoom();
     }
-})
-
-  //  console.log("newpatients",newpatients);
-   
-   const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
-   const { complete } = useSelector((state:RootState)=>state.Patient)
-  //  console.log(waitingroom[0]);
-  // console.log("com",complete);
-
-
- 
-    let waitingpatients_data =  waitingroom?.[0]?.length || "0"
-    let newPatients_data = newpatients?.length || 0 
-    let oldpatients_data = oldpatient?.length || 0
-    // let outpatient_data = newPatients_data + oldpatients_data - waitingpatients_data;
-    let outpatient_data = complete?.length || 0;
- 
-  useEffect(()=>{
-    dispatch(getallPatients())
-    dispatch(getWaitingroom())
-  },[])
-
-
-  // useEffect(()=>{
-  //   dispatch(getWaitingroom())
-  // },[waitingroom])
-
-
-  
-
-
+  }, [dispatch, complete]);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const togglesubSidebar = () => setsubIsOpen(!issubOpen)
@@ -399,4 +403,4 @@ const DashboardLayout: React.FC = () => {
 export default DashboardLayout;
 
 
-// export default page
+

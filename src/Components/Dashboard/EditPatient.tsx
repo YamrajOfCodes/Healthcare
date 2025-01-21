@@ -37,6 +37,7 @@ const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) =
     
     try {
       await dispatch(updatePatient(updatedData)).unwrap();
+      await dispatch(getallPatients()); // Refresh the patients list after update
       onClose();
     } catch (error) {
       console.error('Failed to update patient:', error);

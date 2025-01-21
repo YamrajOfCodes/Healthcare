@@ -1,5 +1,5 @@
 "use client"
-import { deletePatient, getallPatients, Getbillings, getHealthRecord } from '@/Redux/Slices/Patient/patientSlices';
+import { deletePatient, getallPatients, getHealthRecord } from '@/Redux/Slices/Patient/patientSlices';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Edit2, FileText, Notebook, Printer, Search, Trash2, Users, X } from 'lucide-react';
@@ -29,6 +29,7 @@ const Patients: React.FC = () => {
   
 
   const handleEditPatient = (patient: Patient): void => {
+    if (!patient) return;
     window.scrollTo(0, 0);
     setIsEditing(true);
     setEditPatient(patient);
@@ -119,7 +120,6 @@ const handlePrint = ()=>{
   useEffect(() => {
     dispatch(getallPatients());
     dispatch(getHealthRecord());
-    dispatch(Getbillings())
   }, [dispatch]);
 
   useEffect(() => {
@@ -184,8 +184,16 @@ const handlePrint = ()=>{
                           <tbody className="divide-y">
                             {patients?.map((profile) => (
                               <tr key={profile.id} className="hover:bg-gray-50 transition-colors duration-300">
-                                <Link href={`profile/${profile.id}`}><td className="px-6 py-4 whitespace-nowrap text-gray-900">#{profile.id}</td>
-                                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{profile.name}</td></Link>
+                                <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                                  <Link href={`profile/${profile.id}`}>
+                                    #{profile.id}
+                                  </Link>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                                  <Link href={`profile/${profile.id}`}>
+                                    {profile.name}
+                                  </Link>
+                                </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-gray-500">
                                   {new Date().getFullYear() - parseInt(profile.dob.slice(0, 4))}
                                 </td>
@@ -246,14 +254,19 @@ const handlePrint = ()=>{
                   </div >
 
                   <div className={`"overlay absolute -top-28 w-[100%] h-[120vh] bg-black/40 left-0 py-10 " ${isEditing ? 'block' : 'hidden'}`}>
-                    <PatientEditForm
-                      patientdata={editPatient ? {
-                        id: editPatient.id,
-                        name: editPatient.name,
-                        dob: editPatient.dob
-                      } : {}}
-                      onClose={() => setIsEditing(false)}
-                    />
+                    {editPatient && (
+                      <PatientEditForm
+                        patientdata={{
+                          id: editPatient.id,
+                          name: editPatient.name,
+                          dob: editPatient.dob,
+                          email: editPatient.email,
+                          phone: editPatient.phone,
+                          address: editPatient.address
+                        }}
+                        onClose={() => setIsEditing(false)}
+                      />
+                    )}
                   </div>
                   <div>
                     {/* popup */}

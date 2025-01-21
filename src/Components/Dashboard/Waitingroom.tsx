@@ -65,6 +65,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
       if (onComplete) {
         onComplete(waitingid);
       }
+      dispatch(getWaitingroom());
     } catch (error) {
       console.error('Error completing consultation:', error);
     }
@@ -189,7 +190,10 @@ export default function WaitingRoom() {
   const [localWaitingRoom, setLocalWaitingRoom] = useState<WaitingRoomPatient[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [patientsPerPage] = useState(3); 
-  const { waitingroom } = useSelector((state: RootState) => state.Doctor);
+  const { waitingroom, complete } = useSelector((state: RootState) => ({
+    waitingroom: state.Doctor.waitingroom,
+    complete: state.Patient.complete
+  }));
   const [selectedpatient, setselectedpatient] = useState<WaitingRoomPatient | null>(null);
   const [OTDsidebar,Setotdsidebar] = useState<boolean>(false);
 
@@ -229,25 +233,57 @@ export default function WaitingRoom() {
   
   
 
-  useEffect(() => {
-    if (waitingroom?.[0]) {
-      setLocalWaitingRoom(waitingroom[0]);
-    }
-  }, [waitingroom]);
+  const [completedPatients, setCompletedPatients] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    dispatch(getWaitingroom());
-  }, [dispatch]);
+  const handlePatientComplete = async (completedId: string) => {
+    try {
+      await dispatch(completePatient({ id: parseInt(completedId) })).unwrap();
+      
+      setLocalWaitingRoom(prev => prev.filter(patient => patient.id !== completedId));
+      
+      const remainingPatients = localWaitingRoom.length - 1;
+      const newTotalPages = Math.ceil(remainingPatients / patientsPerPage);
+      if (currentPage > newTotalPages && currentPage > 1) {
+        setCurrentPage(prev => prev - 1);
+      }
+      
+      setOpen(false);
+      
+      dispatch(getWaitingroom());
 
-  const handlePatientComplete = (completedId: string) => {
-    setLocalWaitingRoom(prev => prev.filter(patient => patient.id !== completedId));
-    
-    const remainingPatients = localWaitingRoom.length - 1;
-    const newTotalPages = Math.ceil((remainingPatients) / patientsPerPage);
-    if (currentPage > newTotalPages && currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+    } catch (error: any) {
+      if (error?.response?.status === 404 || error?.status === 404) {
+        setLocalWaitingRoom(prev => prev.filter(patient => patient.id !== completedId));
+        console.error('Error completing consultation:', error);
+        return;
+      }
+      
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(getWaitingroom());
+      } catch (error) {
+        console.error('Error fetching waiting room:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (waitingroom?.[0]) {
+      const filteredPatients = waitingroom[0].filter(patient => {
+        return !complete?.some(completedPatient => 
+          completedPatient.id === patient.id || 
+          completedPatient.appointment_id === patient.id
+        );
+      });
+      setLocalWaitingRoom(filteredPatients);
+    }
+  }, [waitingroom, complete]);
 
   // Calculate pagination values
   const indexOfLastPatient = currentPage * patientsPerPage;
