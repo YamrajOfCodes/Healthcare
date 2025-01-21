@@ -52,7 +52,7 @@ export const transactionsAPI = async(data,header)=>{
 export const getHealthrecordsAPI = async(data, header) => {
     return await commonrequest(
         "GET",
-        `${BASE_URL}/api/patients/${33}/health-records`,
+        `${BASE_URL}/api/patients/${37}/health-records`,
         data,
         header,
         ""
@@ -60,7 +60,7 @@ export const getHealthrecordsAPI = async(data, header) => {
 }
 
 export const postBillingAPI = async(data,header)=>{
-    return await commonrequest("POST",`${BASE_URL}/api/billings`,"",header,"");
+    return await commonrequest("POST",`${BASE_URL}/api/billings`,data,header,"");
 }
 
 export const getBillingsDetailsAPI = async(data,header)=>{

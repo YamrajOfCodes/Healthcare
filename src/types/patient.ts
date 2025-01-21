@@ -103,4 +103,5 @@ export interface PatientState {
   };
   transactions: unknown[];
   getbillings:unknown[];
+  billings:unknown[]
 }

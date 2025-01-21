@@ -2,12 +2,14 @@
 import { getDoctors, getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { Calendar, Phone, Mail, User, Clock, MapPin, Activity, Hash, Monitor, X, Filter } from 'lucide-react';
+import { Calendar, Phone, Mail, User, Clock, MapPin, Activity, Hash, Monitor, X, Filter , Download} from 'lucide-react';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { AppointmentDetails } from '@/types/appointment';
 import { getAppointments } from '@/Redux/Slices/Patient/patientSlices';
 import { BaseAppointment } from '@/types/shared';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Allappointment: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -39,6 +41,32 @@ const Allappointment: React.FC = () => {
       
       setallappointments(filteredData);
     };
+
+
+     
+const exportToExcel = (appointments) => {
+  const data = getallappointments?.map((appointment) => ({
+    ID: appointment.id,
+    Patient: appointment.patient?.name,
+    Email: appointment.patient?.email,
+    Phone: appointment.patient?.phone,
+    Doctor: appointment.doctor?.name,
+    Mode: appointment.mode,
+    Date: appointment.appointment_date.slice(0, 10),
+    Type: appointment.type,
+    Visit: appointment.patient?.visit_count,
+    Status: appointment.status,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, "appointments.xlsx");
+}; 
+
 
     const handleStatus = (data:any) => {
       setSelectedStatus(data);
@@ -179,7 +207,9 @@ const Allappointment: React.FC = () => {
           {isFilterOpen ? <X size={20} /> : <Filter size={20} />}
           {isFilterOpen ? 'Close' : 'Filters'}
         </button>
+       
       </div>
+
 
       {/* Mobile Filters - Shown when filter button is clicked */}
       <div className={`lg:hidden ${isFilterOpen ? 'block' : 'hidden'} mb-6 bg-white p-4 rounded-lg shadow-md`}>
@@ -247,7 +277,7 @@ const Allappointment: React.FC = () => {
       {/* Desktop Filters - Hidden on mobile, shown on large screens */}
       <div className="hidden lg:block mb-6 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Filters</h2>
-        <form className="grid grid-cols-4 gap-4">
+        <form className="grid grid-cols-5 gap-4">
           <div>
             <label htmlFor="patient-name" className="block text-sm font-medium text-gray-700 mb-1">
               Patient Name
@@ -305,6 +335,7 @@ const Allappointment: React.FC = () => {
               onChange={(e) => handledate(e.target.value)}
             />
           </div>
+          <div className='cursor-pointer flex  items-center mt-5' onClick={exportToExcel}><button className='bg-gradient-to-br ml-5 from-violet-500 to-indigo-600 text-white px-8 py-1.5 text-lg rounded-md flex gap-2 justify-center items-center'><Download className='w-5 h-5'/>Export</button></div>
         </form>
       </div>
     </div>

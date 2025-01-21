@@ -1,5 +1,5 @@
 "use client"
-import { getallPatients, getAppointments } from '@/Redux/Slices/Patient/patientSlices';
+import { getallPatients, getAppointments, patientPrescription } from '@/Redux/Slices/Patient/patientSlices';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { 
@@ -11,12 +11,14 @@ import {
     Phone,
     User,
     Mail,
-    ChevronRight
+    ChevronRight,
+    Printer
   } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
 import { BaseAppointment } from '@/types/shared';
+import HealthChart from '@/Components/Dashboard/Healthchart';
 
 
 const page = () => {
@@ -27,7 +29,58 @@ const page = () => {
     const dispatch = useAppDispatch();
     const { getappointments } = useSelector((state: RootState) => state.Patient); // Access appointments from the store
     const { allpatients } = useSelector((state:RootState)=>state.Patient)
-    // console.log("allpatients",allpatients);
+     const { prescriptions } = useSelector((state: RootState) => state.Patient);
+     let datas;
+    // console.log("prescriptions",prescriptions?.prescriptions);
+
+    const healthdata = {
+      patient_id: 1,
+      description: "Some description about the patient's health.",
+      date: "2025-01-20",
+      medications: [
+        { name: "Paracetamol", dosage: "500mg", frequency: "Twice a day" }
+      ],
+      healthMetrics: [
+        { name: "Exercise", value: "80" },
+        { name: "Diet", value: "70" }
+      ],
+      attachment_path: "/path/to/attachment"
+    };
+  
+
+
+     const filterPrescription = prescriptions?.prescriptions?.filter((element)=>{
+         if(element?.id == id){
+          return element
+         }
+     })
+
+     const Prescription_details = filterPrescription?.[0]?.prescription_details
+     console.log(Prescription_details);
+
+     setTimeout(() => {
+        if(Prescription_details == undefined){
+          console.log("data is not defined");
+          if(activeItem === "prescription"){
+            return <div>Prescription is not found</div>
+          }
+        }else{
+           datas = JSON.parse(Prescription_details);
+         console.log(data);
+        }
+       
+     }, 3000);
+     
+     
+
+    const [activeItem, setActiveItem] = useState("profile");
+  
+    const navItems = [
+      { id: "profile", label: "Profile" },
+      { id: "prescription", label: "Prescription" },
+      { id: "billing", label: "OTD Billing" },
+      { id: "healthchart", label: "Health Chart" }
+    ];
 
 
     const filteindividual = allpatients?.filter((element)=>{
@@ -104,6 +157,7 @@ const page = () => {
     useEffect(() => {
       dispatch(getAppointments());
       dispatch(getallPatients())
+       dispatch(patientPrescription());
     }, [dispatch]);
     
     // Effect to filter patient when appointments are updated
@@ -149,6 +203,20 @@ const page = () => {
 
       return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
           <div className="max-w-7xl mx-auto">
             {/* Profile Header */}
             <div className="mb-8 bg-white rounded-2xl p-6 shadow-lg backdrop-blur-lg bg-opacity-90">
@@ -163,7 +231,29 @@ const page = () => {
               </div>
             </div>
     
-            {/* Quick Info Cards */}
+            <nav className="bg-white rounded-xl shadow-md mx-4 mb-6">
+      <ul className="flex items-center relative p-2">
+        {navItems.map((item) => (
+          <li key={item.id} className="relative flex-1">
+            <button
+              onClick={() => setActiveItem(item.id)}
+              className={`w-full px-4 py-3 text-sm font-medium transition-all duration-200 rounded-lg
+                ${activeItem === item.id 
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                }
+              `}
+            >
+              {item.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
+              {
+                activeItem === "profile"? 
+                <>
+                 {/* Quick Info Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {/* Phone Card */}
               <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-lg bg-opacity-90">
@@ -311,6 +401,75 @@ const page = () => {
                 </div>
               </div>
             </div>
+                </> : activeItem === "billing" ? "billing" : activeItem === "prescription"? <>
+                
+                <div className="max-w-[800px] mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="relative bg-emerald-100 p-8">
+          <h1 className="text-xl font-bold text-gray-800">
+            Digitech <span className="text-emerald-500">CHOICE</span> CLINIC
+          </h1>
+          <h2 className="text-lg font-semibold text-gray-800">
+            {/* Dr. {appointmentData?.["Doctor Name"] || ""} */}
+          </h2>
+        </div>
+        <div className="p-8 pt-5">
+          <div className="space-y-4 mb-8">
+            <div className="flex flex-wrap gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-500">
+                  NAME OF PATIENT
+                </label>
+                <div className="mt-1 p-2 bg-emerald-50 rounded">
+                  {/* {appointmentData?.["Patient Name"] || ""} */}
+                </div>
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-500">
+                  Appointment ID
+                </label>
+                <div className="mt-1 p-2 bg-emerald-50 rounded">
+                  {/* {prescription?.appointment_id || ""} */}
+                </div>
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-500">
+                  AGE
+                </label>
+                <div className="mt-1 p-2 bg-emerald-50 rounded">
+                  {/* {new Date().getFullYear() - dob} */}
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-500">
+                ADDRESS
+              </label>
+              <div className="mt-1 p-2 bg-emerald-50 rounded">
+                {/* {prescription?.appointment.patient.address || ""} */}
+              </div>
+            </div>
+            <div className="h-80">
+
+            </div>
+            <div>
+              <p>signature</p>
+              <div className="w-1/3 border-b border-gray-700 mt-5"></div>
+            </div>
+          </div>
+          <div className="mt-5 pt-8 text-center">
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              // onClick={handlePrint}
+            >
+              <Printer className="inline-block w-5 h-5 mr-2" />
+              Print
+            </button>
+          </div>
+        </div>
+      </div>
+                </> : <HealthChart healthData={healthdata}/>
+                
+              }
           </div>
         </div>
       );

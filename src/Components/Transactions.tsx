@@ -6,13 +6,16 @@ import {   Stethoscope,
     Filter,
     Calendar,
     FileText,
-    Users } from 'lucide-react';
+    Users, 
+    Download} from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { Transaction } from '@/types/transaction';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
 import { Transactionn } from '@/Redux/Slices/Patient/patientSlices';
 import { useSelector } from 'react-redux';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Transactions: React.FC = () => {
 
@@ -55,6 +58,26 @@ const Transactions: React.FC = () => {
   useEffect(() => {
     dispatch(Transactionn());
   }, [dispatch]);
+
+
+
+  const exportToExcel = (appointments) => {
+    const data = filteredTransactions?.map((appointment) => ({
+      ID: appointment.id,
+      Description: appointment.description,
+      Patient: appointment.patientName,
+      Date: appointment?.date,
+      Amount: appointment?.amount,
+    }));
+  
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+  
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "appointments.xlsx");
+  }; 
 
   // Function to get icon based on transaction type
   const getTransactionIcon = (type: Transaction['type']) => {
@@ -150,7 +173,7 @@ const Transactions: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-gray-800">Recent Transactions</h2>
             <div className="flex gap-4">
-              <div className="relative">
+              {/* <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
@@ -159,11 +182,9 @@ const Transactions: React.FC = () => {
                   placeholder="Search transactions..."
                   className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
                 />
-              </div>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition duration-150">
-                <Filter className="w-5 h-5" />
-                <span>Filter</span>
-              </button>
+              </div> */}
+              <div className='cursor-pointer flex  items-center mt-5' onClick={exportToExcel}><button className='bg-gradient-to-br ml-5 from-violet-500 to-indigo-600 text-white px-8 py-1.5 text-lg rounded-md flex gap-2 justify-center items-center'><Download className='w-5 h-5'/>Export</button></div>
+
             </div>
           </div>
   

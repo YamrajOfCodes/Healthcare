@@ -10,6 +10,7 @@ import {
   HealthrecordsAPI, 
   PatientAPI, 
   patientPrescAPI, 
+  postBillingAPI, 
   transactionsAPI, 
   updatePatientsAPI 
 } from "../../../APIS/Patient/PatientAPI";
@@ -37,7 +38,8 @@ const initialState: PatientState = {
     error: null
   },
   prescriptions: [],
-  transactions:[]
+  transactions:[],
+  billings:[]
 };
 
 
@@ -278,6 +280,26 @@ export const Getbillings = createAsyncThunk("getBillingsDetails",async()=>{
 })
 
 
+export const Postbillings = createAsyncThunk("postBillingsDetails",async(data)=>{
+  try {
+    const response = await postBillingAPI(data);
+    console.log(response);
+    
+    if(response.status == 200){
+      toast.success("billing is generated successfully")
+      return response.data
+    }else{
+      toast.error("billing is not generated")
+      return response.data
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+})
+
+
+
 
 
 // Create the slice
@@ -429,6 +451,20 @@ export const PatientSlice = createSlice({
         state.loader = false;
         state.error = action.error.message || null;
       })
+      
+
+        //  postbillingrecord
+        .addCase(Postbillings.pending, (state) => {
+          state.loader = true;
+        })
+        .addCase(Postbillings.fulfilled, (state, action: PayloadAction<any>) => {
+          state.loader = false;
+          state.billings = [action.payload];
+        })
+        .addCase(Postbillings.rejected, (state, action) => {
+          state.loader = false;
+          state.error = action.error.message || null;
+        })
 
 
       // getbillings

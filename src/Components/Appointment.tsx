@@ -60,6 +60,8 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
   const { allpatients } = useSelector((state:RootState) => state.Patient);
   const {doctors} = useSelector((state:RootState)=>state.Doctor)
 
+  console.log(doctors);
+  
   // handledoctor
 
   const handledoctors = (doctorId: string) => {
@@ -228,7 +230,7 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
         <option value="">Select doctor</option>
-        {doctors?.map((doctor: Doctor) => (
+        {doctors[0]?.map((doctor: Doctor) => (
           <option key={doctor.id} value={doctor.id}>
             {doctor.name}
           </option>

@@ -25,7 +25,7 @@ const Patients: React.FC = () => {
   const { gethealthrecords } = useSelector((state:RootState)=>state.Patient);
   const { getbillings } = useSelector((state:RootState)=>state.Patient)
 
-  console.log("getbillings",getbillings);
+  console.log("gethealthrecords",gethealthrecords);
   
 
   const handleEditPatient = (patient: Patient): void => {
@@ -521,7 +521,7 @@ const handlePrint = ()=>{
              {/* HealthChart Sidebar */}
 
       <div 
-              className={`fixed top-0 right-0 h-full w-[750px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+              className={`fixed top-0 right-0 h-full  w-full md:w-[750px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
                           ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
             >
               {/* Header */}
