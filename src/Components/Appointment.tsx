@@ -11,6 +11,8 @@ import { RootState } from '@/Redux/App/store';
 import { useAppDispatch } from '@/hooks';
 import { AppointmentFormData,Doctor } from '../types/appointment';
 import { Patient } from '../types/patient';
+// import Notification from "@/Assets/appointment_notification.mpeg";
+// import notification from "../../public/appointment_notification.mpeg"
 
 const MedicalIllustration = () => (
   <svg className="w-full h-auto" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
@@ -74,11 +76,15 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
 
   const handleSearch = () => {
     setIsHidden(false);
-    
-    const matchedPatient = allpatients?.find((patient: Patient) => 
-      patient.name.toLowerCase() === searchInput.trim().toLowerCase()
-    );
-
+  
+    // Normalize input and patient names for case-insensitive matching
+    const normalizedSearchInput = searchInput.trim().toLowerCase();
+  
+    const matchedPatient = allpatients?.find((patient: Patient) => {
+      // Match if the input is a substring of the patient name
+      return patient.name.toLowerCase().includes(normalizedSearchInput);
+    });
+  
     if (matchedPatient) {
       setSearchResult(`Patient found: ${matchedPatient.name}`);
       setAppointment(prev => ({
@@ -89,11 +95,21 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
       setSearchResult("Patient not found");
     }
   };
+  
 
 
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  setSearchInput(e.target.value);
-};
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setSearchInput(query);
+  
+    // Filter patients based on the query
+    const results = allpatients?.filter((patient: Patient) =>
+      patient.name.toLowerCase().includes(query)
+    );
+  
+    setSearchResult(results?.length > 0 ? results : ["No patients found"]);
+  };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value;
@@ -121,10 +137,18 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     }));
   };
 
+  const playNotificationSound = () => {
+    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"); // Replace with your file path
+    audio.play().catch((error) => {
+      console.error("Error playing notification sound:", error);
+    });
+  };
+
 
 
   const submitAppointment = (e: React.FormEvent) => {
     e.preventDefault();
+    playNotificationSound();
     
     const { doctor_id, patient_id, mode } = appointment;
 
@@ -193,30 +217,38 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           {/* Right Side - Form */}
           <div className={`p-8 md:p-12 bg-white ${!show && 'w-full'}`}>
 
-          <div className="search flex gap-2 relative">
-  <input
-    type="text"
-    className="px-4 py-2 border border-gray-400 w-3/4 outline-none rounded-md"
-    value={searchInput}
-    onChange={handleInputChange}
-    placeholder="Search for a patient..."
-  />
-  <button
-    className="px-4 py-2 border bg-emerald-500 rounded-md text-white"
-    onClick={handleSearch}
-  >
-    Search
-  </button>
-  {searchResult && !isHidden && ( // Render only when not hidden
-        <span
-          className="absolute top-10 px-2 py-2 w-3/4 border bg-white cursor-pointer hover:"
-          onClick={() => setIsHidden(true)} // Hide on click
-        >
-          {searchResult}
-        </span>
-      )}
-</div>
-
+          <div className="search flex flex-col gap-2 relative">
+    <input
+      type="text"
+      className="px-4 py-2 border border-gray-400 w-3/4 outline-none rounded-md"
+      value={searchInput}
+      onChange={handleInputChange}
+      placeholder="Search for a patient..."
+    />
+    {searchInput && searchResult && (
+      <div className="absolute top-12 w-3/4 bg-white border rounded-md shadow-md">
+        {Array.isArray(searchResult) &&
+          searchResult.map((result: Patient | string, index: number) => (
+            <div
+              key={index}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => {
+                if (typeof result !== "string") {
+                  setSearchInput(result.name);
+                  setAppointment((prev) => ({
+                    ...prev,
+                    patient_id: result.id,
+                  }));
+                  setSearchResult([]); // Clear results
+                }
+              }}
+            >
+              {typeof result === "string" ? result : result.name}
+            </div>
+          ))}
+      </div>
+    )}
+  </div>
             <div className="space-y-8 mt-8">
               {/* Patient Selection */}
           

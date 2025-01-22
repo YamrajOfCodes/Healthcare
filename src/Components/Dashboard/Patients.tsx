@@ -19,7 +19,7 @@ const Patients: React.FC = () => {
   const { allpatients } = useSelector((state: RootState) => state.Patient);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [popup, setpopup] = useState(false);
-  const [selectedpatient, setselectedpatient] = useState("");
+  const [selectedpatient, setselectedpatient] = useState<any>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [patientsPerPage] = useState<number>(5);
   const { gethealthrecords } = useSelector((state:RootState)=>state.Patient);

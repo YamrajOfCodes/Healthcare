@@ -67,7 +67,7 @@ export default function Register({ show, onPatientAdded }: RegisterProps) {
             onPatientAdded?.();
           } else {
             toast.error("Registration failed");
-            console.error("Registration failed: No payload returned.");
+            // console.error("Registration failed: No payload returned.");
           }
         })
         .catch((error) => {
@@ -78,7 +78,7 @@ export default function Register({ show, onPatientAdded }: RegisterProps) {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 ${!show && 'flex justify-start w-[200%]'}`}>
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 ${!show && 'flex justify-start w-[200%]'} justify-start`}>
       <div className={`flex flex-col sm:flex-row min-h-screen overflow-hidden ${!show && 'w-[100vw] sm:w[300vw]'}`}>
         {/* Left Image Section */}
         {
@@ -126,169 +126,127 @@ export default function Register({ show, onPatientAdded }: RegisterProps) {
         }
 
         {/* Right Login Form Section */}
-        <div
-          className={`w-[100%] sm:w-1/2 flex justify-center items-center p-8 sm:p-12 transition-transform duration-500 ease-in-out transform ${isSliding ? "sm:-translate-x-full" : "sm:translate-x-0"}`}
-        >
-          <div className="w-full max-w-md space-y-8">
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold text-gray-900 capitalize">{isSliding? "Login" : "Patient Registration"}</h2>
-              <p className="text-gray-500">Please enter patient details to continue</p>
+        <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+      <div className="max-w-md mx-auto backdrop-blur-lg bg-white/80 rounded-3xl shadow-xl p-8 border border-white/20">
+        {/* Header Section */}
+        <div className="space-y-4 mb-8">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-center">
+            {isSliding ? "Login" : "Patient Registration"}
+          </h2>
+          <p className="text-gray-600 text-center text-sm">
+            {isSliding ? "Welcome back!" : "Please enter patient details to continue"}
+          </p>
+        </div>
+
+        {isSliding ? (
+          // Login Form
+          <form className="space-y-6">
+            <div className="space-y-4">
+              <div className="relative group">
+                <Mail className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400"
+                />
+              </div>
+
+              <div className="relative group">
+                <Lock className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400"
+                />
+              </div>
             </div>
 
-            {
-                isSliding ? <form className="space-y-6">
-                {/* Form fields remain unchanged */}
-
-                {/* Email Field */}
-                <div className="space-y-2">
-                  <label className="flex items-center text-sm font-medium text-gray-900">
-                    <Mail className="w-4 h-4 mr-2 text-blue-600" />
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="john@example.com"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-                  />
-                </div>
-
-                <div className='space-y-2'>
-                <label className="flex items-center text-sm font-medium text-gray-900">
-                    <Lock className='w-4 h-4 mr-2 text-blue-600'/>
-                    Password</label>
+            <button className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-2xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5">
+              Login
+            </button>
+          </form>
+        ) : (
+          // Registration Form
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative group col-span-2">
+                <User className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
                 <input
-                    type="password"
-                    placeholder='*****'
-                    className="w-full px-4 py-3 rounded-xl border border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-                  />
-                </div>
-  
-                <button
-                  type="submit"
-                  className="w-full py-4 bg-gradient-to-r from-green-600 to-green-600 text-white font-medium rounded-xl hover:from-blue-700 hover:to-purple-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200 transform hover:-translate-y-0.5"
+                  type="text"
+                  placeholder="Full Name"
+                  value={formData?.name}
+                  onChange={(e) => setFormData?.({ ...formData, name: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400"
+                />
+              </div>
+
+              <div className="relative group">
+                <Calendar className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <input
+                  type="date"
+                  value={formData?.dob}
+                  onChange={(e) => setFormData?.({ ...formData, dob: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400"
+                />
+              </div>
+
+              <div className="relative group">
+                <User className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <select
+                  value={formData?.gender}
+                  onChange={(e) => setFormData?.({ ...formData, gender: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400"
                 >
-                  login
-                </button>
-              </form>   :   <form className="space-y-6" onSubmit={handleSubmit}>
-      {/* Full Name Field */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-700">
-          <User className="w-4 h-4 mr-2 text-blue-600" />
-          Full Name
-        </label>
-        <input
-          type="text"
-          placeholder="John Doe"
-          className="w-full px-4 py-3 text-gray-900 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })} // Update state on input change
-        />
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div className="relative group">
+                <Phone className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <input
+                  type="tel"
+                  placeholder="Phone Number"
+                  value={formData?.phone}
+                  onChange={(e) => setFormData?.({ ...formData, phone: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400"
+                />
+              </div>
+
+              <div className="relative group">
+                <Mail className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={formData?.email}
+                  onChange={(e) => setFormData?.({ ...formData, email: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400"
+                />
+              </div>
+
+              <div className="relative group col-span-2">
+                <Home className="w-5 h-5 absolute left-3 top-3.5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <textarea
+                  placeholder="Address"
+                  value={formData?.address}
+                  onChange={(e) => setFormData?.({ ...formData, address: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3 bg-white/50 rounded-2xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 outline-none hover:border-blue-400 resize-none h-24"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-2xl hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5"
+            >
+              Add Patient
+            </button>
+          </form>
+        )}
       </div>
-
-      {/* DOB Field */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-900">
-          <Calendar className="w-4 h-4 mr-2 text-blue-600" />
-          Date of Birth
-        </label>
-        <input
-          type="date"
-          className="w-full px-4 py-3 rounded-xl border text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={formData.dob}
-          onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-        />
-      </div>
-
-      {/* Gender Field */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-900">
-          <User className="w-4 h-4 mr-2 text-blue-600" />
-          Gender
-        </label>
-        <select
-          className="w-full px-4 py-3 rounded-xl border text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={formData.gender}
-          onChange={(e) => setFormData({ ...formData, gender: e.target.value })} // Update state on select change
-        >
-          <option value="">Select Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      {/* Phone Field */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-900">
-          <Phone className="w-4 h-4 mr-2 text-blue-600" />
-          Phone Number
-        </label>
-        <input
-          type="tel"
-          placeholder="+1 (555) 000-0000"
-          className="w-full px-4 py-3 rounded-xl border text-gray-900 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })} // Update state on input change
-        />
-      </div>
-
-      {/* Email Field */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-900">
-          <Mail className="w-4 h-4 mr-2 text-blue-600" />
-          Email
-        </label>
-        <input
-          type="email"
-          placeholder="john@example.com"
-          className="w-full px-4 py-3 rounded-xl text-gray-900 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })} // Update state on input change
-        />
-      </div>
-
-      
-
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-900">
-          <Home className="w-4 h-4 mr-2 text-blue-600" />
-          Address
-        </label>
-        <input
-          type="textarea"
-          placeholder="plot no 10,Pune"
-          className="w-full px-4 py-3 rounded-xl text-gray-900 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-gray-50 hover:bg-white"
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })} // Update state on input change
-        />
-      </div>
-
-      {/* Submit Button */}
-      <button
-        type="submit"
-        className="w-full py-4 bg-gradient-to-r from-green-600 to-green-600 text-white font-medium rounded-xl hover:from-blue-700 hover:to-purple-700 focus:ring-4 focus:ring-blue-200 transition-all duration-200 transform hover:-translate-y-0.5"
-      >
-       Add Patient
-      </button>
-    </form>
-            }
-
-            {/* <p className="text-center text-gray-900">
-            {
-                isSliding?  " Don't have an account " : "already have an account?"
-            }
-              <a
-                href="#"
-                className="text-blue-600 hover:text-blue-700 font-medium"
-                onClick={handleOrderChange}
-              >
-                 {
-                isSliding?  " Register" : "login"
-            }
-              </a>
-            </p> */}
-          </div>
-        </div>
+    </div>
       </div>
     </div>
   );

@@ -176,7 +176,7 @@ const ModernNavbar = () => {
   <button
     onClick={handleAddPatient}
     className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-blue-600 text-white 
-             rounded-full text-sm font-medium shadow-lg shadow-blue-500/20
+             rounded-xl text-sm font-medium shadow-lg shadow-blue-500/20
              hover:bg-blue-700 hover:shadow-blue-500/30 transition-all duration-300"
   >
     <UserPlus className="h-4 w-4" />
@@ -185,7 +185,7 @@ const ModernNavbar = () => {
   <button
     onClick={handleScheduleAppointment}
     className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-indigo-600 text-white 
-             rounded-full text-sm font-medium shadow-lg shadow-indigo-500/20
+             rounded-xl text-sm font-medium shadow-lg shadow-indigo-500/20
              hover:bg-indigo-700 hover:shadow-indigo-500/30 transition-all duration-300"
   >
     <Calendar className="h-4 w-4" />
@@ -264,7 +264,7 @@ const ModernNavbar = () => {
         <div className="h-full flex flex-col">
           <div className="flex justify-between p-4 border-b">
             <h2
-              className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer"
+              className="text-sm px-4 py-2 border rounded-xl text-white bg-gradient-to-br from-violet-500 to-indigo-600  text-center cursor-pointer"
               onClick={() => {
                 setAppointmentSidebar(true);
                 setIsSidebarOpen(false);
@@ -280,7 +280,7 @@ const ModernNavbar = () => {
               <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4 flex  justify-center">
             <Register
               show={false}
               onPatientAdded={() => {

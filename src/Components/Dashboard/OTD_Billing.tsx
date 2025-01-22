@@ -7,7 +7,7 @@ import { Postbillings } from '@/Redux/Slices/Patient/patientSlices';
 const OTD_Billing = () => { 
   
   const [formData, setFormData] = useState({
-      id: 25,
+      id: 22,
       appointment_id: 32,
       total_amount: '250.00',
       paid_amount: '200.00',
@@ -15,8 +15,8 @@ const OTD_Billing = () => {
       created_at: '2025-01-15T11:52:57.000000Z',
       updated_at: '2025-01-15T11:52:57.000000Z',
       remaining_balance: '0.00',
-      service_id: null,
-      item_id: null,
+      service_id: 1,
+      item_id: 1,
       appointment: null,
       services: ["consultation"],
       items: ["first",'second'],
@@ -37,8 +37,8 @@ const OTD_Billing = () => {
       created_at: '2025-01-15T11:52:57.000000Z',
       updated_at: '2025-01-15T11:52:57.000000Z',
       remaining_balance: '0.00',
-      service_id: null,
-      item_id: null,
+      service_id: 1,
+      item_id: 1,
       appointment: null,
       services: ["consultation"],
       items: ["first",'second'],
@@ -60,7 +60,7 @@ const OTD_Billing = () => {
     e.preventDefault();
     console.log('Submitting form data:', formData);
     // Add API call here to send data to the backend
-    dispatch(Postbillings(formData))
+    // dispatch(Postbillings(formData))
   };
 
   return (
