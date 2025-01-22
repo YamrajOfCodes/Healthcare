@@ -236,7 +236,7 @@ const ProfileCard: React.FC<ProfileProps> = ({
           <button className="px-3 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl 
                          shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 
                          transition-all duration-300 hover:-translate-y-0.5">
-            <div className="flex items-center justify-center gap-1.5">
+            <div className="flex items-center justify-center gap-1.5" onClick={onHealthClick}>
               <Activity className="h-4 w-4" />
               <span className="text-xs">Health Chart</span>
             </div>

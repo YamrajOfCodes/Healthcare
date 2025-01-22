@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { completePatient } from '@/Redux/Slices/Patient/patientSlices';
 import { AppDispatch, RootState } from '@/Redux/App/store';
 import { Patient, WaitingRoomPatient } from '@/types/patient';
+import HealthChart from './Healthchart';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -57,6 +58,21 @@ const PatientCard: React.FC<PatientCardProps> = ({
     const waiting_hours = Math.floor(waiting_time_ms / (1000 * 60 * 60)) % 24;
     tempdate = `${waiting_hours} hours, ${waiting_minutes} minutes, ${waiting_seconds}`;
   }
+
+  const data = {
+    patient_id: 1,
+    description: "Some description about the patient's health.",
+    date: "2025-01-20",
+    medications: [
+      { name: "Paracetamol", dosage: "500mg", frequency: "Twice a day" }
+    ],
+    healthMetrics: [
+      { name: "Exercise", value: "80" },
+      { name: "Diet", value: "70" }
+    ],
+    attachment_path: "/path/to/attachment"
+  };
+
 
   const handlecomplete = async (): Promise<void> => {
     try {
@@ -198,6 +214,22 @@ export default function WaitingRoom() {
   const [OTDsidebar,Setotdsidebar] = useState<boolean>(false);
 
 
+  const data = {
+    patient_id: 1,
+    description: "Some description about the patient's health.",
+    date: "2025-01-20",
+    medications: [
+      { name: "Paracetamol", dosage: "500mg", frequency: "Twice a day" }
+    ],
+    healthMetrics: [
+      { name: "Exercise", value: "80" },
+      { name: "Diet", value: "70" }
+    ],
+    attachment_path: "/path/to/attachment"
+  };
+
+
+
   const handleOTDSidebar = (patient: WaitingRoomPatient) => {
     setselectedpatient(patient);
     Setotdsidebar(true);
@@ -247,7 +279,7 @@ export default function WaitingRoom() {
         setCurrentPage(prev => prev - 1);
       }
       
-      setOpen(false);
+      // setOpen(false);
       
       dispatch(getWaitingroom());
 
@@ -430,86 +462,13 @@ export default function WaitingRoom() {
       </div>
 
       <div 
-              className={`fixed top-0 right-0 h-full w-[450px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+              className={`fixed top-0 right-0 h-full  w-full md:w-[750px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
                           ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
             >
               {/* Header */}
-              <div className="border-b border-gray-200">
-                <div className="p-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-800">Healthchart</h2>
-                      <p className="text-sm text-gray-500 mt-1">Generate Healthchart</p>
-                    </div>
-                    <button 
-                      onClick={() => sethealthsidebar(false)}
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-                    >
-                      <X className="h-6 w-6 text-gray-500" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-      
-              {/* Content */}
-              {healthPatient && (
-                <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-100px)]">
-                  {/* Patient Info Section */}
-                  <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                    <h3 className="text-sm font-medium text-blue-800 mb-3">Patient Information</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-xs text-gray-500">Patient Name</p>
-                        <p className="text-sm font-medium text-gray-900">{healthPatient.patient.name}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Patient ID</p>
-                        <p className="text-sm font-medium text-gray-900">{healthPatient.id}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Phone</p>
-                        <p className="text-sm font-medium text-gray-900">{healthPatient.patient.phone}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Age</p>
-                        <p className="text-sm font-medium text-gray-900">
-                          {new Date().getFullYear() - parseInt(healthPatient.patient.dob.slice(0,4))} years
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-      
-                  {/* Bill Details Section */}
-                  <div className="bg-white rounded-xl p-4 border border-gray-200">
-                    <h3 className="text-sm font-medium text-gray-800 mb-3">Bill Details</h3>
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                        <span className="text-sm text-gray-600">Consultation Fee</span>
-                        <span className="text-sm font-medium text-gray-900">₹500</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                        <span className="text-sm text-gray-600">Medicine Charges</span>
-                        <span className="text-sm font-medium text-gray-900">₹0</span>
-                      </div>
-                      <div className="flex justify-between items-center py-2">
-                        <span className="text-sm font-medium text-gray-800">Total Amount</span>
-                        <span className="text-sm font-bold text-gray-900">₹500</span>
-                      </div>
-                    </div>
-                  </div>
-      
-                  {/* Action Buttons */}
-                  <div className="flex gap-3 pt-4">
-                    <button className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-xl hover:bg-blue-700 transition-colors duration-200 font-medium">
-                      Generate Bill
-                    </button>
-                    <button className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-xl hover:bg-gray-200 transition-colors duration-200 font-medium"onClick={()=>{window.print()}}>
-                      Print Preview
-                    </button>
-                  </div>
-                </div>
-              )}
+             <HealthChart healthData={data}/>
             </div>
+
 
 
 
