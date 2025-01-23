@@ -126,7 +126,7 @@ export default function Register({ show, onPatientAdded }: RegisterProps) {
         }
 
         {/* Right Login Form Section */}
-        <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6">
+        <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-6 w-[135vw] ">
       <div className="max-w-md mx-auto backdrop-blur-lg bg-white/80 rounded-3xl shadow-xl p-8 border border-white/20">
         {/* Header Section */}
         <div className="space-y-4 mb-8">

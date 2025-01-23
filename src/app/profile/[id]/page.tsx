@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
 import { BaseAppointment } from '@/types/shared';
 import HealthChart from '@/Components/Dashboard/Healthchart';
+import Billings from '@/Components/Dashboard/Billings';
 
 
 const page = () => {
@@ -405,7 +406,7 @@ const page = () => {
                 </div>
               </div>
             </div>
-                </> : activeItem === "billing" ? "billing" : activeItem === "prescription"? <>
+                </> : activeItem === "billing" ? <Billings/> : activeItem === "prescription"? <>
                 
         {
           filterPrescription?.length > 0 ?         <div className="max-w-[800px] mx-auto bg-white shadow-lg rounded-lg overflow-hidden">

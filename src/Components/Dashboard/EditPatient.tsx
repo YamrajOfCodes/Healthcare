@@ -51,7 +51,7 @@ const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) =
         <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 sm:p-6 mb-4 relative overflow-hidden">
           <div className="flex items-center justify-between relative z-10">
             <div>
-              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Patient Registration</h1>
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Edit Patient</h1>
               <p className="text-sm text-gray-500 mt-0.5">Please fill in the details</p>
             </div>
             <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />

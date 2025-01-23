@@ -290,7 +290,9 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
                     }`}
                   >
                     <MapPin className="h-5 w-5" />
-                    <span className="text-gray-700">In-Person Visit</span>
+                    <span className="text-gray-700 hidden sm:block">In-Person Visit</span>
+                    <span className="text-gray-700 sm:hidden">Offline</span>
+
                   </button>
                   <button
                     onClick={() => handleappointment("online")}
@@ -301,7 +303,9 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
                     }`}
                   >
                     <VideoIcon className="h-5 w-5" />
-                    <span className="text-gray-700">Video Consult</span>
+                    <span className="text-gray-700 hidden sm:block">Video Consult</span>
+                    <span className="text-gray-700 sm:hidden">Online</span>
+
                   </button>
                 </div>
               </div>

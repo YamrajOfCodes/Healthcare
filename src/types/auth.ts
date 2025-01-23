@@ -12,3 +12,8 @@ export interface RegisterProps {
   show: boolean;
   onPatientAdded?: () => void;
 }
+
+export interface RegistercomponentProps {
+  onPatientAdded?: () => void;
+}
+

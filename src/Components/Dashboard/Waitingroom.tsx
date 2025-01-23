@@ -294,7 +294,7 @@ export default function WaitingRoom() {
   };
 
   return (
-    <div className="bg-gradient-to-br h-[120vh] from-blue-50 to-cyan-50 py-6 px-4 rounded-md h-full">
+    <div className="bg-gradient-to-br h-[110vh] from-blue-50 to-cyan-50 py-6 px-4 rounded-md ">
       <div className="max-w-7xl mx-auto space-y-6">
         <h1 className="text-xl lg:text-3xl md:text-4xl font-bold text-blue-900 text-center mb-8">
           Patient Waiting Room

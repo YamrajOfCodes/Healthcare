@@ -9,7 +9,8 @@ import {Calendar,Users,FileText, Menu,X,
   CircleUserRound,
   Heart,
   DollarSignIcon,
-  BadgeDollarSign} from "lucide-react"
+  BadgeDollarSign,
+  NotepadTextIcon} from "lucide-react"
 import Showdashboard from "@/Components/Showdashboard";
 import DashCalender from "@/Components/Dashboard/DashCalender";
 import Patients from "@/Components/Dashboard/Patients";
@@ -30,6 +31,7 @@ import clinic_logo from "@/Assets/clinic_logo.jpg"
 import Image from "next/image";
 import Healthrecord from "@/Components/Dashboard/Healthrecord";
 import OTD_Billing from "@/Components/Dashboard/OTD_Billing";
+import Reports from "@/Components/Dashboard/Reports";
 
 
 interface NavItemProps {
@@ -331,6 +333,13 @@ const DashboardLayout: React.FC = () => {
                     isActive={activeItem === 'billing'}
                     onClick={() => setActiveItem('billing')}
                   />
+
+                   <NavItem 
+                    icon={NotepadTextIcon} 
+                    label="Reports" 
+                    isActive={activeItem === 'reports'}
+                    onClick={() => setActiveItem('reports')}
+                  />
                 </nav>
 
                 {/* Bottom Section - Pro Badge */}
@@ -368,7 +377,7 @@ const DashboardLayout: React.FC = () => {
                 </>
               )}
               
-              <div className="w-full">
+              <div className="w-full ">
                 {
                   activeItem === "Calendar" ? <DashCalender /> : 
                   activeItem === "Patients" ? <Appointment show={true} /> : 
@@ -379,7 +388,8 @@ const DashboardLayout: React.FC = () => {
                   activeItem === "Transactions" ? <Transactions/> :
                   activeItem === "upcoming"? <Upcoming/> :
                   activeItem === "health"? <Healthrecord/>:
-                  activeItem === "billing"? <OTD_Billing/>: null
+                  activeItem === "billing"? <OTD_Billing/>:
+                  activeItem === "reports"? <Reports/> : null
                 }
               </div>
             </div>

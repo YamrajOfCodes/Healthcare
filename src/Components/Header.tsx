@@ -18,6 +18,7 @@ import { getallPatients } from "@/Redux/Slices/Patient/patientSlices";
 import Register from "./Register";
 import Appointment from "./Appointment";
 import { useRouter } from "next/navigation";
+import RegisterComponent from "./Dashboard/RegisterComponent";
 
 const ModernNavbar = () => {
   const { allpatients } = useSelector((state: RootState) => state.Patient);
@@ -300,8 +301,8 @@ const ModernNavbar = () => {
       >
         <div className="h-full flex flex-col">
           <div className="flex justify-between p-4 border-b">
-            <h2
-              className="text-sm px-4 py-2 border rounded-md text-white bg-green-500 text-center cursor-pointer"
+          <h2
+              className="text-sm px-4 py-2 border rounded-xl text-white bg-gradient-to-br from-violet-500 to-indigo-600  text-center cursor-pointer"
               onClick={() => {
                 setAppointmentSidebar(true);
                 setIsSidebarOpen(false);
@@ -317,14 +318,8 @@ const ModernNavbar = () => {
               <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4">
-            <Register
-              show={false}
-              onPatientAdded={() => {
-                setIsSidebarOpen(false);
-                dispatch(getallPatients());
-              }}
-            />
+          <div className="flex-1 overflow-y-auto p-4 ">
+           <RegisterComponent/>
           </div>
         </div>
       </div>
