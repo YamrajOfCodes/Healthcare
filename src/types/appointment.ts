@@ -21,7 +21,7 @@ export interface FormattedAppointment {
   date: string;
   time: string;
   patient: string;
-  status: "confirmed" | "pending" | "cancelled";
+  status: "completed" | "pending" | "cancelled";
   priority: "normal" | "high" | "low";
   details: string;
 }

@@ -33,7 +33,7 @@ const DashCalender: React.FC<DashCalenderProps> = () => {
   // Add proper return type for helper functions
   const getStatusColor = (status: FormattedAppointment['status']): string => {
     switch (status) {
-      case 'confirmed':
+      case 'completed':
         return 'bg-green-100 text-green-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
@@ -70,9 +70,9 @@ const DashCalender: React.FC<DashCalenderProps> = () => {
     }
   };
 
-  const getStatusBadge = (status: 'confirmed' | 'pending' | 'cancelled'): React.ReactElement => {
+  const getStatusBadge = (status: 'completed' | 'pending' | 'cancelled'): React.ReactElement => {
     const statusStyles = {
-      confirmed: "bg-green-100 text-green-800",
+      completed: "bg-green-100 text-green-800",
       pending: "bg-yellow-100 text-yellow-800",
       cancelled: "bg-red-100 text-red-800"
     };

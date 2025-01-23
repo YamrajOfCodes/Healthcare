@@ -2,7 +2,7 @@
 import { deletePatient, getallPatients, getHealthRecord } from '@/Redux/Slices/Patient/patientSlices';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Edit2, FileText, Notebook, Printer, Search, Trash2, Users, X } from 'lucide-react';
+import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Download, Edit2, FileText, Notebook, Printer, Search, Trash2, Users, X } from 'lucide-react';
 import PatientEditForm from './EditPatient';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
@@ -10,6 +10,9 @@ import { Patient } from '@/types/patient';
 import Link from 'next/link';
 import HealthChart from './Healthchart';
 import Billings from './Billings';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 
 const Patients: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -29,6 +32,27 @@ const Patients: React.FC = () => {
   const [selectedBillingPatient, setSelectedBillingPatient] = useState(null);
 
   console.log("gethealthrecords",gethealthrecords);
+
+
+  const exportToExcel = (appointments) => {
+    const data = patients?.map((appointment) => ({
+      ID: appointment.id,
+      Patient: appointment?.name,
+      Email: appointment?.email,
+      Phone: appointment?.phone,
+      Age: appointment?.age,
+      Visit: appointment?.visit_count,
+    }));
+  
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+  
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "appointments.xlsx");
+  }; 
+  
   
 
   const handleEditPatient = (patient: Patient): void => {
@@ -163,7 +187,7 @@ const handlePrint = ()=>{
                   onChange={(e) => { handleSearch(e.target.value) }}
                 />
               </div>
-              <button onClick={resetHandle} className='px-6 py-2 bg-white/40 rounded-md text-gray-500 md:text-white hover:bg-white/20 font-semibold'>Reset</button>
+              <div className='cursor-pointer flex  items-center mt-5' onClick={exportToExcel}><button className='bg-gradient-to-br ml-5 from-violet-500 to-indigo-600 text-white px-8 py-1.5 text-lg rounded-md flex gap-2 justify-center items-center'><Download className='w-5 h-5'/>Export</button></div>
             </div>
 
             {/* Main table */}

@@ -403,7 +403,14 @@ export default function WaitingRoom() {
             className={`fixed top-0 right-0 h-full w-full md:w-[750px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
                         ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
           >
-            {/* Header */}
+            {/* Add mobile close button */}
+            <button 
+              onClick={() => sethealthsidebar(false)}
+              className="md:hidden fixed top-4 right-4 p-2 bg-white/80 backdrop-blur-sm hover:bg-gray-100 rounded-full transition-colors duration-200 shadow-lg z-50"
+            >
+              <X className="h-6 w-6 text-gray-500" />
+            </button>
+            
             <HealthChart healthData={data}/>
           </div>
         )}
