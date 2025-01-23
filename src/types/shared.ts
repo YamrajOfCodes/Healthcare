@@ -11,7 +11,7 @@ export interface BaseAppointment {
   patient_id: string;
   doctor_id: string;
   appointment_date: string;
-  status: "confirmed" | "pending" | "cancelled";
+  status: "completed" | "pending" | "cancelled";
   mode: string;
   type: string;
   patient?: {

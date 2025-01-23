@@ -53,7 +53,7 @@ const OTD_Billing = () => {
             {/* Profile Details */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-lg font-semibold text-gray-900">Mr. Jane Doe</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Mr. Kundan Patil</h3>
                 <span className="px-2 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-600">
                   MH193784
                 </span>
@@ -62,7 +62,7 @@ const OTD_Billing = () => {
               <div className="mt-3 space-y-2">
                 <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
                   <ProfileInfo icon={Calendar}>
-                    48 years old male
+                    24 years old male
                   </ProfileInfo>
                   <ProfileInfo icon={MapPin}>
                     Shri Hari Nagar, Pune
@@ -132,7 +132,7 @@ const OTD_Billing = () => {
               <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
                 <option value="Deepali">Dr. Deepali</option>
                 <option value="Yamini">Dr. Yamini</option>
-                <option value="Kritika">Dr. Kritika</option>
+                <option value="Kritika">Dr. Ritik</option>
                 <option value="Kundan">Dr. Kundan</option>
               </select>
             </div>
@@ -153,7 +153,7 @@ const OTD_Billing = () => {
             </div>
 
             {/* Subtype */}
-            <div className="form-group">
+            {/* <div className="form-group">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Subtype
               </label>
@@ -161,7 +161,7 @@ const OTD_Billing = () => {
                 <option>N/S</option>
                 <option>N/A</option>
               </select>
-            </div>
+            </div> */}
 
             {/* Diagnosis */}
             <div className="form-group">

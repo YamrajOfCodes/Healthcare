@@ -9,6 +9,7 @@ import Appointment from './Appointment';
 import { Patient } from '@/types/patient';
 import { getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
 import HealthChart from './Dashboard/Healthchart';
+import Billings from './Dashboard/Billings';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -21,6 +22,8 @@ const Showdashboard: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [healthPatient,sethealthpatient] = useState<Patient | null>(null)
   const [healthsidebar,sethealthsidebar] = useState(false)
+  const [showBillingHistory, setShowBillingHistory] = useState(false);
+  const [selectedBillingPatient, setSelectedBillingPatient] = useState(null);
 
   console.log(allpatients);
   const data = {
@@ -69,8 +72,8 @@ const Showdashboard: React.FC = () => {
   };
 
   const handleOPDClick = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setShowOPDSidebar(true);
+    setSelectedBillingPatient(patient);
+    setShowBillingHistory(true);
   };
 
  const handleHealthchart = (patient : Patient) =>{
@@ -242,6 +245,23 @@ const Showdashboard: React.FC = () => {
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={() => sethealthsidebar(false)}
+        />
+      )}
+
+      {showBillingHistory && (
+        <Billings 
+          onClose={() => {
+            setShowBillingHistory(false);
+            setSelectedBillingPatient(null);
+          }} 
+          patient={selectedBillingPatient}
+        />
+      )}
+
+      {showBillingHistory && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
+          onClick={() => setShowBillingHistory(false)}
         />
       )}
     </div>

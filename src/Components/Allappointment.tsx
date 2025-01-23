@@ -171,8 +171,8 @@ const exportToExcel = (appointments) => {
     
     const getStatusColor = (status: string): string => {
         switch (status.toLowerCase()) {
-          case 'confirmed':
-            return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+          case 'Completed':
+            return 'bg-green-200 text-emerald-700 border-emerald-200';
           case 'pending':
             return 'bg-amber-50 text-amber-700 border-amber-200';
           default:
@@ -381,7 +381,7 @@ const exportToExcel = (appointments) => {
                                     <td className="py-4 px-6">
                                         <span
                                             className={`inline-block px-3 py-1 text-sm font-medium rounded-full ${
-                                                appointment.status === 'confirmed'
+                                                appointment.status === 'completed'
                                                     ? 'bg-green-100 text-green-700'
                                                     : appointment.status === 'pending'
                                                     ? 'bg-yellow-100 text-yellow-700'

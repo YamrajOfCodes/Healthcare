@@ -9,6 +9,7 @@ import { RootState } from '@/Redux/App/store';
 import { Patient } from '@/types/patient';
 import Link from 'next/link';
 import HealthChart from './Healthchart';
+import Billings from './Billings';
 
 const Patients: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +25,8 @@ const Patients: React.FC = () => {
   const [patientsPerPage] = useState<number>(5);
   const { gethealthrecords } = useSelector((state:RootState)=>state.Patient);
   const { getbillings } = useSelector((state:RootState)=>state.Patient)
+  const [showBillingHistory, setShowBillingHistory] = useState(false);
+  const [selectedBillingPatient, setSelectedBillingPatient] = useState(null);
 
   console.log("gethealthrecords",gethealthrecords);
   
@@ -36,7 +39,6 @@ const Patients: React.FC = () => {
   };
 
   // otdSidebar variables
-  const [showOPDSidebar,setShowOPDSidebar] = useState(false);
   const [selectedPatient,SetselectedPatient] = useState(null);
 
   const data = {
@@ -57,7 +59,8 @@ const Patients: React.FC = () => {
   
   const handleOPDSidebar = (patient)=>{
     SetselectedPatient(patient);
-    setShowOPDSidebar(true)
+    setSelectedBillingPatient(patient);
+    setShowBillingHistory(true);
   }
 
 // healthchart variables
@@ -452,7 +455,7 @@ const handlePrint = ()=>{
 
       <div 
         className={`fixed top-0 right-0 h-full w-[450px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
-                    ${showOPDSidebar ? 'translate-x-0' : 'translate-x-full'}`}
+                    ${showBillingHistory ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {/* Header */}
         <div className="border-b border-gray-200">
@@ -463,7 +466,7 @@ const handlePrint = ()=>{
                 <p className="text-sm text-gray-500 mt-1">Generate patient bill</p>
               </div>
               <button 
-                onClick={() => setShowOPDSidebar(false)}
+                onClick={() => setShowBillingHistory(false)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
               >
                 <X className="h-6 w-6 text-gray-500" />
@@ -633,10 +636,10 @@ const handlePrint = ()=>{
         )}
       </div>
 
-      {showOPDSidebar && (
+      {showBillingHistory && (
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
-          onClick={() => setShowOPDSidebar(false)}
+          onClick={() => setShowBillingHistory(false)}
         />
       )}
 
@@ -651,6 +654,16 @@ const handlePrint = ()=>{
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={() => sethealthsidebar(false)}
+        />
+      )}
+
+{showBillingHistory && (
+        <Billings 
+          onClose={() => {
+            setShowBillingHistory(false);
+            setSelectedBillingPatient(null);
+          }} 
+          patient={selectedBillingPatient}
         />
       )}
 

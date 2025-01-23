@@ -26,7 +26,7 @@ const Reports = () => {
             </h2>
             
             <p className="text-xl text-gray-600 max-w-lg mx-auto">
-              We're working hard to bring you an amazing appointment scheduling experience.
+              We're working hard to bring you an amazing Reports experience.
             </p>
 
             {/* Feature Preview Cards */}
