@@ -34,13 +34,19 @@ const initialState: PatientState = {
   update: [],
   complete: [],
   deletepatient: [],
-  healthrecord:[],
+  healthrecord: [],
   getappointments: {
     appointments: null,
     error: null
   },
   prescriptions: [],
-  transactions:[]
+  transactions: [],
+  gethealthrecords: [],
+  getbillings: [],
+  billings: [],
+  createBilling: null,
+  registerpatient: [],
+  appointment: []
 };
 
 
@@ -218,9 +224,9 @@ export const updatePatient = createAsyncThunk(
 
 export const completePatient = createAsyncThunk(
   "completePatient", 
-  async (data: { id: number }, { rejectWithValue }) => {
+  async (id: number, { rejectWithValue }) => {
     try {
-      const response = await CompletePatientAPI({ id: data.id }) as APIResponse;
+      const response = await CompletePatientAPI(id) as APIResponse;
       
       if (response.status === 200) {
         toast.success("Patient consultation completed");

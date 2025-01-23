@@ -27,7 +27,7 @@ const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) =
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const updatedData = {
-      id: patientdata?.id,
+      id: Number(patientdata?.id),
       name: formData.fullname,
       dob: formData.dateOfBirth,
       email: formData.email,
@@ -37,7 +37,7 @@ const PatientEditForm: React.FC<EditPatientProps> = ({ patientdata, onClose }) =
     
     try {
       await dispatch(updatePatient(updatedData)).unwrap();
-      await dispatch(getallPatients()); // Refresh the patients list after update
+      await dispatch(getallPatients());
       onClose();
     } catch (error) {
       console.error('Failed to update patient:', error);

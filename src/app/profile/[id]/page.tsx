@@ -48,7 +48,7 @@ const page = () => {
     };
   
 
-
+    // @ts-ignore
      const filterPrescription = prescriptions?.prescriptions?.filter((element)=>{
          if(element?.id == id){
           return element

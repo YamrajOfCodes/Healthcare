@@ -60,12 +60,11 @@ const PatientCard: React.FC<PatientCardProps> = ({
 
   const handlecomplete = async (): Promise<void> => {
     try {
-      await dispatch(completePatient({ id: parseInt(waitingid) })).unwrap();
+      await dispatch(completePatient(parseInt(waitingid))).unwrap();
       setOpen(false);
       if (onComplete) {
         onComplete(waitingid);
       }
-      dispatch(getWaitingroom());
     } catch (error) {
       console.error('Error completing consultation:', error);
     }
@@ -237,27 +236,22 @@ export default function WaitingRoom() {
 
   const handlePatientComplete = async (completedId: string) => {
     try {
-      await dispatch(completePatient({ id: parseInt(completedId) })).unwrap();
+      await dispatch(completePatient(parseInt(completedId))).unwrap();
       
       setLocalWaitingRoom(prev => prev.filter(patient => patient.id !== completedId));
       
-      const remainingPatients = localWaitingRoom.length - 1;
+      const remainingPatients = localWaitingRoom.filter(patient => patient.id !== completedId).length;
       const newTotalPages = Math.ceil(remainingPatients / patientsPerPage);
       if (currentPage > newTotalPages && currentPage > 1) {
         setCurrentPage(prev => prev - 1);
       }
       
-      // setOpen(false);
+      await dispatch(getWaitingroom());
       
-      dispatch(getWaitingroom());
-
     } catch (error: any) {
       if (error?.response?.status === 404 || error?.status === 404) {
         setLocalWaitingRoom(prev => prev.filter(patient => patient.id !== completedId));
-        console.error('Error completing consultation:', error);
-        return;
       }
-      
     }
   };
 
@@ -276,7 +270,7 @@ export default function WaitingRoom() {
   useEffect(() => {
     if (waitingroom?.[0]) {
       const filteredPatients = waitingroom[0].filter(patient => {
-        return !complete?.some(completedPatient => 
+        return !complete?.some((completedPatient: { id: string; appointment_id: string }) => 
           completedPatient.id === patient.id || 
           completedPatient.appointment_id === patient.id
         );

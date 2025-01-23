@@ -28,16 +28,18 @@ const Transactions: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Transform API data to match Transaction interface
-  const transactions: Transaction[] = transactionsData?.[0]?.map((element: any) => ({
-    id: element.id,
-    type: element.type || 'Service',
-    description: element.description || '',
-    patientName: element.patient || '-',
-    date: element.date,
-    amount: typeof element.amount === 'string' 
-      ? parseFloat(element.amount.replace(/[^0-9.-]+/g,""))
-      : element.amount
-  })) || [];
+  const transactions: Transaction[] = Array.isArray(transactionsData?.[0]) 
+    ? transactionsData[0].map((element: any) => ({
+        id: element.id,
+        type: element.type || 'Service',
+        description: element.description || '',
+        patientName: element.patient || '-',
+        date: element.date,
+        amount: typeof element.amount === 'string' 
+          ? parseFloat(element.amount.replace(/[^0-9.-]+/g,""))
+          : element.amount
+      }))
+    : [];
 
   // Calculate current balance
   const currentBalance = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);

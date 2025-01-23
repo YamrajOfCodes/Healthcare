@@ -14,6 +14,14 @@ interface FormData {
   attachments: { file: File; path: string } | null;
 }
 
+interface HealthRecordData {
+  patient_id: number;
+  description: string;
+  date: string;
+  medications: string;
+  healthMetrics: string;
+  attachment_path: string;
+}
 
 const HealthChartForm = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -52,8 +60,10 @@ const HealthChartForm = () => {
   const { allpatients } = useSelector((state: RootState) => state.Patient);
 
   const samplePatients = allpatients?.map((element) => ({
-    id: Number(element?.id),
+    id: element?.id,
     name: element.name,
+    dob: element?.dob,
+    visit_count: element?.visit_count || 0,
     age: element?.dob.slice(0, 4),
     patientId: `P00${element?.id}`,
   }));
@@ -121,17 +131,17 @@ const HealthChartForm = () => {
 
   if (!selectedPatient) return;
 
-  const submissionData = {
-    patient_id: parseInt(selectedPatient.id),
+  // Create a HealthRecordData type object
+  const submissionData: HealthRecordData = {
+    patient_id: Number(selectedPatient.id),
     description: formData.description,
     date: formData.date,
-    medications: formData.medications, // Array of medication objects
-    healthMetrics: formData.healthMetrics,
-    attachment_path: formData.attachments?.path || '',
+    medications: JSON.stringify(formData.medications),
+    healthMetrics: JSON.stringify(formData.healthMetrics),
+    attachment_path: formData.attachments?.path || ''
   };
 
   console.log('Submitting data:', submissionData);
-
   dispatch(Healthrecord(submissionData));
 
   // Reset form
@@ -168,7 +178,7 @@ const HealthChartForm = () => {
                   <div
                     key={patient.id}
                     className="p-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => handlePatientSelect(patient as Patient)}
+                    onClick={() => handlePatientSelect(patient as unknown as Patient)}
                   >
                     <div className="font-medium">{patient.name}</div>
                     <div className="text-sm text-gray-500">

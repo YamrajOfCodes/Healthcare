@@ -31,8 +31,9 @@ export const getPatientAppointmentAPI = async(data,header)=>{
 export const patientPrescAPI = async(data,header)=>{
     return await commonrequest("GET",`${BASE_URL}/api/prescriptions`,data,header,"");
 }
-export const CompletePatientAPI = async(data,header)=>{
-    return await commonrequest("PATCH",`${BASE_URL}/api/waiting-rooms/${data}/complete`,data,header,"");
+
+export const CompletePatientAPI = async(id, header)=>{
+    return await commonrequest("PATCH",`${BASE_URL}/api/waiting-rooms/${id}/complete`, "", header, "");
 }
 
 export const HealthrecordsAPI = async(data, header) => {

@@ -47,7 +47,7 @@ const Appointment = ({ show, onAppointmentAdded }: AppointmentProps) => {
   const [aptDate, setAptDate] = useState<string>("");
   const [searchInput, setSearchInput] = useState<string>("");
   const [doctor,setdoctor] = useState("");
-const [searchResult, setSearchResult] = useState<string>("");
+const [searchResult, setSearchResult] = useState<Patient[] | string>([]);
 const [isHidden, setIsHidden] = useState(false);
 
 
@@ -108,7 +108,9 @@ const [appointment, setAppointment] = useState<AppointmentFormData>({
       patient.name.toLowerCase().includes(query)
     );
   
-    setSearchResult(results?.length > 0 ? results : ["No patients found"]);
+    // If results exist and have length, set the filtered patients array
+    // Otherwise set the "No patients found" message
+    setSearchResult(results?.length ? results : "No patients found");
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
