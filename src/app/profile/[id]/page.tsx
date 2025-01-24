@@ -70,7 +70,7 @@ const page = () => {
       }
     } else {
       datas = JSON.parse(Prescription_details);
-      console.log(data);
+      // console.log(data);
     }
   }, 3000);
 
@@ -121,21 +121,23 @@ const page = () => {
     setdata(upcominappointments);
   };
 
-  //  console.log(data);
+   console.log(data);
 
   const [origionaldata, setorigionaldata] = useState<BaseAppointment[]>([]);
 
   const handleData = () => {
-    const filteredData = data?.filter((upcomingAppt) => {
-      return patients?.some(
-        (patientAppt: BaseAppointment) =>
-          upcomingAppt.id === patientAppt.id &&
-          patientAppt.patient_id === String(id)
-      );
-    });
+    const filteredData =data?.filter((element:any)=>{
+          if(element.patient_id == id){
+            return element;
+          }
+    })
+  
 
     setorigionaldata(filteredData || []);
   };
+
+  console.log(origionaldata);
+  
 
   // Effect to dispatch the action when the component mounts
   useEffect(() => {

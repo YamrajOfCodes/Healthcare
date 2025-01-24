@@ -1,6 +1,6 @@
 'use client'
-import React from 'react'
-import { Calendar, Clock, FileText, Search, X, ChevronRight } from 'lucide-react'
+import React, { useState } from 'react'
+import { Calendar, Clock, FileText, Search, X, ChevronRight, Filter } from 'lucide-react'
 import { BaseAppointment } from '@/types/shared'
 
 interface VisitHistoryPopupProps {
@@ -10,6 +10,59 @@ interface VisitHistoryPopupProps {
 }
 
 const VisitHistoryPopup: React.FC<VisitHistoryPopupProps> = ({ onClose, visits, patientName }) => {
+
+  
+  
+  const [allvisits,setallvisits] = useState(visits);
+  // console.log(allvisits);
+  
+  const handleDate = (e:any)=>{
+    if(document.getElementById("date")){
+      (document.getElementById("selection") as HTMLInputElement).value = ''
+    }
+    
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+
+    const filterbyDate = allvisits?.filter((visit: any) => {
+      const Datee = visit?.appointment_date.slice(0, 10); // Extract YYYY-MM-DD
+      const Date1 = new Date(Datee); // Convert to Date object
+      const Date2 = new Date(formattedDate); // Assume formattedDate is also in YYYY-MM-DD format
+    
+      // console.log(Date1, Date2);
+    
+      // Compare timestamps for equality
+      if (e === Datee) {
+        // console.log(visit);
+        return true; // Include this visit in the filtered results
+      }
+    
+      return false; // Exclude this visit
+    });
+
+   
+    if(filterbyDate?.length>0){
+      setallvisits(filterbyDate)
+    }else{
+      setallvisits(visits)
+    }
+    
+  }
+
+
+
+  const handleMode = (e: any) => {
+      const filters = visits?.filter((element:any)=>{
+         if(element.mode == e){
+         return element
+          
+         }
+        
+      })   
+
+      setallvisits(filters)
+  };
+  
   return (
     <>
       {/* Sidebar */}
@@ -36,9 +89,42 @@ const VisitHistoryPopup: React.FC<VisitHistoryPopupProps> = ({ onClose, visits, 
         </div>
 
         {/* Content */}
+
+        <div className="bg-white shadow-md rounded-lg p-4 flex items-center justify-between border border-gray-200">
+      <div className="flex items-center space-x-2 text-gray-700">
+        <Filter className="w-5 h-5 text-blue-500" />
+        <span className="font-semibold text-sm">Filter By</span>
+      </div>
+      
+      <div className="flex items-center space-x-4">
+        <div className="relative">
+          <input 
+            type="date" 
+            id="date"
+            className="pl-8 pr-2 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-400"
+            onChange={(e) => handleDate(e.target.value)}
+          />
+          <Calendar className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <label htmlFor="selection" className="text-sm text-gray-600">Mode</label>
+          <select 
+            id="selection" 
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-400"
+            onChange={(e) => handleMode(e.target.value)}
+          >
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+
         <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(100vh-100px)]">
           {visits.length > 0 ? (
-            visits.map((visit, index) => (
+            allvisits?.map((visit, index) => (
               <div 
                 key={index} 
                 className="bg-white rounded-xl p-4 border border-gray-200 hover:border-blue-200 transition-colors duration-200"

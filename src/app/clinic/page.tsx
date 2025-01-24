@@ -241,7 +241,7 @@ const DashboardLayout: React.FC = () => {
                 </div>
 
                 {/* Navigation - Make it scrollable */}
-                <nav className="space-y-3 flex-grow overflow-y-auto">
+                <nav className="space-y-3 flex-grow overflow-y-auto scrollbar-hide">
                   <NavItem 
                     icon={LayoutDashboard} 
                     label="Dashboard" 
