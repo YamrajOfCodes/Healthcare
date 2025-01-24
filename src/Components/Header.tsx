@@ -258,7 +258,7 @@ const ModernNavbar = () => {
 
       {/* Patient Registration Sidebar */}
       <div
-        className={`hidden sm:block fixed top-0 right-0 h-full w-2/3 lg:w-1/3 bg-white shadow-xl transform transition-transform duration-300 overflow-hidden ${
+        className={`hidden sm:block fixed top-0 right-0 h-full w-2/3 lg:w-1/3 bg-white shadow-xl transform transition-transform duration-300 overflow-hidden  ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         } z-50`}
       >
@@ -281,7 +281,7 @@ const ModernNavbar = () => {
               <X className="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition-colors duration-200" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 flex  justify-center">
+          <div className="flex-1 overflow-y-auto overflow-hidden p-4 flex  justify-center">
             <Register
               show={false}
               onPatientAdded={() => {

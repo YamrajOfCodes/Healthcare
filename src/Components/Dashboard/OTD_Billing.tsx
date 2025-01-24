@@ -115,11 +115,11 @@ const OTD_Billing = () => {
               <div className="grid grid-cols-2 gap-4">
                 <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                   <Calendar className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm">03/Dec/2019</span>
+                  <span className="text-sm text-black">03/Dec/2019</span>
                 </button>
                 <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                   <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm">3:57 PM</span>
+                  <span className="text-sm text-black">3:57 PM</span>
                 </button>
               </div>
             </div>
@@ -129,11 +129,11 @@ const OTD_Billing = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Doctor
               </label>
-              <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
-                <option value="Deepali">Dr. Deepali</option>
-                <option value="Yamini">Dr. Yamini</option>
-                <option value="Kritika">Dr. Ritik</option>
-                <option value="Kundan">Dr. Kundan</option>
+              <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 text-black  bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
+                <option value="Deepali" className='text-black'>Dr. Deepali</option>
+                <option value="Yamini" className='text-black'>Dr. Yamini</option>
+                <option value="Kritika" className='text-black'>Dr. Ritik</option>
+                <option value="Kundan" className='text-black'>Dr. Kundan</option>
               </select>
             </div>
 
@@ -142,13 +142,13 @@ const OTD_Billing = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 OPD Type
               </label>
-              <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
-                <option>General OPD</option>
-                <option>Pediatrics</option>
-                <option>Orthopedics</option>
-                <option>Consultation</option>
-                <option>Gynecology</option>
-                <option>Neurology</option>
+              <select className="w-full rounded-lg border-gray-200 px-4 py-2.5 text-black bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 border">
+                <option className='text-black'>General OPD</option>
+                <option className='text-black'>Pediatrics</option>
+                <option className='text-black'>Orthopedics</option>
+                <option className='text-black'>Consultation</option>
+                <option className='text-black'>Gynecology</option>
+                <option className='text-black'>Neurology</option>
               </select>
             </div>
 
@@ -252,7 +252,7 @@ const OTD_Billing = () => {
                   <button
                     key={mode}
                     onClick={() => setActivePayMode(mode.toLowerCase())}
-                    className={`flex-1 px-4 py-2.5 rounded-lg border transition-all text-sm ${
+                    className={`flex-1 px-4 py-2.5 rounded-lg border transition-all text-sm text-black ${
                       activePayMode === mode.toLowerCase()
                         ? 'bg-blue-500 text-white border-blue-500'
                         : 'border-gray-200 hover:bg-gray-50'
@@ -302,6 +302,7 @@ const OTD_Billing = () => {
           </div>
         </div>
       </div>
+           <div className='text-end w-5/6 mt-10'><button className='px-6 py-2 lg:px-8 lg:py-3 bg-blue-600 text-white rounded-xl hover:cursor-pointer hover:bg-blue-700'>Save Billing</button></div>
     </div>
       
     </div>

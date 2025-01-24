@@ -155,7 +155,7 @@ const Billings = ({ onClose, patient }) => {
             {demoBillings.map((bill, index) => (
               <div key={index} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all duration-300 relative">
                 {/* Actions Menu Button */}
-                <div className="absolute top-4 right-4">
+                {/* <div className="absolute top-4 right-4">
                   <button 
                     onClick={() => setShowActions(showActions === bill.id ? null : bill.id)}
                     className="p-1 hover:bg-gray-100 rounded-full transition-colors duration-200"
@@ -163,7 +163,7 @@ const Billings = ({ onClose, patient }) => {
                     <MoreVertical className="h-5 w-5 text-gray-500" />
                   </button>
 
-                  {/* Actions Dropdown */}
+                  
                   {showActions === bill.id && (
                     <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                       <div className="py-1">
@@ -184,7 +184,7 @@ const Billings = ({ onClose, patient }) => {
                       </div>
                     </div>
                   )}
-                </div>
+                </div> */}
 
                 <div className="flex justify-between items-start mb-3 pr-8">
                   <div>
@@ -235,13 +235,13 @@ const Billings = ({ onClose, patient }) => {
                     </div>
                     <div className="flex items-center gap-2">
                       {/* Quick action buttons */}
-                      <button 
+                      {/* <button 
                         onClick={() => handleUpdate(bill)}
                         className="p-1 hover:bg-blue-50 rounded-full transition-colors duration-200"
                         title="Edit Bill"
                       >
                         <Edit2 className="h-4 w-4 text-blue-500" />
-                      </button>
+                      </button> */}
                       <button 
                         onClick={() => handleDelete(bill.id)}
                         className="p-1 hover:bg-red-50 rounded-full transition-colors duration-200"

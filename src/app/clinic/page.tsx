@@ -10,7 +10,8 @@ import {Calendar,Users,FileText, Menu,X,
   Heart,
   DollarSignIcon,
   BadgeDollarSign,
-  NotepadTextIcon} from "lucide-react"
+  NotepadTextIcon,
+  Box} from "lucide-react"
 import Showdashboard from "@/Components/Showdashboard";
 import DashCalender from "@/Components/Dashboard/DashCalender";
 import Patients from "@/Components/Dashboard/Patients";
@@ -32,6 +33,7 @@ import Image from "next/image";
 import Healthrecord from "@/Components/Dashboard/Healthrecord";
 import OTD_Billing from "@/Components/Dashboard/OTD_Billing";
 import Reports from "@/Components/Dashboard/Reports";
+import Inventory from "@/Components/Dashboard/Inventory";
 
 
 interface NavItemProps {
@@ -340,6 +342,13 @@ const DashboardLayout: React.FC = () => {
                     isActive={activeItem === 'reports'}
                     onClick={() => setActiveItem('reports')}
                   />
+
+                    <NavItem 
+                    icon={Box} 
+                    label="Inventory" 
+                    isActive={activeItem === 'inventory'}
+                    onClick={() => setActiveItem('inventory')}
+                  />
                 </nav>
 
                 {/* Bottom Section - Pro Badge */}
@@ -389,7 +398,8 @@ const DashboardLayout: React.FC = () => {
                   activeItem === "upcoming"? <Upcoming/> :
                   activeItem === "health"? <Healthrecord/>:
                   activeItem === "billing"? <OTD_Billing/>:
-                  activeItem === "reports"? <Reports/> : null
+                  activeItem === "reports"? <Reports/> :
+                  activeItem === "inventory"?<Inventory/> : null
                 }
               </div>
             </div>
