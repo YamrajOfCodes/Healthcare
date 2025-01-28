@@ -12,6 +12,7 @@ import HealthChart from './Healthchart';
 import Billings from './Billings';
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import PrescriptionTemplate from '../Prescription/PrescriptionTemplate';
 
 
 const Patients: React.FC = () => {
@@ -30,6 +31,8 @@ const Patients: React.FC = () => {
   const { getbillings } = useSelector((state:RootState)=>state.Patient)
   const [showBillingHistory, setShowBillingHistory] = useState(false);
   const [selectedBillingPatient, setSelectedBillingPatient] = useState(null);
+  const [prescriptionSidebar, setPrescriptionSidebar] = useState(false);
+  const [selectedPrescription, setSelectedPrescription] = useState<Patient | null>(null);
 
   console.log("gethealthrecords",gethealthrecords);
 
@@ -100,15 +103,10 @@ const handleHealthsidebar = (patient)=>{
 
 // prescription sidebar variables
 
-const [prescriptionSidebar,setPrescriptionSidebar] = useState(false);
-const [selectedPrescription,setSelectedPrescription] = useState(null);
-
-const handleprescriptionSidebar = (patient)=>{
+const handlePrescriptionSidebar = (patient: Patient) => {
   setPrescriptionSidebar(true);
   setSelectedPrescription(patient);
-  console.log("selectedPrescription",selectedPrescription);
-  
-}
+};
 
 const handlePrint = ()=>{
   window.print()
@@ -245,9 +243,11 @@ const handlePrint = ()=>{
                                       setselectedpatient(profile?.id)
                                     }}>Delete</span>
                                   </button>
-                                  <button className="text-pink-600 hover:text-red-900 inline-flex items-center space-x-1" onClick={()=>{handleprescriptionSidebar(profile)}}>
+                                  <button
+                                    className="text-pink-600 hover:text-red-900 inline-flex items-center space-x-1"
+                                    onClick={() => handlePrescriptionSidebar(profile)}
+                                  >
                                     <Notebook className="h-4 w-4" />
-                                    {/* <span onClick={()=>{handledeletepatient(profile.id)}}>Delete</span> */}
                                     <span>Prescription</span>
                                   </button>
                                   <button 
@@ -440,6 +440,14 @@ const handlePrint = ()=>{
                             <Trash2 className="h-3 w-3" />
                             <span className="text-xs font-semibold">Delete</span>
                           </button>
+                          <button 
+                            className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-pink-50 hover:border-pink-200 text-pink-600 transition-all duration-200"
+                          >
+                            <Link href={`/prescription/new/${profile.id}`} className="flex items-center space-x-1">
+                              <Notebook className="h-3 w-3" />
+                              <span className="text-xs font-semibold">Prescription</span>
+                            </Link>
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -572,91 +580,14 @@ const handlePrint = ()=>{
 
 
             <div 
-        className={`fixed top-0 right-0 h-full w-full bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+        className={`fixed top-0 right-0 h-full w-full bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 overflow-y-auto 
                     ${prescriptionSidebar ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* Header */}
-        <div className="border-b border-gray-200">
-          <div className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-              </div>
-              <button 
-                onClick={() => setPrescriptionSidebar(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-              >
-                <X className="h-6 w-6 text-gray-500" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
         {selectedPrescription && (
-           <div className="max-w-[800px] mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-           <div className="relative bg-emerald-100 p-8">
-             <h1 className="text-xl font-bold text-gray-800">
-               Digitech <span className="text-emerald-500">CHOICE</span> CLINIC
-             </h1>
-             <h2 className="text-lg font-semibold text-gray-800">
-               {/* Dr. {appointmentData?.["Doctor Name"] || ""} */}
-             </h2>
-           </div>
-           <div className="p-8 pt-5">
-             <div className="space-y-4 mb-8">
-               <div className="flex flex-wrap gap-4">
-                 <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-900">
-                     NAME OF PATIENT
-                   </label>
-                   <div className="mt-1 p-2 bg-emerald-50 rounded">
-                    {selectedPrescription?.name}
-                   </div>
-                 </div>
-                 <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-900">
-                     Appointment ID
-                   </label>
-                   <div className="mt-1 p-2 bg-emerald-50 rounded">
-                   {selectedPrescription?.id}
-                   </div>
-                 </div>
-                 <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-900">
-                     AGE
-                   </label>
-                   <div className="mt-1 p-2 bg-emerald-50 rounded">
-                     {new Date().getFullYear() - selectedPrescription?.dob.slice(0,4)}
-                   </div>
-                 </div>
-               </div>
-               <div>
-                 <label className="block text-sm font-medium text-gray-900">
-                   ADDRESS
-                 </label>
-                 <div className="mt-1 p-2 bg-emerald-50 rounded">
-                 {selectedPrescription?.address}
-                 </div>
-               </div>
-               <div className="h-80">
-   
-               </div>
-               <div>
-                 <p>signature</p>
-                 <div className="w-1/3 border-b border-gray-700 mt-5"></div>
-               </div>
-             </div>
-             <div className="mt-5 pt-8 text-center">
-               <button
-                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                 onClick={handlePrint}
-               >
-                 <Printer className="inline-block w-5 h-5 mr-2" />
-                 Print
-               </button>
-             </div>
-           </div>
-         </div>
+          <PrescriptionTemplate 
+            selectedPrescription={selectedPrescription}
+            onClose={() => setPrescriptionSidebar(false)}
+          />
         )}
       </div>
 
@@ -664,13 +595,6 @@ const handlePrint = ()=>{
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={() => setShowBillingHistory(false)}
-        />
-      )}
-
-{prescriptionSidebar && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
-          onClick={() => setPrescriptionSidebar(false)}
         />
       )}
 

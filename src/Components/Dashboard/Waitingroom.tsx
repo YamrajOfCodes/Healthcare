@@ -9,6 +9,8 @@ import { AppDispatch, RootState } from '@/Redux/App/store';
 import { Patient, WaitingRoomPatient } from '@/types/patient';
 import Billings from './Billings';
 import HealthChart from './Healthchart';
+import logo from '@/public/vedgarbha_logo.png';
+import PrescriptionTemplate from '../Prescription/PrescriptionTemplate';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -376,11 +378,11 @@ export default function WaitingRoom() {
       )}
 
       <div 
-        className={`fixed top-0 right-0 h-full w-[450px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+        className={`fixed top-0 right-0 h-full w-full bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 overflow-y-auto 
                     ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {/* Header */}
-        <div className="border-b border-gray-200">
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
           <div className="p-6">
             <div className="flex justify-between items-center">
               <div>
@@ -425,91 +427,14 @@ export default function WaitingRoom() {
       )}
 
       <div 
-        className={`fixed top-0 right-0 h-full w-full bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+        className={`fixed top-0 right-0 h-full w-full bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 overflow-y-auto 
                     ${prescriptionSidebar ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* Header */}
-        <div className="border-b border-gray-200">
-          <div className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-              </div>
-              <button 
-                onClick={() => setPrescriptionSidebar(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-              >
-                <X className="h-6 w-6 text-gray-500" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
         {selectedPrescription && (
-           <div className="max-w-[800px] mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-           <div className="relative bg-emerald-100 p-8">
-             <h1 className="text-xl font-bold text-gray-800">
-               Digitech <span className="text-emerald-500">CHOICE</span> CLINIC
-             </h1>
-             <h2 className="text-lg font-semibold text-gray-800">
-               {/* Dr. {appointmentData?.["Doctor Name"] || ""} */}
-             </h2>
-           </div>
-           <div className="p-8 pt-5">
-             <div className="space-y-4 mb-8">
-               <div className="flex flex-wrap gap-4">
-                 <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-900">
-                     NAME OF PATIENT
-                   </label>
-                   <div className="mt-1 p-2 bg-emerald-50 rounded">
-                    {selectedPrescription?.patient?.name}
-                   </div>
-                 </div>
-                 <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-900">
-                     Appointment ID
-                   </label>
-                   <div className="mt-1 p-2 bg-emerald-50 rounded">
-                   {selectedPrescription?.id}
-                   </div>
-                 </div>
-                 <div className="flex-1">
-                   <label className="block text-sm font-medium text-gray-900">
-                     AGE
-                   </label>
-                   <div className="mt-1 p-2 bg-emerald-50 rounded">
-                     {new Date().getFullYear() - parseInt(selectedPrescription?.patient?.dob?.slice(0,4) || '0')}
-                   </div>
-                 </div>
-               </div>
-               <div>
-                 <label className="block text-sm font-medium text-gray-900">
-                   ADDRESS
-                 </label>
-                 <div className="mt-1 p-2 bg-emerald-50 rounded">
-                 {selectedPrescription?.patient?.address}
-                 </div>
-               </div>
-               <div className="h-80">
-   
-               </div>
-               <div>
-                 <p>signature</p>
-                 <div className="w-1/3 border-b border-gray-700 mt-5"></div>
-               </div>
-             </div>
-             <div className="mt-5 pt-8 text-center">
-               <button
-                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                 onClick={handlePrint}
-               >
-                 <Printer className="inline-block w-5 h-5 mr-2" />
-                 Print
-               </button>
-             </div>
-           </div>
-         </div>
+          <PrescriptionTemplate 
+            selectedPrescription={selectedPrescription}
+            onClose={() => setPrescriptionSidebar(false)}
+          />
         )}
       </div>
 

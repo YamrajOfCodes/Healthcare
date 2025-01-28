@@ -26,6 +26,7 @@ import { BaseAppointment } from "@/types/shared";
 import HealthChart from "@/Components/Dashboard/Healthchart";
 import Billings from "@/Components/Dashboard/Billings";
 import VisitHistoryPopup from "@/Components/Dashboard/ViewHistoryPopup";
+import PrescriptionTemplate from "@/Components/Prescription/PrescriptionTemplate";
 
 const page = () => {
   const { id } = useParams(); // Extract the patient ID from URL params
@@ -50,11 +51,10 @@ const page = () => {
     attachment_path: "/path/to/attachment",
   };
 
-  // @ts-ignore
+  // Fix the prescription filtering logic
+  //@ts-ignore
   const filterPrescription = prescriptions?.prescriptions?.filter((element) => {
-    if (element?.id == id) {
-      return element;
-    }
+    return element?.appointment?.patient_id == id;  // Changed to check appointment's patient_id
   });
 
   console.log(filterPrescription);
@@ -565,79 +565,11 @@ const page = () => {
         ) : activeItem === "prescription" ? (
           <>
             {filterPrescription?.length > 0 ? (
-              <div className="max-w-[800px] mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-                <div className="relative bg-emerald-100 p-8 flex justify-between">
-                  <h1 className="text-xl font-bold text-gray-800">
-                    Digitech <span className="text-emerald-500">CHOICE</span>{" "}
-                    CLINIC
-                  </h1>
-                  {/* <h2 className="text-lg font-semibold text-gray-800"> */}
-                  {/* Dr. {appointmentData?.["Doctor Name"] || ""} */}
-                  {/* </h2> */}
-                  <p className="px-4 py-1 bg-green-500 rounded-lg text-white">
-                    {" "}
-                    {filterPrescription?.[0]?.appointment?.mode}
-                  </p>
-                </div>
-                <div className="p-8 pt-5">
-                  <div className="space-y-4 mb-8">
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-900">
-                          NAME OF PATIENT
-                        </label>
-                        <div className="mt-1 p-2 bg-emerald-50 rounded">
-                          {filterPrescription?.[0]?.appointment?.patient?.name}
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-900">
-                          Appointment ID
-                        </label>
-                        <div className="mt-1 p-2 bg-emerald-50 rounded">
-                          {filterPrescription?.[0]?.appointment?.id}
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-900">
-                          AGE
-                        </label>
-                        <div className="mt-1 p-2 bg-emerald-50 rounded">
-                          {new Date().getFullYear() -
-                            filterPrescription?.[0]?.appointment?.patient?.dob.slice(
-                              0,
-                              3
-                            )}
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-900">
-                        ADDRESS
-                      </label>
-                      <div className="mt-1 p-2 bg-emerald-50 rounded">
-                        {filterPrescription?.[0]?.appointment?.patient?.address}
-                      </div>
-                    </div>
-                    <div className="h-80"></div>
-                    <div>
-                      <p>signature</p>
-                      <div className="w-1/3 border-b border-gray-700 mt-5"></div>
-                    </div>
-                  </div>
-                  <div className="mt-5 pt-8 text-center">
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md"
-                      // onClick={handlePrint}
-                    >
-                      <Printer className="inline-block w-5 h-5 mr-2" />
-                      Print
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <PrescriptionTemplate selectedPrescription={filterPrescription}/>
             ) : (
-              "No prescription Found"
+              <div className="text-center py-8 text-gray-600">
+                No prescription found for this patient
+              </div>
             )}
           </>
         ) : (

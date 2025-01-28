@@ -370,15 +370,52 @@ const DashboardLayout: React.FC = () => {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-h-screen overflow-y-auto">
+          <main className="flex-1 min-h-screen overflow-y-auto p-4">
           <Header/>
             <div className="container mx-auto p-4 contents ">
               {activeItem === 'Home' && (
                 <>
-                  <div className="cards bg-white/20 flex justify-center gap-5 sm:flex-row flex-wrap rounded-md shadow-lg p-4">
-                    <StatusCard status="Waiting" number={waitingpatients_data} />
-                    <StatusCard status="New" number={newPatients_data} />
-                    <StatusCard status="Follow-up" number={oldpatients_data} />
+                  <div className="bg-white rounded-xl shadow-xl p-6 backdrop-blur-sm border border-white/20">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="flex items-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100/50 border border-blue-200/30">
+                        <div className="p-3 rounded-lg bg-blue-500/10 mr-4">
+                          <Clock className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-medium text-gray-600">Waiting Patients</h3>
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl font-bold text-blue-600">{waitingpatients_data}</span>
+                            <span className="text-sm text-gray-500">patients</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center p-4 rounded-lg bg-gradient-to-r from-green-50 to-green-100/50 border border-green-200/30">
+                        <div className="p-3 rounded-lg bg-green-500/10 mr-4">
+                          <UserPlus className="w-6 h-6 text-green-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-medium text-gray-600">New Patients</h3>
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl font-bold text-green-600">{newPatients_data}</span>
+                            <span className="text-sm text-gray-500">patients</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center p-4 rounded-lg bg-gradient-to-r from-purple-50 to-purple-100/50 border border-purple-200/30">
+                        <div className="p-3 rounded-lg bg-purple-500/10 mr-4">
+                          <Users className="w-6 h-6 text-purple-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-medium text-gray-600">Follow-up Patients</h3>
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl font-bold text-purple-600">{oldpatients_data}</span>
+                            <span className="text-sm text-gray-500">patients</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div className="dash w-full ">
                     <Showdashboard />
