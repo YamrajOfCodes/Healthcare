@@ -23,6 +23,27 @@ const Allappointment: React.FC = () => {
     const [selectedStatus, setSelectedStatus] = useState<string>("All");
     const [selectedDoctor, setSelectedDoctor] = useState<string>("All");
     const [selectedDate, setSelectedDate] = useState<string>("");
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [patientsPerPage] = useState(3); 
+    const totalPages = Math.ceil(getallappointments.length / 10);
+
+
+
+    const indexOfLastPatient = currentPage * patientsPerPage;
+    const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+    const currentPatients = getallappointments.slice(indexOfFirstPatient, indexOfLastPatient);
+    // const totalPages = Math.ceil(localWaitingRoom.length / patientsPerPage);
+  
+
+
+    const handlePageChange = (pageNumber: number) => {
+      setCurrentPage(pageNumber);
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    };
 
     const handledoctor = (data: string) => {
       setSelectedDoctor(data);
@@ -396,6 +417,21 @@ const exportToExcel = (appointments) => {
                         </tbody>
                     </table>
                 </div>
+                <div className="flex justify-center gap-2 mt-4">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-3 py-1 rounded-md ${
+                currentPage === index + 1
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
 
                 {/* Cards for smaller screens */}
                 <div className="sm:hidden space-y-6">

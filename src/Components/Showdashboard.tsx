@@ -82,7 +82,7 @@ const Showdashboard: React.FC = () => {
   }
 
   return (
-    <div className="h-full relative">
+    <div className="h-full relative mt-2">
       <div className="h-full rounded-2xl bg-white/20 backdrop-blur-xl border border-white/20 shadow-xl">
         <div className="p-6">
           <div className="flex justify-between">

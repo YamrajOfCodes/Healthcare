@@ -1,7 +1,7 @@
 "use client"
 import { Printer, X } from 'lucide-react';
-import Image from 'next/image';
 import logo from "@/Assets/vedgarbha_logo.png"
+import Image from 'next/image';
 
 interface PrescriptionTemplateProps {
   selectedPrescription: any;
@@ -17,9 +17,6 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
   const handlePrint = () => {
     window.print();
   };
-
-  console.log(selectedPrescription);
-  
 
   // Helper function to get patient name
   const getPatientName = () => {
@@ -77,7 +74,9 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
           <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
             <div className="w-[400px] h-[400px] flex items-center justify-center">
               <Image 
-                src={logo.src} width={1000} height={1000}
+                src={logo.src}
+                height={1000}
+                width={1000}
                 alt="Vedgarbha Ayurveda Logo" 
                 className="w-full h-full object-contain"
               />
@@ -90,11 +89,13 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
               <div className="flex items-center gap-4">
                 {/* Header Logo */}
                 <div className="w-32">
-                  <Image
-                    src={logo.src} width={1000} height={1000}
-                    alt="Vedgarbha Ayurveda Logo" 
-                    className="w-full object-contain"
-                  />
+                <Image 
+                src={logo.src}
+                height={300}
+                width={300}
+                alt="Vedgarbha Ayurveda Logo" 
+                className="w-full h-full object-contain"
+              />
                 </div>
                 
                 {/* Header Text */}
@@ -137,7 +138,7 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
                     <label className="block text-sm font-medium text-gray-500">
                       NAME OF PATIENT
                     </label>
-                    <div className="mt-1 text-black p-2 bg-white/80 backdrop-blur-sm rounded border border-gray-200">
+                    <div className="mt-1 text-black p-2 bg-white/80 backdrop-blur-sm ">
                       {getPatientName()}
                     </div>
                   </div>
@@ -145,7 +146,7 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
                     <label className="block text-sm font-medium text-black">
                       Appointment ID
                     </label>
-                    <div className="mt-1 text-black p-2 bg-white/80 backdrop-blur-sm rounded border border-gray-200">
+                    <div className="mt-1 text-black p-2 bg-white/80 backdrop-blur-sm ">
                       {selectedPrescription?.id || selectedPrescription?.appointment_id || 'N/A'}
                     </div>
                   </div>
@@ -153,7 +154,7 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
                     <label className="block text-sm font-medium text-gray-500">
                       AGE
                     </label>
-                    <div className="mt-1 p-2 text-black bg-white/80 backdrop-blur-sm rounded border border-gray-200">
+                    <div className="mt-1 p-2 text-black bg-white/80 backdrop-blur-sm ">
                       {getPatientAge()}
                     </div>
                   </div>
@@ -162,7 +163,7 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
                   <label className="block text-sm font-medium text-gray-500">
                     ADDRESS
                   </label>
-                  <div className="mt-1 text-black p-2 bg-white/80 backdrop-blur-sm rounded border border-gray-200">
+                  <div className="mt-1 text-black p-2 bg-white/80 backdrop-blur-sm ">
                     {getPatientAddress()}
                   </div>
                 </div>

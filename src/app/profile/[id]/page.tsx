@@ -11,7 +11,7 @@ import {
   Clock,
   CreditCard,
   FileText,
-  History,
+  History as Historry,
   Phone,
   User,
   Mail,
@@ -27,6 +27,10 @@ import HealthChart from "@/Components/Dashboard/Healthchart";
 import Billings from "@/Components/Dashboard/Billings";
 import VisitHistoryPopup from "@/Components/Dashboard/ViewHistoryPopup";
 import PrescriptionTemplate from "@/Components/Prescription/PrescriptionTemplate";
+import History from "@/Components/Dashboard/History";
+import ClinicNote from "@/Components/Dashboard/ClinicNote";
+import PatientReports from "@/Components/Dashboard/PatientReports";
+import Inventory from "@/Components/Dashboard/Inventory";
 
 const page = () => {
   const { id } = useParams(); // Extract the patient ID from URL params
@@ -78,9 +82,13 @@ const page = () => {
 
   const navItems = [
     { id: "profile", label: "Profile" },
+    { id: "Health", label: "Health" },
     { id: "prescription", label: "Prescription" },
     { id: "billing", label: "OTD Billing" },
-    { id: "healthchart", label: "Health Chart" },
+    { id: "History", label: "History" },
+    { id: "ClinicNote", label: "Clinic Note" },
+    { id: "Reports", label: "Reports " },
+    { id: "Attach", label: "Attach" },
   ];
 
   const filteindividual = allpatients?.filter((element) => {
@@ -261,8 +269,8 @@ const page = () => {
           </div>
         </div>
 
-        <nav className="bg-white rounded-xl shadow-md mx-4 mb-6">
-          <ul className="flex items-center relative p-2">
+        <nav className="bg-white rounded-xl shadow-md mx-4 mb-6 h-[10vh] flex  items-center" style={{background:"white"}}>
+          <ul className="flex items-center relative p-2 justify-between w-full">
             {navItems.map((item) => (
               <li key={item.id} className="relative flex-1">
                 <button
@@ -334,7 +342,7 @@ const page = () => {
               <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-lg bg-opacity-90">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-md">
-                    <History className="h-6 w-6 text-white" />
+                    <Historry className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Total Visits</p>
@@ -353,7 +361,7 @@ const page = () => {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                      <History className="h-5 w-5 text-white" />
+                      <Historry className="h-5 w-5 text-white" />
                     </div>
                     <h2 className="text-xl font-bold text-gray-800">
                       Visit History
@@ -572,9 +580,20 @@ const page = () => {
               </div>
             )}
           </>
-        ) : (
-          <HealthChart healthData={healthdata} />
-        )}
+        ) : activeItem === "Health"? (
+          <><HealthChart healthData={healthdata} /></>
+        )
+        : activeItem === "History"? (
+          <><History /></>
+        ) : activeItem === "Reports"? (
+          <><PatientReports /></>
+        ) :  activeItem === "ClinicNote"? (
+          <><ClinicNote /></>
+        ) : <Inventory/>
+       
+      
+      }
+        
         {/* Add VisitHistoryPopup */}
         {showVisitHistory && (
           <VisitHistoryPopup

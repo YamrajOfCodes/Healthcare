@@ -5,7 +5,7 @@ const Inventory = () => {
   return (
     <div>
           <div>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+      <div className="min-h-screen  p-6">
       <div className="max-w-3xl mx-auto mt-10 bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="p-8 text-center">
           {/* Top Section with Animated Icons */}

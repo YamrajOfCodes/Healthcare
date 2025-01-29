@@ -9,7 +9,7 @@ import { AppDispatch, RootState } from '@/Redux/App/store';
 import { Patient, WaitingRoomPatient } from '@/types/patient';
 import Billings from './Billings';
 import HealthChart from './Healthchart';
-import logo from '@/public/vedgarbha_logo.png';
+import logo from '@/public/logo.png';
 import PrescriptionTemplate from '../Prescription/PrescriptionTemplate';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -378,47 +378,14 @@ export default function WaitingRoom() {
       )}
 
       <div 
-        className={`fixed top-0 right-0 h-full w-full bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 overflow-y-auto 
+        className={`fixed top-0 right-0 h-full w-full md:w-[750px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
                     ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-200">
-          <div className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">Healthchart</h2>
-                <p className="text-sm text-gray-500 mt-1">Generate Healthchart</p>
-              </div>
-              <button 
-                onClick={() => sethealthsidebar(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-              >
-                <X className="h-6 w-6 text-gray-500" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        {healthPatient && (
-          <div 
-            className={`fixed top-0 right-0 h-full w-full md:w-[750px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
-                        ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
-          >
-            {/* Add mobile close button */}
-            <button 
-              onClick={() => sethealthsidebar(false)}
-              className="md:hidden fixed top-4 right-4 p-2 bg-white/80 backdrop-blur-sm hover:bg-gray-100 rounded-full transition-colors duration-200 shadow-lg z-50"
-            >
-              <X className="h-6 w-6 text-gray-500" />
-            </button>
-            
-            <HealthChart healthData={data}/>
-          </div>
-        )}
+        <HealthChart healthData={data}/>
       </div>
 
-      {/* Update the overlay for healthchart */}
+      {/* Keep the overlay */}
       {healthsidebar && (
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"

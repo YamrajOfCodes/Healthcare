@@ -39,7 +39,7 @@ import Inventory from "@/Components/Dashboard/Inventory";
 interface NavItemProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
-  isActive: boolean;
+  isActive: any;
   onClick: () => void;
   hasSubNav?: boolean;
   notification?: boolean;
@@ -107,6 +107,8 @@ const SubNavItem: React.FC<SubNavItemProps> = ({ icon: Icon, label, onClick, hig
 );
 
 const DashboardLayout: React.FC = () => {
+
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [issubOpen, setsubIsOpen] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<string>('Home')
@@ -255,7 +257,7 @@ const DashboardLayout: React.FC = () => {
                     <NavItem 
                       icon={Users} 
                       label="Patients" 
-                      isActive={activeItem === 'allpatients'}
+                      isActive={activeItem === 'allpatients' || activeItem === "waitingroom" }
                       onClick={() =>{setIsSubNavOpen(!isSubNavOpen),setActiveItem("allpatients")}}
                       hasSubNav
                       notification={true}
@@ -283,7 +285,7 @@ const DashboardLayout: React.FC = () => {
                     <NavItem 
                       icon={Users} 
                       label="Appointments" 
-                      isActive={activeItem === 'appointments'}
+                      isActive={activeItem === 'allappointments'  || activeItem === 'upcoming'}
                       onClick={()=>{togglesubSidebar(),setActiveItem("upcoming")}}
                       hasSubNav
                       notification={true}
@@ -370,12 +372,12 @@ const DashboardLayout: React.FC = () => {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-h-screen overflow-y-auto p-4">
+          <main className="flex-1 min-h-screen overflow-y-auto p-2">
           <Header/>
             <div className="container mx-auto p-4 contents ">
               {activeItem === 'Home' && (
                 <>
-                  <div className="bg-white rounded-xl shadow-xl p-6 backdrop-blur-sm border border-white/20">
+                  <div className="bg-white rounded-xl shadow-xl p-6 backdrop-blur-sm border border-white/20 mt-2">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="flex items-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100/50 border border-blue-200/30">
                         <div className="p-3 rounded-lg bg-blue-500/10 mr-4">
@@ -417,7 +419,7 @@ const DashboardLayout: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="dash w-full ">
+                  <div className="dash w-full">
                     <Showdashboard />
                   </div>
                 </>
