@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import {Calendar,Users,FileText, Menu,X,  
+import {
+  Calendar, Users, FileText, Menu, X,
   LayoutDashboard,
   UserPlus,
   Clock,
@@ -11,7 +12,8 @@ import {Calendar,Users,FileText, Menu,X,
   DollarSignIcon,
   BadgeDollarSign,
   NotepadTextIcon,
-  Box} from "lucide-react"
+  Box
+} from "lucide-react"
 import Showdashboard from "@/Components/Showdashboard";
 import DashCalender from "@/Components/Dashboard/DashCalender";
 import Patients from "@/Components/Dashboard/Patients";
@@ -52,8 +54,8 @@ const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, isActive, onClick,
     className={`
       w-full group flex items-center justify-between p-4 
       rounded-2xl transition-all duration-300 relative
-      ${isActive 
-        ? 'bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 shadow-lg shadow-indigo-500/30' 
+      ${isActive
+        ? 'bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 shadow-lg shadow-indigo-500/30'
         : 'hover:bg-white/10 hover:shadow-lg hover:-translate-y-0.5'
       }
     `}
@@ -61,8 +63,8 @@ const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, isActive, onClick,
     <div className="flex items-center gap-3">
       <div className={`
         p-2 rounded-xl transition-all duration-300 relative
-        ${isActive 
-          ? 'bg-white/20' 
+        ${isActive
+          ? 'bg-white/20'
           : 'bg-white/5 group-hover:bg-white/10'
         }
       `}>
@@ -109,27 +111,46 @@ const SubNavItem: React.FC<SubNavItemProps> = ({ icon: Icon, label, onClick, hig
 const DashboardLayout: React.FC = () => {
 
 
+  const dispatch = useAppDispatch();
+  const [pageHeight, setPageHeight] = useState(0);
+  console.log(pageHeight);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      setPageHeight(document.documentElement.scrollHeight); // Get full scrollable page height
+    };
+
+    updateHeight(); // Set initial height
+    window.addEventListener("resize", updateHeight);
+    window.addEventListener("scroll", updateHeight); // Update on scroll
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("scroll", updateHeight);
+    };
+  }, []);
+
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [issubOpen, setsubIsOpen] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<string>('Home')
   const [isSubNavOpen, setIsSubNavOpen] = useState<boolean>(true);
-  const { allpatients } = useSelector((state:RootState)=>state.Patient);
+  const { allpatients } = useSelector((state: RootState) => state.Patient);
 
-  const dispatch = useAppDispatch();
 
-  const { waitingroom } = useSelector((state:RootState)=>state.Doctor);
-  const { complete } = useSelector((state:RootState)=>state.Patient);
+  const { waitingroom } = useSelector((state: RootState) => state.Doctor);
+  const { complete } = useSelector((state: RootState) => state.Patient);
 
   const waitingpatients_data = React.useMemo(() => {
     if (!waitingroom?.[0] || !complete) return 0;
     return waitingroom[0].filter(patient => !complete.includes(patient.id)).length;
   }, [waitingroom, complete]);
 
-  let newpatients = allpatients?.filter((element:any)=>{
+  let newpatients = allpatients?.filter((element: any) => {
     return element.visit_count === 0;
   });
 
-  let oldpatient = allpatients?.filter((element:any)=>{
+  let oldpatient = allpatients?.filter((element: any) => {
     return element.visit_count > 0;
   });
 
@@ -158,7 +179,7 @@ const DashboardLayout: React.FC = () => {
         console.error('Error refreshing waiting room:', error);
       }
     };
-    
+
     if (complete?.length > 0) {
       refreshWaitingRoom();
     }
@@ -169,15 +190,15 @@ const DashboardLayout: React.FC = () => {
 
   return (
     <>
-      <div className="relative max-h-screen">
+      <div className="relative">
         {/* Background */}
-          <div className="fixed inset-0 bg-webbg md:bg-gradient-to-r from-pink-100 to-pink-50">
+        <div className="fixed inset-0 bg-webbg md:bg-gradient-to-r from-pink-100 to-pink-50">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,...')] opacity-[0.15] bg-repeat bg-center"></div>
           <div className="absolute top-0 left-0 right-0 h-96 md:bg-gradient-to-b from-blue-50/50 to-transparent"></div>
         </div>
-       
 
-        <div className="relative flex min-h-screen">
+
+        <div className="relative flex ">
           {/* Sidebar Toggle Button */}
           <button
             onClick={toggleSidebar}
@@ -189,12 +210,15 @@ const DashboardLayout: React.FC = () => {
           </button>
 
           {/* Sidebar */}
-          <aside className={`
-            fixed md:static inset-y-0 left-0 z-50 md:z-auto w-80
-            transform transition-transform duration-300 ease-in-out
-            ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
-            md:translate-x-0 md:h-screen
-          `}>
+          <aside
+            className={`
+              fixed md:static inset-y-0 left-0 z-50 md:z-auto w-80
+              transform transition-transform duration-300 ease-in-out
+             ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
+             md:translate-x-0
+            `}
+            style={{ height: `${pageHeight}px`, overflowY: "auto" }} // Dynamically set height
+          >
             <div className="h-full bg-white backdrop-blur-2xl
               border-r border-white/20 shadow-[0_0_30px_rgba(0,0,0,0.1)]
               overflow-y-auto">
@@ -217,12 +241,12 @@ const DashboardLayout: React.FC = () => {
                     </h2>
                     <p className="text-sm text-gray-500">Doctor Dashboard</p>
                   </div>
-                  <X onClick={toggleSidebar} 
+                  <X onClick={toggleSidebar}
                     className="md:hidden ml-auto cursor-pointer hover:text-blue-500 transition-all" />
                 </div>
-                 
 
-                  {/* decoration */}
+
+                {/* decoration */}
                 {/* <div className="fixed inset-0 -z-10">
                 <div className="absolute top-0 -left-32 w-96 h-96 bg-orange-500 rounded-full opacity-10 blur-3xl animate-pulse"></div>
                 <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-orange-500 rounded-full opacity-10 blur-3xl animate-pulse delay-1000"></div>
@@ -246,108 +270,108 @@ const DashboardLayout: React.FC = () => {
 
                 {/* Navigation - Make it scrollable */}
                 <nav className="space-y-3 flex-grow overflow-y-auto scrollbar-hide">
-                  <NavItem 
-                    icon={LayoutDashboard} 
-                    label="Dashboard" 
+                  <NavItem
+                    icon={LayoutDashboard}
+                    label="Dashboard"
                     isActive={activeItem === 'Home'}
                     onClick={() => setActiveItem('Home')}
                   />
 
                   <div className="space-y-2">
-                    <NavItem 
-                      icon={Users} 
-                      label="Patients" 
-                      isActive={activeItem === 'allpatients' || activeItem === "waitingroom" }
-                      onClick={() =>{setIsSubNavOpen(!isSubNavOpen),setActiveItem("allpatients")}}
+                    <NavItem
+                      icon={Users}
+                      label="Patients"
+                      isActive={activeItem === 'allpatients' || activeItem === "waitingroom"}
+                      onClick={() => { setIsSubNavOpen(!isSubNavOpen), setActiveItem("allpatients") }}
                       hasSubNav
                       notification={true}
-                      
+
                     />
-                    
+
                     {isSubNavOpen && (
                       <div className="ml-4 pl-4 border-l-2 border-blue-100/20 space-y-2">
-                        <SubNavItem 
-                          icon={Users} 
-                          label="All Patients" 
+                        <SubNavItem
+                          icon={Users}
+                          label="All Patients"
                           onClick={() => setActiveItem('allpatients')}
                         />
-                        <SubNavItem 
-                          icon={Clock} 
-                          label="Waiting Room" 
+                        <SubNavItem
+                          icon={Clock}
+                          label="Waiting Room"
                           onClick={() => setActiveItem('waitingroom')}
                           highlight={true}
-                        />                     
+                        />
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <NavItem 
-                      icon={Users} 
-                      label="Appointments" 
-                      isActive={activeItem === 'allappointments'  || activeItem === 'upcoming'}
-                      onClick={()=>{togglesubSidebar(),setActiveItem("upcoming")}}
+                    <NavItem
+                      icon={Users}
+                      label="Appointments"
+                      isActive={activeItem === 'allappointments' || activeItem === 'upcoming'}
+                      onClick={() => { togglesubSidebar(), setActiveItem("upcoming") }}
                       hasSubNav
                       notification={true}
                     />
-                    
+
                     {issubOpen && (
                       <div className="ml-4 pl-4 border-l-2 border-blue-100/20 space-y-2">
-                      
-                        <SubNavItem 
-                          icon={Clock} 
-                          label="upcoming " 
+
+                        <SubNavItem
+                          icon={Clock}
+                          label="upcoming "
                           onClick={() => setActiveItem('upcoming')}
                           highlight={true}
-                        />   
-                    
-                        <SubNavItem 
-                          icon={UserPlus} 
-                          label="All appointments" 
+                        />
+
+                        <SubNavItem
+                          icon={UserPlus}
+                          label="All appointments"
                           onClick={() => setActiveItem('allappointments')}
                         />
                       </div>
                     )}
                   </div>
 
-                  <NavItem 
-                    icon={Calendar} 
-                    label="Calendar" 
+                  <NavItem
+                    icon={Calendar}
+                    label="Calendar"
                     isActive={activeItem === 'Calendar'}
                     onClick={() => setActiveItem('Calendar')}
                   />
 
-                  <NavItem 
-                    icon={DollarSignIcon} 
-                    label="Transactions" 
+                  <NavItem
+                    icon={DollarSignIcon}
+                    label="Transactions"
                     isActive={activeItem === 'Transactions'}
                     onClick={() => setActiveItem('Transactions')}
                   />
 
-                  <NavItem 
-                    icon={Heart} 
-                    label="Health" 
+                  <NavItem
+                    icon={Heart}
+                    label="Health"
                     isActive={activeItem === 'health'}
                     onClick={() => setActiveItem('health')}
                   />
 
-                    <NavItem 
-                    icon={BadgeDollarSign} 
-                    label="Billing" 
+                  <NavItem
+                    icon={BadgeDollarSign}
+                    label="Billing"
                     isActive={activeItem === 'billing'}
                     onClick={() => setActiveItem('billing')}
                   />
 
-                   <NavItem 
-                    icon={NotepadTextIcon} 
-                    label="Reports" 
+                  <NavItem
+                    icon={NotepadTextIcon}
+                    label="Reports"
                     isActive={activeItem === 'reports'}
                     onClick={() => setActiveItem('reports')}
                   />
 
-                    <NavItem 
-                    icon={Box} 
-                    label="Inventory" 
+                  <NavItem
+                    icon={Box}
+                    label="Inventory"
                     isActive={activeItem === 'inventory'}
                     onClick={() => setActiveItem('inventory')}
                   />
@@ -373,13 +397,13 @@ const DashboardLayout: React.FC = () => {
 
           {/* Main Content */}
           <main className="flex-1 min-h-screen overflow-y-auto p-2">
-          <Header/>
+            <Header />
             <div className="container mx-auto p-4 contents ">
               {activeItem === 'Home' && (
                 <>
                   <div className="bg-white rounded-xl shadow-xl p-6 backdrop-blur-sm border border-white/20 mt-2">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="flex items-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100/50 border border-blue-200/30">
+                      <div className="flex items-center p-4 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100/50 border border-blue-200/30 hover:cursor-pointer" onClick={()=>{setActiveItem("waitingroom")}}>
                         <div className="p-3 rounded-lg bg-blue-500/10 mr-4">
                           <Clock className="w-6 h-6 text-blue-600" />
                         </div>
@@ -424,27 +448,27 @@ const DashboardLayout: React.FC = () => {
                   </div>
                 </>
               )}
-              
+
               <div className="w-full ">
                 {
-                  activeItem === "Calendar" ? <DashCalender /> : 
-                  activeItem === "Patients" ? <Appointment show={true} /> : 
-                  activeItem === "allpatients" ? <Patients /> : 
-                  activeItem === "waitingroom" ? <Waitingroom /> : 
-                  activeItem === "register" ? <Register show={true} /> : 
-                  activeItem === "allappointments" ? <Allappointment /> : 
-                  activeItem === "Transactions" ? <Transactions/> :
-                  activeItem === "upcoming"? <Upcoming/> :
-                  activeItem === "health"? <Healthrecord/>:
-                  activeItem === "billing"? <OTD_Billing/>:
-                  activeItem === "reports"? <Reports/> :
-                  activeItem === "inventory"?<Inventory/> : null
+                  activeItem === "Calendar" ? <DashCalender /> :
+                    activeItem === "Patients" ? <Appointment show={true} /> :
+                      activeItem === "allpatients" ? <Patients /> :
+                        activeItem === "waitingroom" ? <Waitingroom /> :
+                          activeItem === "register" ? <Register show={true} /> :
+                            activeItem === "allappointments" ? <Allappointment /> :
+                              activeItem === "Transactions" ? <Transactions /> :
+                                activeItem === "upcoming" ? <Upcoming /> :
+                                  activeItem === "health" ? <Healthrecord /> :
+                                    activeItem === "billing" ? <OTD_Billing /> :
+                                      activeItem === "reports" ? <Reports /> :
+                                        activeItem === "inventory" ? <Inventory /> : null
                 }
               </div>
             </div>
           </main>
 
-  
+
 
           {/* Mobile Overlay */}
           {isOpen && (

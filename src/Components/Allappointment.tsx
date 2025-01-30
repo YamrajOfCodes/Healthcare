@@ -25,15 +25,17 @@ const Allappointment: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState<string>("");
     
     const [currentPage, setCurrentPage] = useState(1);
-    const [patientsPerPage] = useState(3); 
-    const totalPages = Math.ceil(getallappointments.length / 10);
-
-
-
+    const [patientsPerPage] = useState(7); 
+    
+    // console.log(getallappointments);
+    
+    
+    
     const indexOfLastPatient = currentPage * patientsPerPage;
     const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
     const currentPatients = getallappointments.slice(indexOfFirstPatient, indexOfLastPatient);
     // const totalPages = Math.ceil(localWaitingRoom.length / patientsPerPage);
+    const totalPages = Math.ceil(getallappointments.length / patientsPerPage);
   
 
 
@@ -382,7 +384,7 @@ const exportToExcel = (appointments) => {
                         </thead>
                         {/* Table Body */}
                         <tbody className="divide-y divide-gray-200">
-                            {getallappointments?.map((appointment, index) => (
+                            {currentPatients?.map((appointment, index) => (
                                 <tr
                                     key={appointment.id}
                                     className={`${

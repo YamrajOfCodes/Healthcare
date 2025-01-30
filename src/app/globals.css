@@ -19,3 +19,16 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@media print{
+
+  body {
+    zoom: 85%;
+  }
+  
+
+   .nav, .profile, .crossbar, .print{ 
+    display: none !important; 
+  }
+}
+

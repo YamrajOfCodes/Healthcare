@@ -41,6 +41,7 @@ const page = () => {
   let datas;
   // console.log("prescriptions",prescriptions?.prescriptions);
 
+
   const healthdata = {
     patient_id: 1,
     description: "Some description about the patient's health.",
@@ -58,7 +59,7 @@ const page = () => {
   // Fix the prescription filtering logic
   //@ts-ignore
   const filterPrescription = prescriptions?.prescriptions?.filter((element) => {
-    return element?.appointment?.patient_id == id;  // Changed to check appointment's patient_id
+    return element?.id == id;  // Changed to check appointment's patient_id
   });
 
   console.log(filterPrescription);
@@ -153,6 +154,12 @@ const page = () => {
     dispatch(getallPatients());
     dispatch(patientPrescription());
   }, [dispatch]);
+
+
+
+  
+
+
 
   // Effect to filter patient when appointments are updated
   useEffect(() => {
@@ -253,7 +260,7 @@ const page = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Profile Header */}
-        <div className="mb-8 bg-white rounded-2xl p-6 shadow-lg backdrop-blur-lg bg-opacity-90">
+        <div className="mb-8 bg-white profile rounded-2xl p-6 shadow-lg backdrop-blur-lg bg-opacity-90">
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg">
               <User className="h-12 w-12 text-white" />
@@ -269,7 +276,7 @@ const page = () => {
           </div>
         </div>
 
-        <nav className="bg-white rounded-xl shadow-md mx-4 mb-6 h-[10vh] flex  items-center" style={{background:"white"}}>
+        <nav className="bg-white rounded-xl shadow-md mx-4 mb-6 h-[10vh] flex nav items-center" style={{background:"white"}}>
           <ul className="flex items-center relative p-2 justify-between w-full">
             {navItems.map((item) => (
               <li key={item.id} className="relative flex-1">
@@ -573,7 +580,7 @@ const page = () => {
         ) : activeItem === "prescription" ? (
           <>
             {filterPrescription?.length > 0 ? (
-              <PrescriptionTemplate selectedPrescription={filterPrescription}/>
+              <PrescriptionTemplate selectedPrescription={filterPrescription?.[0]}/>
             ) : (
               <div className="text-center py-8 text-gray-600">
                 No prescription found for this patient
@@ -603,6 +610,13 @@ const page = () => {
           />
         )}
       </div>
+      <style jsx>{`
+  @media print {
+    .nav, .profile {
+      display: none !important;
+    }
+  }
+`}</style>
     </div>
   );
 };
