@@ -10,7 +10,8 @@ import {
   Users,
   MessageSquare,
   Plus,
-  FileEdit
+  FileEdit,
+  Calendar
 } from 'lucide-react';
 
 const MedicalRecords = () => {
@@ -29,7 +30,8 @@ const MedicalRecords = () => {
       { title: "Doctor's Advice", icon: MessageSquare, color: 'blue' },
       { title: 'Suggested Doctor', icon: UserCog, color: 'yellow' },
       { title: 'Referred Doctor', icon: Users, color: 'green', isSelect: true },
-      { title: 'Personal Remark', icon: FileEdit, color: 'rose' }
+      { title: 'Personal Remark', icon: FileEdit, color: 'rose' },
+      { title: 'Next Follow-up', icon: Calendar, color: 'purple', isDateInput: true }
     ]
   };
 

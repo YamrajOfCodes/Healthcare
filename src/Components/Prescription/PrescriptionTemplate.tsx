@@ -27,7 +27,8 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
     if (selectedPrescription?.patient?.name) {
       return selectedPrescription.patient.name;
     }
-    if (selectedPrescription?.name) {
+    // Check for patient_id match
+    if (selectedPrescription?.name && selectedPrescription?.patient_id) {
       return selectedPrescription.name;
     }
     if (selectedPrescription?.appointment?.patient?.name) {
