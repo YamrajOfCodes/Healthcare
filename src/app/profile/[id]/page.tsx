@@ -46,7 +46,7 @@ const page = () => {
 
 
   const healthdata = {
-    patient_id: 1,
+    patient_id: "1",
     description: "Some description about the patient's health.",
     date: "2025-01-20",
     medications: [
@@ -283,8 +283,8 @@ const page = () => {
         </div>
 
         {/* Navigation - Made scrollable on mobile */}
-        <nav className="bg-white rounded-xl nav shadow-md mx-2 sm:mx-4 mb-6 overflow-x-auto">
-          <ul className="flex items-center p-2 min-w-max">
+        <nav className="bg-white rounded-xl shadow-md mx-2 sm:mx-4 mb-6 overflow-x-auto">
+          <ul className="flex justify-center items-center p-2 min-w-max">
             {navItems.map((item) => (
               <li key={item.id} className="px-1">
                 <button
@@ -392,7 +392,7 @@ const page = () => {
 
                 {/* Recent Visits */}
                 <div className="space-y-4">
-                  {patients?.slice(0, 3).map((visit, index) => (
+                  {patients?.slice(0, 3).map((visit: BaseAppointment, index: number) => (
                     <div
                       key={index}
                       className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"

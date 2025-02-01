@@ -23,11 +23,11 @@ const Showdashboard: React.FC = () => {
   const [healthPatient,sethealthpatient] = useState<Patient | null>(null)
   const [healthsidebar,sethealthsidebar] = useState(false)
   const [showBillingHistory, setShowBillingHistory] = useState(false);
-  const [selectedBillingPatient, setSelectedBillingPatient] = useState(null);
+  const [selectedBillingPatient, setSelectedBillingPatient] = useState<Patient | null>(null);
 
   console.log(allpatients);
   const data = {
-    patient_id: 1,
+    patient_id: "1",
     description: "Some description about the patient's health.",
     date: "2025-01-20",
     medications: [
@@ -194,40 +194,15 @@ const Showdashboard: React.FC = () => {
 
 
       {/* Health sidebar */}
-
-
       <div 
-        className={`fixed top-0 right-0 h-full w-[450px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
+        className={`fixed top-0 right-0 h-full w-full md:w-[450px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
                     ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* Header */}
-        <div className="border-b border-gray-200">
-          <div className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">Healthchart</h2>
-                <p className="text-sm text-gray-500 mt-1">Generate Healthchart</p>
-              </div>
-              <button 
-                onClick={() => sethealthsidebar(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
-              >
-                <X className="h-6 w-6 text-gray-500" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
         {healthPatient && (
-              <div 
-              className={`fixed top-0 right-0 h-full  w-full md:w-[750px] bg-gradient-to-b from-white to-gray-50 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 
-                          ${healthsidebar ? 'translate-x-0' : 'translate-x-full'}`}
-            >
-              {/* Header */}
-             <HealthChart healthData={data}/>
-            </div>
-
+          <HealthChart 
+            healthData={data} 
+            onClose={() => sethealthsidebar(false)}
+          />
         )}
       </div>
 
@@ -248,7 +223,7 @@ const Showdashboard: React.FC = () => {
         />
       )}
 
-      {showBillingHistory && (
+      {showBillingHistory && selectedBillingPatient && (
         <Billings 
           onClose={() => {
             setShowBillingHistory(false);

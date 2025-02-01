@@ -14,6 +14,15 @@ import {
   Calendar
 } from 'lucide-react';
 
+interface RecordItem {
+  title: string;
+  icon: React.ElementType;
+  color: string;
+  isCustom?: boolean;
+  isSelect?: boolean;
+  isDateInput?: boolean;
+}
+
 const MedicalRecords = () => {
   const recordTypes = {
     column1: [
@@ -35,7 +44,7 @@ const MedicalRecords = () => {
     ]
   };
 
-  const RecordCard = ({ item }) => (
+  const RecordCard: React.FC<{ item: RecordItem }> = ({ item }) => (
     <div className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
       <div className={`absolute inset-0 bg-gradient-to-br from-${item.color}-50 to-${item.color}-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
       

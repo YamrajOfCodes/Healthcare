@@ -63,7 +63,7 @@ const Transactions: React.FC = () => {
 
 
 
-  const exportToExcel = (appointments) => {
+  const exportToExcel = () => {
     const data = filteredTransactions?.map((appointment) => ({
       ID: appointment.id,
       Description: appointment.description,
@@ -74,11 +74,11 @@ const Transactions: React.FC = () => {
   
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "transactions");
   
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, "appointments.xlsx");
+    saveAs(blob, "Transactions.xlsx");
   }; 
 
   // Function to get icon based on transaction type

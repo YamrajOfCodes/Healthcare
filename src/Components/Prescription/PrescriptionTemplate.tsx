@@ -5,7 +5,26 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 interface PrescriptionTemplateProps {
-  selectedPrescription: any;
+  selectedPrescription: {
+    id: string;
+    appointment: {
+      id: string;
+      mode: string;
+      patient: {
+        name: string;
+        dob: string;
+        address: string;
+      };
+    };
+    medications: Array<{
+      name: string;
+      dosage: string;
+      frequency: string;
+    }>;
+    diagnosis: string;
+    notes: string;
+    prescription_details: string;
+  };
   onClose?: () => void;
   showCloseButton?: boolean;
 }
@@ -24,13 +43,6 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
   // Helper function to get patient name
   const getPatientName = () => {
-    if (selectedPrescription?.patient?.name) {
-      return selectedPrescription.patient.name;
-    }
-    // Check for patient_id match
-    if (selectedPrescription?.name && selectedPrescription?.patient_id) {
-      return selectedPrescription.name;
-    }
     if (selectedPrescription?.appointment?.patient?.name) {
       return selectedPrescription.appointment.patient.name;
     }
@@ -39,9 +51,7 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
   // Helper function to get patient age
   const getPatientAge = () => {
-    const dob = selectedPrescription?.patient?.dob || 
-                selectedPrescription?.dob || 
-                selectedPrescription?.appointment?.patient?.dob;
+    const dob = selectedPrescription?.appointment?.patient?.dob;
     if (dob) {
       return new Date().getFullYear() - parseInt(dob.slice(0,4));
     }
@@ -50,10 +60,7 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
 
   // Helper function to get patient address
   const getPatientAddress = () => {
-    return selectedPrescription?.patient?.address || 
-           selectedPrescription?.address || 
-           selectedPrescription?.appointment?.patient?.address || 
-           'N/A';
+    return selectedPrescription?.appointment?.patient?.address || 'N/A';
   };
 
   return (
@@ -152,7 +159,7 @@ const PrescriptionTemplate: React.FC<PrescriptionTemplateProps> = ({
                       Appointment ID
                     </label>
                     <div className="mt-1 text-black p-2 bg-white/80 backdrop-blur-sm ">
-                      {selectedPrescription?.id || selectedPrescription?.appointment_id || 'N/A'}
+                      {selectedPrescription?.id || selectedPrescription?.appointment?.id || 'N/A'}
                     </div>
                   </div>
                   <div className="flex-1">

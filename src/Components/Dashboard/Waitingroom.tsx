@@ -11,6 +11,7 @@ import Billings from './Billings';
 import HealthChart from './Healthchart';
 import logo from '@/public/logo.png';
 import PrescriptionTemplate from '../Prescription/PrescriptionTemplate';
+import { BasePatient } from '@/types/shared';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -202,10 +203,18 @@ export default function WaitingRoom() {
   }));
   const [selectedpatient, setselectedpatient] = useState<WaitingRoomPatient | null>(null);
   const [showBillingHistory, setShowBillingHistory] = useState(false);
-  const [selectedBillingPatient, setSelectedBillingPatient] = useState(null);
+  const [selectedBillingPatient, setSelectedBillingPatient] = useState<BasePatient | null>(null);
 
   const handleOPDClick = (patient: WaitingRoomPatient) => {
-    setSelectedBillingPatient(patient.patient);
+    setSelectedBillingPatient({
+      id: patient.id,
+      name: patient.patient.name,
+      address: patient.patient.address,
+      phone: patient.patient.phone,
+      visit_count: patient.patient.visit_count,
+      gender: patient.patient.gender,
+      dob: patient.patient.dob
+    });
     setShowBillingHistory(true);
   };
 
@@ -215,7 +224,7 @@ export default function WaitingRoom() {
   const [healthsidebar, sethealthsidebar] = useState(false);
   
   const data = {
-    patient_id: 1,
+    patient_id: "1",
     description: "Some description about the patient's health.",
     date: "2025-01-20",
     medications: [
@@ -289,8 +298,8 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     if (waitingroom?.[0]) {
-      const filteredPatients = waitingroom[0].filter(patient => {
-        return !complete?.some((completedPatient: { id: string; appointment_id: string }) => 
+      const filteredPatients = (waitingroom[0] as WaitingRoomPatient[]).filter(patient => {
+        return !(complete as { id: string; appointment_id: string; }[])?.some((completedPatient) => 
           completedPatient.id === patient.id || 
           completedPatient.appointment_id === patient.id
         );
@@ -360,7 +369,7 @@ export default function WaitingRoom() {
         </div>
       </div>
 
-      {showBillingHistory && (
+      {showBillingHistory && selectedBillingPatient && (
         <Billings 
           onClose={() => {
             setShowBillingHistory(false);
@@ -399,7 +408,22 @@ export default function WaitingRoom() {
       >
         {selectedPrescription && (
           <PrescriptionTemplate 
-            selectedPrescription={selectedPrescription}
+            selectedPrescription={{
+              id: selectedPrescription.id,
+              appointment: {
+                id: selectedPrescription.appointment.id,
+                mode: selectedPrescription.appointment.mode,
+                patient: {
+                  name: selectedPrescription.patient.name,
+                  dob: selectedPrescription.patient.dob,
+                  address: selectedPrescription.patient.address || ''
+                }
+              },
+              medications: selectedPrescription.medications || [],
+              diagnosis: '',
+              notes: '',
+              prescription_details: ''
+            }}
             onClose={() => setPrescriptionSidebar(false)}
           />
         )}

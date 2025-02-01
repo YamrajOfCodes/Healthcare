@@ -14,6 +14,10 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import PrescriptionTemplate from '../Prescription/PrescriptionTemplate';
 
+interface PrescriptionTemplateProps {
+  selectedPrescription: Patient;
+  onClose: () => void;
+}
 
 const Patients: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,20 +28,20 @@ const Patients: React.FC = () => {
   const { allpatients } = useSelector((state: RootState) => state.Patient);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [popup, setpopup] = useState(false);
-  const [selectedpatient, setselectedpatient] = useState<any>("");
+  const [selectedpatient, setselectedpatient] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [patientsPerPage] = useState<number>(5);
   const { gethealthrecords } = useSelector((state:RootState)=>state.Patient);
   const { getbillings } = useSelector((state:RootState)=>state.Patient)
   const [showBillingHistory, setShowBillingHistory] = useState(false);
-  const [selectedBillingPatient, setSelectedBillingPatient] = useState(null);
+  const [selectedBillingPatient, setSelectedBillingPatient] = useState<Patient | null>(null);
   const [prescriptionSidebar, setPrescriptionSidebar] = useState(false);
   const [selectedPrescription, setSelectedPrescription] = useState<Patient | null>(null);
 
   console.log("gethealthrecords",gethealthrecords);
 
 
-  const exportToExcel = (appointments) => {
+  const exportToExcel = () => {
     const data = patients?.map((appointment) => ({
       ID: appointment.id,
       Patient: appointment?.name,
@@ -49,11 +53,11 @@ const Patients: React.FC = () => {
   
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "patients");
   
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, "appointments.xlsx");
+    saveAs(blob, "Patients.xlsx");
   }; 
   
   
@@ -66,10 +70,10 @@ const Patients: React.FC = () => {
   };
 
   // otdSidebar variables
-  const [selectedPatient,SetselectedPatient] = useState(null);
+  const [selectedPatient, SetselectedPatient] = useState<Patient | null>(null);
 
   const data = {
-    patient_id: 1,
+    patient_id: "1",
     description: "Some description about the patient's health.",
     date: "2025-01-20",
     medications: [
@@ -84,7 +88,7 @@ const Patients: React.FC = () => {
 
 
   
-  const handleOPDSidebar = (patient)=>{
+  const handleOPDSidebar = (patient: Patient) => {
     SetselectedPatient(patient);
     setSelectedBillingPatient(patient);
     setShowBillingHistory(true);
@@ -92,10 +96,10 @@ const Patients: React.FC = () => {
 
 // healthchart variables
 
-const [healthPatient,sethealthpatient] = useState<null>(null);
+const [healthPatient,sethealthpatient] = useState<Patient | null>(null);
 const [healthsidebar,sethealthsidebar] = useState(false)
 
-const handleHealthsidebar = (patient)=>{
+const handleHealthsidebar = (patient: Patient)=>{
   sethealthsidebar(true);
   sethealthpatient(patient)
 }
@@ -132,8 +136,8 @@ const handlePrint = ()=>{
   };
   const handleDeletePatient = (): void => {
     if (selectedpatient) {
-      dispatch(deletePatient(selectedpatient));
-      const filterdata = patients.filter((data) => data.id !== selectedpatient);
+      dispatch(deletePatient(Number(selectedpatient)));
+      const filterdata = patients.filter((data: Patient) => Number(data.id) !== selectedpatient);
       setPatients(filterdata);
       setpopup(false);
     }
@@ -240,7 +244,7 @@ const handlePrint = ()=>{
                                     {/* <span onClick={()=>{handledeletepatient(profile.id)}}>Delete</span> */}
                                     <span onClick={() => {
                                       setpopup(true)
-                                      setselectedpatient(profile?.id)
+                                      setselectedpatient(Number(profile?.id))
                                     }}>Delete</span>
                                   </button>
                                   <button
@@ -434,7 +438,7 @@ const handlePrint = ()=>{
                             className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-white border border-gray-200 hover:bg-red-50 hover:border-red-200 text-red-600 transition-all duration-200"
                             onClick={() => {
                               setpopup(true),
-                                setselectedpatient(profile?.id)
+                                setselectedpatient(Number(profile?.id))
                             }}
                           >
                             <Trash2 className="h-3 w-3" />
@@ -585,16 +589,34 @@ const handlePrint = ()=>{
       >
         {selectedPrescription && (
           <PrescriptionTemplate 
-            selectedPrescription={selectedPrescription}
+            selectedPrescription={{
+              id: selectedPrescription.id,
+              appointment: {
+                id: '1', // or generate appropriate ID
+                mode: 'consultation',
+                patient: {
+                  name: selectedPrescription.name,
+                  dob: selectedPrescription.dob,
+                  address: selectedPrescription.address || ''
+                }
+              },
+              medications: [],
+              diagnosis: '',
+              notes: '',
+              prescription_details: ''
+            }}
             onClose={() => setPrescriptionSidebar(false)}
           />
         )}
       </div>
 
-      {showBillingHistory && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
-          onClick={() => setShowBillingHistory(false)}
+      {showBillingHistory && selectedBillingPatient && (
+        <Billings 
+          onClose={() => {
+            setShowBillingHistory(false);
+            setSelectedBillingPatient(null);
+          }} 
+          patient={selectedBillingPatient}
         />
       )}
 
@@ -602,16 +624,6 @@ const handlePrint = ()=>{
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={() => sethealthsidebar(false)}
-        />
-      )}
-
-{showBillingHistory && (
-        <Billings 
-          onClose={() => {
-            setShowBillingHistory(false);
-            setSelectedBillingPatient(null);
-          }} 
-          patient={selectedBillingPatient}
         />
       )}
 

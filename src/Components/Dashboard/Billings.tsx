@@ -1,8 +1,14 @@
 'use client'
 import React, { useState } from 'react'
 import { Calendar, Clock, FileText, Search, Filter, Download, X, ChevronRight, Edit2, Trash2, MoreVertical } from 'lucide-react'
+import { BasePatient } from '@/types/shared'
 
-const Billings = ({ onClose, patient }) => {
+interface BillingsProps {
+  onClose: () => void;
+  patient: BasePatient;
+}
+
+const Billings: React.FC<BillingsProps> = ({ onClose, patient }) => {
   const [search, setSearch] = useState("")
   const [showActions, setShowActions] = useState<string | null>(null)
 

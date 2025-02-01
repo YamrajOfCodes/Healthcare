@@ -17,12 +17,14 @@ export interface AppointmentsState {
   error: string | null;
 }
 
+export type AppointmentStatus = 'booked' | 'full' | 'completed' | 'pending' | 'cancelled' | 'available';
+
 export interface FormattedAppointment {
   date: string;
   time: string;
   patient: string;
-  status: "completed" | "pending" | "cancelled";
-  priority: "normal" | "high" | "low";
+  status: AppointmentStatus;
+  priority: string;
   details: string;
 }
 

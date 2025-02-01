@@ -21,15 +21,12 @@ const Upcoming: React.FC = () => {
 
   const { getappointments } = useSelector((state:RootState)=>state.Patient);
   const dispatch = useAppDispatch();
-  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
-
-  // console.log(getappointments?.appointments)
-  const [data,setdata] = useState<UpcomingAppointment[]>([]);
-  // console.log(getappointments.appointments);
-
-  
-  
-
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [data, setdata] = useState<UpcomingAppointment[]>([]);
+  const [filteredData, setFilteredData] = useState<UpcomingAppointment[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [appointmentsPerPage] = useState(6);
 
   const handleupcoming = () => {
     const upcominappointments = getappointments?.appointments?.filter((element: any) => {
@@ -59,21 +56,74 @@ const Upcoming: React.FC = () => {
     setdata(upcominappointments); // Update the state
   };
   
-  
-  
-
-
-  
   useEffect(() => {
     dispatch(getAppointments());
-  }, [dispatch]);
+  }, [dispatch, refreshTrigger]);
   
-  // Trigger handleupcoming whenever getappointments changes
   useEffect(() => {
     handleupcoming();
   }, [getappointments]);
 
-  
+  // Simplified applyFilters function with only three filter options
+  const applyFilters = () => {
+    let filtered = [...data];
+
+    if (selectedStatus) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      switch (selectedStatus) {
+        case 'today':
+          filtered = filtered.filter(appointment => {
+            const appointmentDate = new Date(appointment.date);
+            appointmentDate.setHours(0, 0, 0, 0);
+            return appointmentDate.getTime() === today.getTime();
+          });
+          break;
+        case 'yesterday':
+          filtered = filtered.filter(appointment => {
+            const appointmentDate = new Date(appointment.date);
+            appointmentDate.setHours(0, 0, 0, 0);
+            return appointmentDate.getTime() === yesterday.getTime();
+          });
+          break;
+        // 'all' case uses all upcoming appointments (default data)
+      }
+    }
+
+    setFilteredData(filtered);
+  };
+
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [selectedStatus, data]);
+
+  const refreshAppointments = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  useEffect(() => {
+    window.addEventListener('appointmentAdded', refreshAppointments);
+    return () => {
+      window.removeEventListener('appointmentAdded', refreshAppointments);
+    };
+  }, []);
+
+  const indexOfLastAppointment = currentPage * appointmentsPerPage;
+  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+  const currentAppointments = filteredData.slice(indexOfFirstAppointment, indexOfLastAppointment);
+  const totalPages = Math.ceil(filteredData.length / appointmentsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   const appointments = [
     {
@@ -111,18 +161,62 @@ const Upcoming: React.FC = () => {
     }
   ];
   return (
-    <div className="w-full">
-    <div className="p-6 bg-blue-50 h-screen">
+    <div className="w-full h-96 bg-blue-50">
+    <div className="p-6 bg-blue-50 w-full">
       <div className="mb-8 flex justify-between">
         <div>
-        <h2 className=" text-lg md:text-2xl font-bold text-gray-800 mb-2">Upcoming Appointments</h2>
-        <p className="text-gray-600">Manage your scheduled appointments and consultations</p>
+        <h2 className=" text-lg md:text-2xl font-bold text-black mb-2">Upcoming Appointments</h2>
+        <p className="text-black">Manage your scheduled appointments and consultations</p>
         </div>
         {/* <p>dsd</p> */}
       </div>
   
+      {/* Simplified Filter Section - Only Three Options */}
+      <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+        <div className="max-w-xs">
+          <label className="block text-sm font-medium text-black mb-3">
+            Filter By
+          </label>
+          <div className="flex flex-col space-y-2">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="status"
+                value="today"
+                checked={selectedStatus === 'today'}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="form-radio text-blue-600"
+              />
+              <span className="ml-2 text-sm text-gray-700">Today</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="status"
+                value="yesterday"
+                checked={selectedStatus === 'yesterday'}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="form-radio text-blue-600"
+              />
+              <span className="ml-2 text-sm text-gray-700">Yesterday</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="status"
+                value=""
+                checked={selectedStatus === ''}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="form-radio text-blue-600"
+              />
+              <span className="ml-2 text-sm text-gray-700">All Upcoming</span>
+            </label>
+          </div>
+        </div>
+      </div>
+  
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {data?.map((appointment) => (
+        {currentAppointments?.map((appointment) => (
           <div
             key={appointment.id}
             className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
@@ -160,11 +254,11 @@ const Upcoming: React.FC = () => {
               {/* Patient Info */}
               <div className="flex items-start gap-3">
                 <div className="mt-1">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Patient</p>
-                  <p className="font-medium text-gray-900">{appointment.patientName}</p>
+                  <p className="text-sm text-black">Patient</p>
+                  <p className="font-medium text-black">{appointment.patientName}</p>
                 </div>
               </div>
   
@@ -172,21 +266,21 @@ const Upcoming: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-start gap-3">
                   <div className="mt-1">
-                    <Calendar className="h-5 w-5 text-gray-400" />
+                    <Calendar className="h-5 w-5 text-black" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Date</p>
-                    <p className="font-medium text-gray-900">{appointment.date}</p>
+                    <p className="text-sm text-black">Date</p>
+                    <p className="font-medium text-black">{appointment.date}</p>
                   </div>
                 </div>
   
                 <div className="flex items-start gap-3">
                   <div className="mt-1">
-                    <Clock className="h-5 w-5 text-gray-400" />
+                    <Clock className="h-5 w-5 text-black" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Time</p>
-                    <p className="font-medium text-gray-900">{appointment.time}</p>
+                    <p className="text-sm text-black">Time</p>
+                    <p className="font-medium text-black">{appointment.time}</p>
                   </div>
                 </div>
               </div>
@@ -194,27 +288,59 @@ const Upcoming: React.FC = () => {
               {/* Doctor Info */}
               <div className="flex items-start gap-3">
                 <div className="mt-1">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Doctor</p>
-                  <p className="font-medium text-gray-900">{appointment.doctor}</p>
+                  <p className="text-sm text-black">Doctor</p>
+                  <p className="font-medium text-black">{appointment.doctor}</p>
                 </div>
               </div>
   
               {/* Contact */}
               <div className="flex items-start gap-3">
                 <div className="mt-1">
-                  <Phone className="h-5 w-5 text-gray-400" />
+                  <Phone className="h-5 w-5 text-black" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Contact</p>
-                  <p className="font-medium text-gray-900">{appointment.phone}</p>
+                  <p className="text-sm text-black">Contact</p>
+                  <p className="font-medium text-black">{appointment.phone}</p>
                 </div>
               </div>
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-6 flex justify-center gap-2">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+        
+        {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => handlePageChange(index + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === index + 1
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-blue-500'
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+        
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 rounded bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
       </div>
     </div>
   </div>

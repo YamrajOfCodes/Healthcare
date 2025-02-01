@@ -1,13 +1,20 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { Calendar, Clock, Printer, Save, LayoutDashboard, MoreHorizontal, ChevronDown , Phone, MapPin } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 const OTD_Billing = () => {
 
     const [activePayMode, setActivePayMode] = useState('cash');
 
 
-    const ProfileInfo = ({ icon: Icon, children }) => (
+    const ProfileInfo = ({ 
+        icon: Icon,
+        children 
+    }: { 
+        icon: LucideIcon;
+        children: React.ReactNode;
+    }) => (
         <div className="flex items-center gap-2 text-gray-600">
           <Icon className="w-4 h-4" />
           <span>{children}</span>

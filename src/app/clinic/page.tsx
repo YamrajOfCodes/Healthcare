@@ -143,7 +143,7 @@ const DashboardLayout: React.FC = () => {
 
   const waitingpatients_data = React.useMemo(() => {
     if (!waitingroom?.[0] || !complete) return 0;
-    return waitingroom[0].filter(patient => !complete.includes(patient.id)).length;
+    return (waitingroom[0] as Array<{ id: string }>).filter(patient => !complete.includes(patient.id)).length;
   }, [waitingroom, complete]);
 
   let newpatients = allpatients?.filter((element: any) => {
@@ -456,7 +456,7 @@ const DashboardLayout: React.FC = () => {
                       activeItem === "allpatients" ? <Patients /> :
                         activeItem === "waitingroom" ? <Waitingroom /> :
                           activeItem === "register" ? <Register show={true} /> :
-                            activeItem === "allappointments" ? <Allappointment /> :
+                            activeItem === "allappointments" ? <Allappointment  /> :
                               activeItem === "Transactions" ? <Transactions /> :
                                 activeItem === "upcoming" ? <Upcoming /> :
                                   activeItem === "health" ? <Healthrecord /> :

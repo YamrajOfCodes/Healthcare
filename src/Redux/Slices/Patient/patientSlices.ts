@@ -131,6 +131,10 @@ export const Addappointment = createAsyncThunk(
       const response = await addPatientAppointmentAPI(appointment) as APIResponse;
       if (response.status === 200) {
         dispatch(getWaitingroom());
+        dispatch(getAppointments());
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('appointmentAdded'));
+        }
         return response.data;
       }
       return rejectWithValue(response.data);
@@ -311,8 +315,8 @@ export const createBilling = createAsyncThunk(
 
 export const getHealthRecord = createAsyncThunk("gethealthRecord",async()=>{
   try {
-    const response = await getHealthrecordsAPI();
-    if(response.status == 200){
+    const response = await getHealthrecordsAPI() as APIResponse;
+    if(response.status === 200){
       return response.data;
     }else{
       return response.data
@@ -392,9 +396,9 @@ export const PatientSlice = createSlice({
         state.loader = false;
         state.appointment = [action.payload];
       })
-      .addCase(Addappointment.rejected, (state, action: PayloadAction<unknown>) => {
+      .addCase(Addappointment.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload as string;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // Get Appointments
@@ -407,7 +411,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(getAppointments.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // Get Prescriptions
@@ -420,7 +424,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(patientPrescription.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // Update Patient
@@ -433,7 +437,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(updatePatient.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // Complete Patient Consultation
@@ -446,7 +450,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(completePatient.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.payload as string || action.error.message;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // HealthRecord
@@ -459,7 +463,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(Healthrecord.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // Transactions
@@ -472,7 +476,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(Transactionn.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       })
       
       //  getrecords
@@ -485,7 +489,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(getHealthRecord.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // getbillings
@@ -498,7 +502,7 @@ export const PatientSlice = createSlice({
       })
       .addCase(getBillings.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       })
 
       // Add createBilling reducers
@@ -511,13 +515,13 @@ export const PatientSlice = createSlice({
       })
       .addCase(createBilling.rejected, (state, action) => {
         state.loader = false;
-        state.error = action.error.message || null;
+        state.error = (action.payload as string) || action.error.message || null;
       });
   },
 });
 export const Postbillings = createAsyncThunk("postBillingsDetails",async(data)=>{
   try {
-    const response = await postBillingAPI(data);
+    const response = await postBillingAPI(data) as APIResponse;
     console.log(response);
     
     if(response.status == 200){

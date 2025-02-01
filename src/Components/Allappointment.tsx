@@ -67,7 +67,7 @@ const Allappointment: React.FC = () => {
 
 
      
-const exportToExcel = (appointments) => {
+const exportToExcel = (appointments:any) => {
   const data = getallappointments?.map((appointment) => ({
     ID: appointment.id,
     Patient: appointment.patient?.name,
@@ -83,11 +83,11 @@ const exportToExcel = (appointments) => {
 
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Appointments");
+  XLSX.utils.book_append_sheet(workbook, worksheet, "allAppointments");
 
   const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
   const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-  saveAs(blob, "appointments.xlsx");
+  saveAs(blob, "Allappointments.xlsx");
 }; 
 
 

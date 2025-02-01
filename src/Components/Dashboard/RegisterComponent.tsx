@@ -7,7 +7,7 @@ import { RegisterPatient } from '@/Redux/Slices/Patient/patientSlices';
 import { RegistercomponentProps } from '@/types/auth';
 import { useRouter } from 'next/navigation';
 
-const RegisterComponent : React.FC<RegistercomponentProps> = ({onPatientAdded}) => {
+const RegisterComponent: React.FC<RegistercomponentProps> = ({ onPatientAdded }) => {
 
     const dispatch = useAppDispatch();
       const router = useRouter();
@@ -23,7 +23,7 @@ const RegisterComponent : React.FC<RegistercomponentProps> = ({onPatientAdded}) 
     
       const [isSubmitted, setIsSubmitted] = useState(false);
     
-      const handleChange = (e) => {
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { id, value } = e.target;
         setFormData(prev => ({
           ...prev,

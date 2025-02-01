@@ -4,6 +4,9 @@ export interface BasePatient {
   email?: string;
   phone?: string;
   address?: string;
+  visit_count: number;
+  gender: string;
+  dob: string;
 }
 
 export interface BaseAppointment {

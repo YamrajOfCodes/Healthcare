@@ -4,7 +4,12 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Toolbar from './Toolbar'
 
-const Tiptap = ({content,onChange}:any) => {
+interface TiptapProps {
+  content: string;
+  onChange: (content: string) => void;
+}
+
+const Tiptap: React.FC<TiptapProps> = ({ content, onChange }) => {
  
     const handlechange = (e:string)=>{
         onChange(e)

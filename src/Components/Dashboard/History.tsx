@@ -12,13 +12,30 @@ import {
   PlusCircle
 } from 'lucide-react';
 
+interface CustomField {
+  id: string;
+  title: string;
+  color: string;
+}
+
+interface RecordModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  field: CustomField | null;
+}
+
+interface HistoryRecord {
+  date: string;
+  [key: string]: string[] | string;  // Index signature that allows both string and string[]
+}
+
 const History = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
-  const [selectedField, setSelectedField] = useState(null);
-  const [customFields, setCustomFields] = useState([]);
+  const [selectedField, setSelectedField] = useState<CustomField | null>(null);
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
 
-  const [records, setRecords] = useState([
+  const [records, setRecords] = useState<HistoryRecord[]>([
     {
       date: "04/Dec/2019",
       family_history: ["Diabetes", "Blood Pressure", "Heart Disease"],
@@ -136,19 +153,21 @@ const History = () => {
     );
   };
 
-  const RecordModal = ({ isOpen, onClose, field }) => {
+  const RecordModal: React.FC<RecordModalProps> = ({ isOpen, onClose, field }) => {
     if (!isOpen) return null;
 
-    const handleAddRecord = (e) => {
+    const handleAddRecord = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const description = formData.get('description');
+      const formData = new FormData(e.currentTarget);
+      const description = formData.get('description')?.toString();
       
+      if (!field) return;
+
       if (description) {
         const updatedRecords = records.map(record => ({
           ...record,
           [field.id]: [...(record[field.id] || []), description]
-        }));
+        })) as HistoryRecord[];
         setRecords(updatedRecords);
         onClose();
       }
@@ -205,7 +224,7 @@ const History = () => {
     );
   };
 
-  const HistoryCard = ({ field }) => (
+  const HistoryCard: React.FC<{ field: CustomField }> = ({ field }) => (
     <div 
       className={`bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border-l-4 border-${field.color}-500 cursor-pointer`}
       onClick={() => {
@@ -225,7 +244,7 @@ const History = () => {
       </div>
 
       <ul className="space-y-2">
-        {records[0][field.id]?.map((item, index) => (
+        {Array.isArray(records[0][field.id]) && (records[0][field.id] as string[])?.map((item, index) => (
           <li 
             key={index}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"

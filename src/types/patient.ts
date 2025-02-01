@@ -30,6 +30,7 @@ export interface Patient {
   created_at?: string;
   updated_at?: string;
   age?: number;
+  gender: string;
 }
 
 export interface PatientData {
