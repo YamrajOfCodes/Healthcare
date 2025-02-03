@@ -1,6 +1,7 @@
 "use client"
 import { Calendar, Clock, Construction } from 'lucide-react'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
 
 
 const Inventory = () => {
@@ -44,6 +45,12 @@ interface Form{
 
   const handlesubmitItem = (e:any)=>{
     e.preventDefault();
+
+    const {name}  = formData;
+
+     if(name == ""){
+      toast.error("please enter productname")
+     }
     setInventory([...inventory,formData])
     handleItem();
   }
