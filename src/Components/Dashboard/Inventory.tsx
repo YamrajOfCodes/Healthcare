@@ -50,6 +50,7 @@ interface Form{
 
      if(name == ""){
       toast.error("please enter productname")
+      return
      }
     setInventory([...inventory,formData])
     handleItem();
