@@ -2,7 +2,7 @@
 import { deletePatient, getallPatients, getHealthRecord } from '@/Redux/Slices/Patient/patientSlices';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Download, Edit2, FileText, Notebook, Printer, Search, Trash2, Users, X } from 'lucide-react';
+import { Activity, AlertCircle, Calendar, ChevronRight, Clock, Download, Edit2, FileText, Notebook, Printer, Search, Trash2, Users, X, ChevronLeft } from 'lucide-react';
 import PatientEditForm from './EditPatient';
 import { useAppDispatch } from '@/hooks';
 import { RootState } from '@/Redux/App/store';
@@ -281,6 +281,33 @@ const handlePrint = ()=>{
                           </tbody >
                         </table >
                       </div >
+                      {/* Add pagination controls */}
+                      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-600">
+                            Showing {indexOfFirstPatient + 1} to {Math.min(indexOfFirstPatient + patientsPerPage, patients.length)} of {patients.length} patients
+                          </p>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
+                              disabled={currentPage === 1}
+                              className="p-2 rounded-lg bg-blue-400 disabled:cursor-not-allowed"
+                            >
+                              <ChevronLeft className="h-5 w-5" />
+                            </button>
+                            <span className="text-sm text-gray-600">
+                              Page {currentPage} of {Math.ceil(patients.length / patientsPerPage)}
+                            </span>
+                            <button
+                              onClick={() => handlePageChange(Math.min(currentPage + 1, Math.ceil(patients.length / patientsPerPage)))}
+                              disabled={currentPage === Math.ceil(patients.length / patientsPerPage)}
+                              className="p-2 rounded-lg bg-blue-400 disabled:cursor-not-allowed"
+                            >
+                              <ChevronRight className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div >
                   </div >
 

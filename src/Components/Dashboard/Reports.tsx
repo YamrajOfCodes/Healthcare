@@ -1,75 +1,149 @@
-import React from 'react'
-import { Calendar, Clock, Construction } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 
 const Reports = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const itemsPerPage = 10;
+
+  // Sample health report data - replace with actual patient data
+  const sampleData = Array.from({ length: 50 }, (_, index) => ({
+    id: index + 1,
+    date: new Date(2024, 0, index + 1).toLocaleDateString(),
+    patientName: `Patient ${index + 1}`,
+    age: Math.floor(Math.random() * 50) + 20,
+    bloodPressure: `${Math.floor(Math.random() * 40) + 100}/${Math.floor(Math.random() * 20) + 60}`,
+    heartRate: Math.floor(Math.random() * 40) + 60,
+    temperature: ((Math.random() * 2) + 36).toFixed(1),
+    diagnosis: ['Hypertension', 'Diabetes', 'Common Cold'][index % 3],
+    status: ['Normal', 'Requires Attention', 'Critical'][index % 3],
+  }));
+
+  // Filter data based on search query
+  const filteredData = useMemo(() => {
+    return sampleData.filter((item) => {
+      const searchTerm = searchQuery.toLowerCase();
+      return (
+        item.patientName.toLowerCase().includes(searchTerm) ||
+        item.diagnosis.toLowerCase().includes(searchTerm)
+      );
+    });
+  }, [searchQuery, sampleData]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+
+  // Reset to first page when search query changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   return (
-    <div>
-       <div>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
-      <div className="max-w-3xl mx-auto mt-10 bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="p-8 text-center">
-          {/* Top Section with Animated Icons */}
-          <div className="relative h-48 mb-6">
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <div className="relative">
-                <Calendar className="h-24 w-24 text-blue-500 animate-pulse" />
-                <Clock className="h-16 w-16 text-indigo-400 absolute -right-8 -bottom-4 animate-bounce" />
-                <Construction className="h-16 w-16 text-purple-400 absolute -left-8 -bottom-4 animate-bounce delay-100" />
-              </div>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">Patient Health Reports</h1>
+          <p className="text-gray-600">View and monitor patient health records</p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <input
+              type="text"
+              placeholder="Search by patient name or diagnosis..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full text-black pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-400 outline-none transition-colors"
+            />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
+        </div>
 
-          {/* Main Content */}
-          <div className="space-y-6">
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
-              Coming Soon!
-            </h2>
-            
-            <p className="text-xl text-gray-600 max-w-lg mx-auto">
-              We're working hard to bring you an amazing Reports experience.
-            </p>
+        {/* Table */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {filteredData.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              No results found for "{searchQuery}"
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">ID</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Date</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Patient Name</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Age</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Blood Pressure</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Heart Rate</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Temperature</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Diagnosis</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {currentData.map((report) => (
+                    <tr key={report.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 text-sm text-gray-600">#{report.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{report.date}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{report.patientName}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{report.age}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{report.bloodPressure}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{report.heartRate} bpm</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{report.temperature}°C</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{report.diagnosis}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          report.status === 'Normal' ? 'bg-green-100 text-green-800' :
+                          report.status === 'Requires Attention' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {report.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-            {/* Feature Preview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-              <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                <div className="h-10 w-10 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-blue-600" />
+          {/* Pagination - only show if we have data */}
+          {filteredData.length > 0 && (
+            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-gray-600">
+                  Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of {filteredData.length} reports
+                </p>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <span className="text-sm text-gray-600">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
                 </div>
-                <h3 className="font-semibold text-gray-800">Easy Scheduling</h3>
-                <p className="text-sm text-gray-600 mt-2">Book appointments with just a few clicks</p>
-              </div>
-
-              <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                <div className="h-10 w-10 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Instant Confirmations</h3>
-                <p className="text-sm text-gray-600 mt-2">Get immediate booking confirmations</p>
-              </div>
-
-              <div className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                <div className="h-10 w-10 mx-auto mb-3 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <Construction className="h-6 w-6 text-indigo-600" />
-                </div>
-                <h3 className="font-semibold text-gray-800">Smart Reminders</h3>
-                <p className="text-sm text-gray-600 mt-2">Never miss an appointment again</p>
               </div>
             </div>
-
-            {/* Progress Bar */}
-            <div className="max-w-md mx-auto mt-12">
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-3/4 animate-pulse"></div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">75% Complete</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
-    </div>
-    </div>
-  )
-}
+  );
+};
 
-export default Reports
+export default Reports;

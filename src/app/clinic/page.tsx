@@ -226,10 +226,10 @@ const DashboardLayout: React.FC = () => {
                 {/* Logo Section */}
                 <div className="flex items-center gap-4 mb-12">
                   <div className="relative group">
-                    <div className="absolute -inset-1.5 bg-gradient-to-r from-violet-600 to-blue-600 
-                      rounded-2xl blur opacity-70 group-hover:opacity-100 transition duration-300">
+                    <div className="absolute 
+                      rounded-2xl opacity-70 group-hover:opacity-100 transition duration-300">
                     </div>
-                    <div className="relative h-full w-14 bg-gradient-to-br from-green-600 to-green-400 
+                    <div className="relative h-full w-14 
                       rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-all">
                       <Image src={clinic_logo} width={1000} height={1200} alt="clinic_logo"></Image>
                     </div>

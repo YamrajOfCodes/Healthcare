@@ -9,7 +9,9 @@ import {
   Calendar,
   UserPlus,
   X,
-  LogOut,
+  Bell,
+  Check, 
+  LogOut
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/Redux/App/store";
@@ -66,8 +68,43 @@ const ModernNavbar = () => {
     setpatient(allpatients);
   }, [allpatients]);
 
+
+  // notification
+
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { 
+      id: 1, 
+      message: 'New patient appointment scheduled', 
+      time: '2 mins ago',
+      read: false 
+    },
+    { 
+      id: 2, 
+      message: 'Lab results ready for review', 
+      time: '15 mins ago',
+      read: false 
+    },
+    { 
+      id: 3, 
+      message: 'Medication refill request', 
+      time: '1 hour ago',
+      read: true 
+    }
+  ]);
+
+  const markNotificationAsRead = (id:any) => {
+    setNotifications(notifications.map(notif => 
+      notif.id === id ? { ...notif, read: true } : notif
+    ));
+  };
+
+  const unreadCount = notifications.filter(notif => !notif.read).length;
+
   return (
     <>
+
+    
      <div className="relative flex justify-between px-4 py-3 bg-white/50">
   <input
     type="text"
@@ -83,6 +120,8 @@ const ModernNavbar = () => {
     aria-expanded={search ? "true" : "false"}
     aria-haspopup="listbox"
   />
+
+  
 
   {/* Search Results Dropdown */}
   {search && patient && (
@@ -130,71 +169,117 @@ const ModernNavbar = () => {
     </div>
   )}
 
-
-<div className="flex items-center gap-2 sm:gap-4">
-  {/* Mobile Profile Icon - Only visible on small screens */}
-  <div className="md:hidden relative">
-    <div 
-      className="flex items-center gap-2 cursor-pointer"
-      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-    >
-      <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 
-                    p-0.5 hover:shadow-lg hover:shadow-indigo-500/30 
-                    transition-all duration-300">
-        <div className="h-full w-full rounded-lg bg-white flex items-center justify-center">
-          <UserCircle className="h-5 w-5 text-indigo-600" />
-        </div>
-      </div>
-    </div>
-
-    {/* Mobile Dropdown Menu */}
-    {isProfileDropdownOpen && (
-      <div className="absolute right-0 top-full mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-        <div className="py-1" role="menu" aria-orientation="vertical">
-          <div className="px-4 py-2 border-b">
-            <p className="text-sm font-semibold text-gray-900">Super Admin</p>
-            <p className="text-xs text-gray-500">Healthcare System</p>
+ <div className="flex items-center gap-2 sm:gap-4">
+      {/* Mobile Notification Icon */}
+      <div className="relative md:hidden">
+        <div 
+          className="cursor-pointer flex items-center"
+          onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+        >
+          <div className="relative">
+            <Bell className="h-5 w-5 text-gray-600" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
           </div>
-          <button
-            className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-            role="menuitem"
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </button>
-          <button
-            className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-            role="menuitem"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </button>
         </div>
-      </div>
-    )}
-  </div>
 
-  <button
-    onClick={handleAddPatient}
-    className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-blue-600 text-white 
-             rounded-xl text-sm font-medium shadow-lg shadow-blue-500/20
-             hover:bg-blue-700 hover:shadow-blue-500/30 transition-all duration-300"
-  >
-    <UserPlus className="h-4 w-4" />
-    <span className="hidden sm:inline">Add Patient</span>
-  </button>
-  <button
-    onClick={handleScheduleAppointment}
-    className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-indigo-600 text-white 
-             rounded-xl text-sm font-medium shadow-lg shadow-indigo-500/20
-             hover:bg-indigo-700 hover:shadow-indigo-500/30 transition-all duration-300"
-  >
-    <Calendar className="h-4 w-4" />
-    <span className="hidden sm:inline">
-      Schedule Appointment
-    </span>
-  </button>
-</div>
+        {isNotificationOpen && (
+          <div className="absolute right-0 top-full mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+            <div className="p-2 border-b">
+              <h3 className="font-semibold text-sm">Notifications</h3>
+            </div>
+            <div className="max-h-64 overflow-y-auto">
+              {notifications.map((notif) => (
+                <div 
+                  key={notif.id} 
+                  className={`p-3 flex items-center justify-between hover:bg-gray-50 ${!notif.read ? 'bg-blue-50' : ''}`}
+                >
+                  <div>
+                    <p className="text-xs text-gray-800">{notif.message}</p>
+                    <p className="text-xs text-gray-500">{notif.time}</p>
+                  </div>
+                  {!notif.read && (
+                    <button 
+                      onClick={() => markNotificationAsRead(notif.id)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <Check className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Profile Icon */}
+      <div className="relative md:hidden">
+        <div 
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+        >
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 
+                        p-0.5 hover:shadow-lg hover:shadow-indigo-500/30 
+                        transition-all duration-300">
+            <div className="h-full w-full rounded-lg bg-white flex items-center justify-center">
+              <UserCircle className="h-5 w-5 text-indigo-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Profile Dropdown Menu */}
+        {isProfileDropdownOpen && (
+          <div className="absolute right-0 top-full mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+            <div className="py-1" role="menu" aria-orientation="vertical">
+              <div className="px-4 py-2 border-b">
+                <p className="text-sm font-semibold text-gray-900">Super Admin</p>
+                <p className="text-xs text-gray-500">Healthcare System</p>
+              </div>
+              <button
+                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                role="menuitem"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </button>
+              <button
+                className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                role="menuitem"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <button
+        onClick={handleAddPatient}
+        className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-blue-600 text-white 
+                 rounded-xl text-sm font-medium shadow-lg shadow-blue-500/20
+                 hover:bg-blue-700 hover:shadow-blue-500/30 transition-all duration-300"
+      >
+        <UserPlus className="h-4 w-4" />
+        <span className="hidden sm:inline">Add Patient</span>
+      </button>
+      <button
+        onClick={handleScheduleAppointment}
+        className="px-2 sm:px-4 py-2.5 flex items-center gap-1 sm:gap-2 bg-indigo-600 text-white 
+                 rounded-xl text-sm font-medium shadow-lg shadow-indigo-500/20
+                 hover:bg-indigo-700 hover:shadow-indigo-500/30 transition-all duration-300"
+      >
+        <Calendar className="h-4 w-4" />
+        <span className="hidden sm:inline">
+          Schedule Appointment
+        </span>
+      </button>
+    </div>
 
                 {/* Right Section - Only visible on larger screens */}
                 <div className="hidden md:flex items-center gap-6">
@@ -203,6 +288,49 @@ const ModernNavbar = () => {
                   <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-xl text-gray-600">
                     <Phone className="h-4 w-4 text-gray-400" />
                     <span className="text-sm font-medium">+91 93598 68665</span>
+                  </div>
+
+                  <div className="relative">
+                <div 
+                  className="cursor-pointer flex items-center gap-2"
+                   onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                  >
+             <Bell className="h-6 w-6" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </div>
+
+          {isNotificationOpen && (
+            <div className="absolute right-0 top-full mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+              <div className="p-2 border-b">
+                <h3 className="font-semibold text-sm">Notifications</h3>
+              </div>
+              <div className="max-h-64 overflow-y-auto">
+                {notifications.map((notif) => (
+                  <div 
+                    key={notif.id} 
+                    className={`p-3 flex items-center justify-between hover:bg-gray-50 ${!notif.read ? 'bg-blue-50' : ''}`}
+                  >
+                    <div>
+                      <p className="text-xs text-gray-800">{notif.message}</p>
+                      <p className="text-xs text-gray-500">{notif.time}</p>
+                    </div>
+                    {!notif.read && (
+                      <button 
+                        onClick={() => markNotificationAsRead(notif.id)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Check className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
                   </div>
 
                   {/* Profile */}
