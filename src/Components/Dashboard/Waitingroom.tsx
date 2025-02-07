@@ -162,7 +162,7 @@ const PatientCard: React.FC<PatientCardProps> = ({
           <button className="flex-1 text-sm md:text-lg px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"onClick={onHealthClicks}>
             Health
           </button>
-            <button className="flex-1 text-sm md:text-lg flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 text-center"onClick={onPrescription}>
+            <button className="text-sm md:text-lg flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 text-center"onClick={onPrescription}>
               Prescription
             </button>
           <div className="relative">

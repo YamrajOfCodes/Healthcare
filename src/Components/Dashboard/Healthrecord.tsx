@@ -68,6 +68,8 @@ const HealthChartForm = () => {
     patientId: `P00${element?.id}`,
   }));
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   useEffect(() => {
     dispatch(getallPatients());
   }, [dispatch]);
@@ -149,6 +151,15 @@ const HealthChartForm = () => {
   setSelectedPatient(null);
 };
 
+const validateForm = () => {
+  const newErrors: Record<string, string> = {};
+  
+  if (!searchQuery) newErrors.search = 'Patient search is required';
+  if (!formData.description) newErrors.description = 'Description is required';
+  
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -160,7 +171,9 @@ const HealthChartForm = () => {
             <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className={`w-full pl-10 pr-4 py-2 border rounded-lg transition-colors
+                ${errors.search ? 'border-red-500 bg-red-50' : 'border-gray-300'}
+                focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none`}
               placeholder="Search patient by name or ID"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -195,6 +208,9 @@ const HealthChartForm = () => {
                 {selectedPatient.name} (ID: {selectedPatient.id})
               </div>
             </div>
+          )}
+          {errors.search && (
+            <p className="mt-1 text-sm text-red-500">{errors.search}</p>
           )}
         </div>
 

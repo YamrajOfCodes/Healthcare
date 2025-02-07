@@ -16,6 +16,9 @@ const Toolbar = ({ editor }: any) => {
           className={`${
             editor.isActive("bold") ? "bg-sky-700 text-white p-2 rounded-lg" : "text-sky-400"
           }`}
+          aria-label="Bold text"
+          aria-pressed={editor.isActive("bold")}
+          title="Bold (Ctrl+B)"
         >
           <Bold className="w-5 h-5" />
         </button>

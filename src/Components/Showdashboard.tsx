@@ -4,7 +4,7 @@ import { getallPatients } from '@/Redux/Slices/Patient/patientSlices';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/Redux/App/store';
 import Register from './Register';
-import { X, XCircle, XCircleIcon, FileText } from "lucide-react";
+import { X, XCircle, XCircleIcon, FileText, Loader2, Search } from "lucide-react";
 import Appointment from './Appointment';
 import { Patient } from '@/types/patient';
 import { getWaitingroom } from '@/Redux/Slices/Admin/adminSlice';
@@ -24,6 +24,9 @@ const Showdashboard: React.FC = () => {
   const [healthsidebar,sethealthsidebar] = useState(false)
   const [showBillingHistory, setShowBillingHistory] = useState(false);
   const [selectedBillingPatient, setSelectedBillingPatient] = useState<Patient | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   console.log(allpatients);
   const data = {
@@ -40,11 +43,26 @@ const Showdashboard: React.FC = () => {
     attachment_path: "/path/to/attachment"
   };
 
-  
-
   useEffect(() => {
-    dispatch(getallPatients());
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        await dispatch(getallPatients());
+        setError(null);
+      } catch (err) {
+        setError('Failed to load patients. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, [dispatch]);
+
+  // Filter patients based on search query
+  const filteredPatients = allpatients?.filter(patient =>
+    patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (patient.phone?.includes(searchQuery) ?? false)
+  );
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -85,29 +103,72 @@ const Showdashboard: React.FC = () => {
     <div className="h-full relative mt-2">
       <div className="h-full rounded-2xl bg-white/20 backdrop-blur-xl border border-white/20 shadow-xl">
         <div className="p-6">
-          <div className="flex justify-between">
-            <p className="text-sm sm:text-lg border  text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 mb-4 transition-colors duration-300">
-              Recently Added
-            </p>
-           
+          {/* Header with search */}
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
+            <div className="flex items-center gap-4 w-full sm:w-auto mb-4 sm:mb-0">
+              <p className="text-sm sm:text-lg border text-black sm:text-black bg-white/40 w-fit rounded-lg px-6 py-2 transition-colors duration-300">
+                Recently Added
+                <span className="text-sm text-gray-500 ml-2">
+                  {allpatients?.length > 0 && `(Last ${Math.min(4, allpatients.length)} of ${allpatients.length})`}
+                </span>
+              </p>
+            </div>
+            <div className="relative w-full sm:w-64">
+              <input
+                type="text"
+                placeholder="Search patients..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
-            {allpatients?.slice(-4).map((profile: Patient) => (
-              <div
-                key={profile.id}
-                className="groupshadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105 cursor-pointer flex justify-center sm:justify-start w-full"
+
+          {/* Error state */}
+          {error && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
+              {error}
+              <button 
+                onClick={() => dispatch(getallPatients())}
+                className="ml-2 underline"
               >
-                <ProfileCard 
-                  {...profile} 
-                  id={profile.id} 
-                  entryTime={profile.created_at ?? new Date().toISOString()} 
-                  updated_at={profile.updated_at ?? new Date().toISOString()} 
-                  onOPDClick={() => handleOPDClick(profile)}
-                  onHealthClick={()=>{handleHealthchart(profile)}}
-                />
-              </div>
-            ))}
-          </div>
+                Retry
+              </button>
+            </div>
+          )}
+
+          {/* Loading state */}
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6">
+              {(searchQuery ? filteredPatients : allpatients?.slice(-4))?.map((profile: Patient) => (
+                <div
+                  key={profile.id}
+                  className="group shadow-lg rounded-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer flex justify-center sm:justify-start w-full"
+                >
+                  <ProfileCard 
+                    {...profile} 
+                    id={profile.id} 
+                    entryTime={profile.created_at ?? new Date().toISOString()} 
+                    updated_at={profile.updated_at ?? new Date().toISOString()} 
+                    onOPDClick={() => handleOPDClick(profile)}
+                    onHealthClick={() => handleHealthchart(profile)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* No results state */}
+          {!isLoading && searchQuery && filteredPatients?.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No patients found matching "{searchQuery}"</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -207,19 +268,14 @@ const Showdashboard: React.FC = () => {
       </div>
 
       {/* Overlay with improved opacity animation */}
-      {showOPDSidebar && (
+      {(showOPDSidebar || healthsidebar || showBillingHistory) && (
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
-          onClick={() => setShowOPDSidebar(false)}
-        />
-      )}
-
-
-
-{healthsidebar && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
-          onClick={() => sethealthsidebar(false)}
+          onClick={() => {
+            setShowOPDSidebar(false);
+            sethealthsidebar(false);
+            setShowBillingHistory(false);
+          }}
         />
       )}
 
@@ -230,13 +286,6 @@ const Showdashboard: React.FC = () => {
             setSelectedBillingPatient(null);
           }} 
           patient={selectedBillingPatient}
-        />
-      )}
-
-      {showBillingHistory && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
-          onClick={() => setShowBillingHistory(false)}
         />
       )}
     </div>
