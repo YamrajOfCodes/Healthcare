@@ -22,7 +22,7 @@ const DashCalender: React.FC<DashCalenderProps> = () => {
   const [calenderData, setCalenderData] = useState<FormattedAppointment[]>([]);
   const [timeSlots] = useState(() => {
     const startTime = setHours(setMinutes(new Date(), 0), 10); // 9:00 AM
-    const endTime = setHours(setMinutes(new Date(), 0), 21); // 2:00 PM
+    const endTime = setHours(setMinutes(new Date(), 0), 20); // 2:00 PM
     return eachHourOfInterval({ start: startTime, end: endTime });
   });
 
